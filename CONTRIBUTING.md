@@ -12,11 +12,11 @@ Welcome to the reTaler team! Please follow these guidelines when working on this
 - React Hook Form + Yup
 - React Router
 
---- 
+ 
 
 ## 🌱 Getting Started (very important)
 
-> Please read carefully before you start coding.
+###  Please read carefully before you start coding.
 
 ### 1. Clone the repo
 
@@ -33,7 +33,6 @@ git checkout -b feature/your-name-task
 2. Run `npm install` to install dependencies
 3. Run `npm run dev` to start the dev server
 
----
 
 ## 🌿 Branching Convention
 
@@ -41,7 +40,6 @@ Use this pattern:
 `feature/your-name-task`  
 Example: `feature/bridget-signup-page`
 
----
 
 ## 🧩 ShadCN Setup (One-Time Step)
 
@@ -69,8 +67,6 @@ resolve: {
 
 ```
 
----
-
 ## 🧾 Rules
 
 - Do not push directly to `development` or `main`.
@@ -80,7 +76,6 @@ resolve: {
 - Use `@` alias imports (e.g., `@/components/...`)
 - One file = one component
 
----
 
 ## 🔔 Installing New Packages
 
