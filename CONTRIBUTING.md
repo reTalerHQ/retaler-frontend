@@ -1,5 +1,6 @@
 # Contribution Guidelines for reTaler Web App
 
+
 Welcome to the reTaler team! Please follow these guidelines when working on this project.
 
 ## 🔧 Tools/Stack
@@ -10,6 +11,8 @@ Welcome to the reTaler team! Please follow these guidelines when working on this
 - Phosphor Icons
 - React Hook Form + Yup
 - React Router
+
+--- 
 
 ## 🌱 Getting Started (very important)
 
@@ -30,11 +33,15 @@ git checkout -b feature/your-name-task
 2. Run `npm install` to install dependencies
 3. Run `npm run dev` to start the dev server
 
+---
+
 ## 🌿 Branching Convention
 
 Use this pattern:  
 `feature/your-name-task`  
 Example: `feature/bridget-signup-page`
+
+---
 
 ## 🧩 ShadCN Setup (One-Time Step)
 
@@ -44,7 +51,7 @@ ShadCN is **not a regular dependency**. Every developer must run this **once** b
 
 ```bash
 
-npx shadcn-ui@latest init
+npx shadcn@latest init
 
 ```
 
@@ -61,6 +68,8 @@ resolve: {
 },
 
 ```
+
+---
 
 ## 🧾 Rules
 
