@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import { DashboardLayout } from "./layouts/dashboard-layout";
-import { DashboardPage, ForgotPasswordPage } from "./pages";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { DashboardPage, ForgotPasswordPage } from "@/pages";
 
 export const router = createBrowserRouter([
   {

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { PagePreLoader } from "../components/page-pre-loader";
+import { PagePreLoader } from "@/components/page-pre-loader";
 
 const Dashboard = lazy(() => import("./dashboard"));
 export const DashboardPage = () => (
