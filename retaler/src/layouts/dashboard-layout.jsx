@@ -60,7 +60,7 @@ export const DashboardLayout = () => {
               key={link.id}
               to={link.to}
               className={({ isActive }) =>
-                `flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
+                `fflex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
                   isActive
                     ? "text-primary font-medium hover:bg-[#F6F8FD]"
                     : "text-gray-700 hover:bg-gray-100"
