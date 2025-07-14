@@ -14,3 +14,24 @@ export const ForgotPasswordPage = () => (
     <ForgotPassword />
   </Suspense>
 );
+
+const Inventory = lazy(() => import("./inventory"));
+export const InventoryPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Inventory />
+  </Suspense>
+);
+
+const AddNewProduct = lazy(() => import("./add-new-product"));
+export const AddNewProductPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <AddNewProduct />
+  </Suspense>
+);
+
+const BulkAddNewProducts = lazy(() => import("./bulk-add-new-products"));
+export const BulkAddNewProductsPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <BulkAddNewProducts />
+  </Suspense>
+);
