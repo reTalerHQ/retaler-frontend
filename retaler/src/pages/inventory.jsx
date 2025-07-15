@@ -30,7 +30,7 @@ const UPLOAD_OPTIONS = {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [selectedUploadOption, setSelectedUploadOption] = useState(null);
@@ -163,51 +163,7 @@ const Inventory = () => {
     setSelectedUploadOption(option);
   };
 
-  const handleAllSelect = () => {
-    if (selectedIds.length !== products.length) {
-      setSelectedIds(products.map((item) => item.id));
-    } else {
-      setSelectedIds([]);
-    }
-  };
-
-  const handleRowSelect = (id) => {
-    const isIdSelected = selectedIds.some((item) => item === id);
-
-    if (isIdSelected) {
-      setSelectedIds((ids) => ids.filter((sId) => sId !== id));
-    } else {
-      setSelectedIds((ids) => [...ids, id]);
-    }
-  };
-
   const columns = [
-    {
-      header: () => (
-        <span>
-          <Checkbox
-            onCheckedChange={() => handleAllSelect()}
-            checked={
-              products?.every((prod) =>
-                selectedIds?.some((sId) => sId === prod?.id),
-              ) ?? false
-            }
-          />
-        </span>
-      ),
-      accessorKey: "id",
-      cell: ({ row }) => {
-        const { id } = row.original;
-        return (
-          <span>
-            <Checkbox
-              checked={selectedIds?.some((sId) => sId === id) ?? false}
-              onCheckedChange={() => handleRowSelect(id)}
-            />
-          </span>
-        );
-      },
-    },
     {
       accessorKey: "productName",
       header: "Product Name",
@@ -328,7 +284,13 @@ const Inventory = () => {
             />
           </div>
         </div>
-        <DataTable columns={columns} data={products} />
+        <DataTable
+          columns={columns}
+          data={products}
+          enableRowSelection
+          onSelectedRowsChange={setSelectedProducts}
+          selectedRowClassName="bg-[#CACDF6]/30"
+        />
       </div>
       <Dialog open={openModal}>
         <DialogContent className={"gap-2 sm:max-w-[90%] lg:max-w-[700px]"}>

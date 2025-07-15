@@ -51,7 +51,7 @@ function TableRow({ className, ...props }) {
     <tr
       data-slot="table-row"
       className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted transition-colors",
+        "hover:opacity-85 data-[state=selected]:bg-muted transition-colors",
         className,
       )}
       {...props}
