@@ -60,7 +60,7 @@ export const DashboardLayout = () => {
               key={link.id}
               to={link.to}
               className={({ isActive }) =>
-                `fflex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
+                `flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
                   isActive
                     ? "text-primary font-medium hover:bg-[#F6F8FD]"
                     : "text-gray-700 hover:bg-gray-100"
@@ -134,7 +134,7 @@ export const DashboardLayout = () => {
                   <CaretDown />
                 </button>
               </PopoverTrigger>
-              <PopoverContent className="max-w-40 p-2 lg:max-w-50 gap-3 flex flex-col">
+              <PopoverContent className="flex max-w-40 flex-col gap-3 p-2 lg:max-w-50">
                 <Link
                   to="/account"
                   className="flex items-center justify-start gap-2 px-4 text-sm"
