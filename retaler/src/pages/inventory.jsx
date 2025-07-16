@@ -15,7 +15,6 @@ import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
-import { Checkbox } from "../components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 
@@ -34,6 +33,8 @@ const Inventory = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [selectedUploadOption, setSelectedUploadOption] = useState(null);
+
+  console.log({ selectedProducts });
 
   const products = [
     {
