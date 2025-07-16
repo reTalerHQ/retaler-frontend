@@ -14,3 +14,17 @@ export const ForgotPasswordPage = () => (
     <ForgotPassword />
   </Suspense>
 );
+
+const Signin = lazy(() => import("./sign-in"));
+export const SigninPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Signin />
+  </Suspense>
+);
+
+const ResetPassword = lazy(() => import("./ResetPassword"));
+export const ResetPasswordPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <ResetPassword />
+  </Suspense>
+);
