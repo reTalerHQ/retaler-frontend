@@ -4,9 +4,8 @@ import { Input } from "../components/ui/input";
 const ForgotPassword = () => {
   return (
     <>
-      <section className="my-[50px] flex items-center justify-center md:my-[40px]">
-        <section className="h-80 w-150 flex items-center justify-center md:h-100">
-          <div className="h-65 w-86 md:h-70 md:w-120">
+    <section className="flex items-center justify-center min-h-screen bg-blue-50">
+        <div className=" flex w-xl flex-col rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl ">
             <h1 className="text-[20px] font-semibold md:text-[36px] md:font-bold">
               Reset Your Password
             </h1>
@@ -29,8 +28,7 @@ const ForgotPassword = () => {
                 Send reset email
               </button>
             </form>
-          </div>
-        </section>
+        </div>
       </section>
     </>
   );
