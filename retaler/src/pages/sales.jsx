@@ -10,6 +10,8 @@ import {
   Funnel,
   X,
   ChartBar,
+  Export,
+  Star,
 } from "phosphor-react";
 import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
@@ -17,7 +19,7 @@ import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Checkbox } from "../components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const MODAL_TYPES = {
   ADD_PRODUCTS: "ADD_PRODUCT",
@@ -244,34 +246,50 @@ const Sales = () => {
   return (
     <>
       <div className="flex flex-col justify-between gap-3 lg:flex-row">
-        <h1 className="text-lg font-bold lg:text-2xl">Inventory</h1>
-        <Button onClick={() => handleToggleModal(MODAL_TYPES.ADD_PRODUCTS)}>
-          <Plus /> Add new Product
-        </Button>
+        <h1 className="text-lg font-bold lg:text-2xl">Sales</h1>
+        <div className="items-ceter flex justify-between gap-3">
+          <Button
+            className={
+              "text-primary border-0 bg-transparent shadow-none hover:bg-transparent hover:opacity-50"
+            }
+          >
+            <Export />
+            <span>Export</span>
+          </Button>
+          <Link
+            to="/sales/add-new-sales"
+            className="bg-primary flex items-center rounded-sm p-2 text-white hover:opacity-75"
+          >
+            <Plus /> Add new Sale
+          </Link>
+        </div>
       </div>
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <BusinessOverviewCard
-          title="Total Products"
-          count={45}
-          icon={<Tag className="text-2xl text-[#4C518F]" />}
-          color="#CACDF6"
-        />
-        <BusinessOverviewCard
           title="Total Sales"
-          count={"N 100.00"}
+          count={"₦ 100,000"}
           icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
-          color="#98CEA1"
+          color="#E6F3E8"
+          border="#98CEA1"
         />
         <BusinessOverviewCard
-          title="Restock Needed"
-          count={5}
-          icon={<Warning className="text-2xl text-[#CCA300]" />}
+          title="Revenue Generate"
+          count={"₦ 354,200"}
+          icon={<ChartBar className="text-2xl text-[#375ED9]" />}
+          color="#F6F8FD"
+          border="#ADBDEF"
+        />
+        <BusinessOverviewCard
+          title="Avg. Sale Value"
+          count={"₦ 5,000"}
+          icon={<Star className="text-2xl text-[#FFF5CC]" />}
           color="#FFF5CC"
+          border="#FFD633"
         />
       </div>
       <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9">
         <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
-          <h1 className="text-lg font-bold">All Products</h1>
+          <h1 className="text-lg font-bold">Sales</h1>
           <div className="flex items-center gap-2">
             <button>
               <Funnel className="text-2xl" />

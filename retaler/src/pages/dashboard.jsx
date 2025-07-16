@@ -145,7 +145,8 @@ const Dashboard = () => {
               title="Total Products"
               count={0}
               icon={<Tag className="text-2xl text-[#4C518F]" />}
-              color="#CACDF6"
+              color="#F2F3FD"
+              border="#CACDF6"
             />
             <BusinessOverviewCard
               title="Total Sales"
@@ -153,19 +154,22 @@ const Dashboard = () => {
               icon={
                 <CurrencyCircleDollar className="text-2xl text-[#038719]" />
               }
-              color="#98CEA1"
+              color="#E6F3E8"
+              border="#98CEA1"
             />
             <BusinessOverviewCard
               title="Total Products"
               count={0}
               icon={<Warning className="text-2xl text-[#CCA300]" />}
               color="#FFF5CC"
+              border="#FFD633"
             />
             <BusinessOverviewCard
               title="No. of Staff"
               count={0}
               icon={<User className="text-2xl text-[#C61010]" />}
-              color="#E89D9D"
+              color="#F9E7E7"
+              border="#E89D9D"
             />
           </div>
         </article>
