@@ -39,11 +39,11 @@ export const router = createBrowserRouter([
     element: <InviteStaff />,
   },
   {
-    path: "/dashboard-layout",
+    path: "",
     element: <DashboardLayout />,
     children: [
       {
-        index: true,
+        path: "dashboard",
         element: <DashboardPage />,
       },
       {
