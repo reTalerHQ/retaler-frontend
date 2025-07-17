@@ -15,6 +15,19 @@ export const ForgotPasswordPage = () => (
   </Suspense>
 );
 
+const Signin = lazy(() => import("./sign-in"));
+export const SigninPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Signin />
+  </Suspense>
+);
+
+const ResetPassword = lazy(() => import("./ResetPassword"));
+export const ResetPasswordPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <ResetPassword />
+  </Suspense>
+);
 const Inventory = lazy(() => import("./inventory"));
 export const InventoryPage = () => (
   <Suspense fallback={<PagePreLoader />}>
