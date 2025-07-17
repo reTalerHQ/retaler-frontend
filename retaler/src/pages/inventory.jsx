@@ -15,7 +15,6 @@ import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
-import { Checkbox } from "../components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
 import { useNavigate } from "react-router-dom";
 
@@ -34,6 +33,8 @@ const Inventory = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [selectedUploadOption, setSelectedUploadOption] = useState(null);
+
+  console.log({ selectedProducts });
 
   const products = [
     {
@@ -254,19 +255,22 @@ const Inventory = () => {
           title="Total Products"
           count={45}
           icon={<Tag className="text-2xl text-[#4C518F]" />}
-          color="#CACDF6"
+          color="#F2F3FD"
+          border="#CACDF6"
         />
         <BusinessOverviewCard
           title="Total Sales"
           count={"N 100.00"}
           icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
-          color="#98CEA1"
+          color="#E6F3E8"
+          border="#98CEA1"
         />
         <BusinessOverviewCard
           title="Restock Needed"
           count={5}
           icon={<Warning className="text-2xl text-[#CCA300]" />}
           color="#FFF5CC"
+          border="#FFD633"
         />
       </div>
       <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9">

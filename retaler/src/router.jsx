@@ -5,6 +5,7 @@ import {
   AddNewProductPage,
   BulkAddNewProductsPage,
   InventoryPage,
+  SalesPage,
 } from "./pages";
 
 // import { SplashScreen } from "@/pages/splashScreen";
@@ -38,11 +39,11 @@ export const router = createBrowserRouter([
     element: <InviteStaff />,
   },
   {
-    path: "/dashboard-layout",
+    path: "",
     element: <DashboardLayout />,
     children: [
       {
-        index: true,
+        path: "dashboard",
         element: <DashboardPage />,
       },
       {
@@ -59,6 +60,15 @@ export const router = createBrowserRouter([
           {
             path: "bulk-add-new-products",
             element: <BulkAddNewProductsPage />,
+          },
+        ],
+      },
+      {
+        path: "sales",
+        children: [
+          {
+            index: true,
+            element: <SalesPage />,
           },
         ],
       },

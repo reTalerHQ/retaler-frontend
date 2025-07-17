@@ -26,7 +26,7 @@ export const DashboardLayout = () => {
   const handleToggleSidebar = () => setIsSidebarOpened((v) => !v);
 
   const sidebarLinks = [
-    { id: 1, title: "Dashboard", icon: <House />, to: "/" },
+    { id: 1, title: "Dashboard", icon: <House />, to: "/dashboard" },
     { id: 2, title: "Inventory", icon: <FolderSimple />, to: "/inventory" },
     { id: 3, title: "Sales", icon: <CurrencyCircleDollar />, to: "/sales" },
     { id: 4, title: "Analytics", icon: <TrendUp />, to: "/analytics" },
@@ -59,6 +59,7 @@ export const DashboardLayout = () => {
             <NavLink
               key={link.id}
               to={link.to}
+              onClick={() => setIsSidebarOpened(false)}
               className={({ isActive }) =>
                 `flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
                   isActive
@@ -95,7 +96,7 @@ export const DashboardLayout = () => {
             >
               <List className="text-lg text-gray-700" />
             </button>
-            <Link to="/">
+            <Link to="/dashboard">
               <img
                 src="/assets/images/retaler-logo.svg"
                 alt="Retaler"
