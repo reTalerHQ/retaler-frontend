@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import { DashboardPage, ForgotPasswordPage } from "@/pages";
+import { AnalyticsPage, DashboardPage, ForgotPasswordPage } from "@/pages";
 import { ResetPasswordPage, SigninPage } from "./pages";
 import {
   AddNewProductPage,
@@ -73,6 +73,10 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "analytics",
+        element: <AnalyticsPage />,
+      },
     ],
   },
   {
@@ -84,7 +88,7 @@ export const router = createBrowserRouter([
     element: <SigninPage />,
   },
 
-   {
+  {
     path: "/ResetPassword",
     element: <ResetPasswordPage />,
   },
