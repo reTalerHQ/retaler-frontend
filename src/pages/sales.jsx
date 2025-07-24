@@ -9,15 +9,28 @@ import {
   ChartBar,
   Export,
   Star,
+  Trash,
+  X,
 } from "phosphor-react";
 import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Link } from "react-router-dom";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+
 const Sales = () => {
   const [selectedSalesIds, setSelectedSalesIds] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const sales = [
     {
       id: 1,
@@ -110,6 +123,21 @@ const Sales = () => {
     },
   ];
 
+  const handleDeleteSelected = () => {
+    console.log("✅ Would delete IDs:", selectedSalesIds);
+    // setShowDeleteModal(false);
+    setSelectedSalesIds([]);
+  };
+
+  // const handleDeleteSelected = () => {
+  //   const remainingSales = sales.filter(
+  //     (sale) => !selectedSalesIds.includes(sale.id),
+  //   );
+
+  //   console.log("Remaining Sales after delete:", remainingSales);
+  //   setSelectedSalesIds([]);
+  // };
+
   return (
     <>
       <div className="flex flex-col justify-between gap-3 lg:flex-row">
@@ -131,6 +159,8 @@ const Sales = () => {
           </Link>
         </div>
       </div>
+
+      {/* OVERVIEW CARDS */}
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <BusinessOverviewCard
           title="Total Sales"
@@ -154,21 +184,48 @@ const Sales = () => {
           border="#FFD633"
         />
       </div>
+
+      {/* SALES TABLE */}
       <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9">
         <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
-          <h1 className="text-lg font-bold">Sales</h1>
-          <div className="flex items-center gap-2">
-            <button>
-              <Funnel className="text-2xl" />
-            </button>
-            <Input
-              showError={false}
-              type="Search"
-              placeholder="Search"
-              leftIcon={<MagnifyingGlass className="text-sm text-[#BBBBBB]" />}
-            />
+          <h1 className="text-lg font-bold">All Sales</h1>
+
+          <div className="flex items-center gap-5">
+            <div className="">
+              {selectedSalesIds.length > 0 && (
+                <div className="inline-flex items-center gap-5">
+                  <p className="text-xs lg:text-lg">
+                    {selectedSalesIds.length}{" "}
+                    {selectedSalesIds.length > 1 ? "items" : "item"} selected
+                  </p>
+                  <Button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="bg-gray-300 text-gray-600 hover:bg-gray-400"
+                  >
+                    <Trash size={32} weight="bold" /> Delete
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* SEARCH BAR */}
+            <div className="flex items-center gap-2">
+              <button>
+                <Funnel className="text-2xl" />
+              </button>
+              <Input
+                showError={false}
+                type="Search"
+                placeholder="Search"
+                leftIcon={
+                  <MagnifyingGlass className="text-sm text-[#BBBBBB]" />
+                }
+              />
+            </div>
           </div>
         </div>
+
+        {/* TABLE */}
         <DataTable
           columns={columns}
           data={sales}
@@ -177,6 +234,50 @@ const Sales = () => {
           selectedRowClassName="bg-[#CACDF6]/30"
         />
       </div>
+
+      {/* DELETE MODAL */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="flex flex-col items-center gap-6 sm:max-w-[600px]">
+          {/* MODAL HEADER */}
+          <DialogClose asChild>
+            <Button
+              variant="outline"
+              className="absolute top-4 right-4 flex justify-end text-gray-500 hover:text-gray-700"
+            >
+              <X size={24} />
+            </Button>
+          </DialogClose>
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogTitle className="text-xl font-bold">
+              Delete Products
+            </DialogTitle>
+          </DialogHeader>
+
+          {/* DESCRIPTION */}
+          <DialogDescription>
+            Are you sure you want to delete the selected sales?{" "}
+            <span>This action is irreversible.</span>
+          </DialogDescription>
+
+          {/* footer modal */}
+          <DialogFooter className="flex flex-row gap-4">
+            <DialogClose asChild>
+              <Button variant="outline" className="bg:px-8 bg-gray-300">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              className="bg:px-8 bg-red-600 text-white hover:bg-red-700"
+              onClick={() => {
+                handleDeleteSelected(); // ✅ Actually delete here
+                setShowDeleteModal(false); // ✅ Close modal
+              }}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

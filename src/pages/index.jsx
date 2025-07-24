@@ -15,6 +15,20 @@ export const ForgotPasswordPage = () => (
   </Suspense>
 );
 
+const Welcome = lazy(() => import("./welcome"));
+export const WelcomePage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Welcome />
+  </Suspense>
+);
+
+const Signup = lazy(() => import("./signup"));
+export const SignUpPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Signup />
+  </Suspense>
+);
+
 const Signin = lazy(() => import("./sign-in"));
 export const SigninPage = () => (
   <Suspense fallback={<PagePreLoader />}>
@@ -59,6 +73,8 @@ const Analytics = lazy(() => import("./analytics"));
 export const AnalyticsPage = () => (
   <Suspense fallback={<PagePreLoader />}>
     <Analytics />
+  </Suspense>
+);
 
 const Staff = lazy(() => import("./staff"));
 export const StaffPage = () => (

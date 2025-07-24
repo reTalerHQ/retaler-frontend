@@ -20,41 +20,41 @@ const schema = yup.object({
 });
 
 const STORAGE_KEY_EMAIL = "email";
-const STORAGE_KEY_PASSWORD = "password"
+const STORAGE_KEY_PASSWORD = "password";
 
 const Signin = () => {
-  const [isChecked, setIsChecked] = useState(false)
+  const [isChecked, setIsChecked] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue
+    setValue,
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
   });
-  
+
   // This will load from localStorage
   useEffect(() => {
-    const storedEmail = 
-    JSON.parse(localStorage.getItem(STORAGE_KEY_EMAIL)) || '';
+    const storedEmail =
+      JSON.parse(localStorage.getItem(STORAGE_KEY_EMAIL)) || "";
     const storedPassword =
-    JSON.parse(localStorage.getItem(STORAGE_KEY_PASSWORD)) || ''
+      JSON.parse(localStorage.getItem(STORAGE_KEY_PASSWORD)) || "";
 
     setValue("email", storedEmail);
-    setValue("password", storedPassword)
-  }, [setValue])
+    setValue("password", storedPassword);
+  }, [setValue]);
 
   // To save email and password to localStorage
   const onSubmit = (data) => {
     if (isChecked) {
-  localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify(data.email))
-  localStorage.setItem(STORAGE_KEY_PASSWORD, JSON.stringify(data.password))
-} else {
-  localStorage.removeItem(STORAGE_KEY_EMAIL)
-  localStorage.removeItem(STORAGE_KEY_PASSWORD)
-}
+      localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify(data.email));
+      localStorage.setItem(STORAGE_KEY_PASSWORD, JSON.stringify(data.password));
+    } else {
+      localStorage.removeItem(STORAGE_KEY_EMAIL);
+      localStorage.removeItem(STORAGE_KEY_PASSWORD);
+    }
     console.log("Form Data:", data);
     navigate("/dashboard");
   };
@@ -63,13 +63,13 @@ const Signin = () => {
   return (
     <>
       <section className="flex min-h-screen items-center justify-center bg-blue-50">
-        <div className="flex w-xl flex-col rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+        <div className="flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
           <h1 className="text-[20px] font-semibold md:text-[36px] md:font-bold">
             Welcome Back!
           </h1>
           <p className="mb:text-[20px] text-[14px] text-[#373636] md:text-xl">
             Log in with your email and password
-          </p>     
+          </p>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="mt-4">
               <label
@@ -117,17 +117,15 @@ const Signin = () => {
               name="checkbox"
               id="checkbox"
               checked={isChecked}
-            
-               onChange={(e) => setIsChecked(e.target.checked)}
-             
+              onChange={(e) => setIsChecked(e.target.checked)}
             />
             <label
               htmlFor="checkbox"
-              className="ml-1 text-[14px] md:text-[16px]"
+              className="ml-1 text-[12px] md:text-[16px]"
             >
               Remember me
             </label>
-            <span className="ml-10 text-[14px] md:ml-45 md:text-[16px]">
+            <span className="ml-10 text-[12px] md:ml-45 md:text-[16px]">
               <Link to="/forgot-password">Forgot your password?</Link>
             </span>
             <Button
