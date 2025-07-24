@@ -43,7 +43,7 @@ export const InviteStaff = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex w-xl flex-col rounded-lg bg-white px-10 py-8 shadow-md md:max-w-xl">
+      <div className="my-0 flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:max-w-xl">
         <h1 className="mb-2 text-lg font-semibold md:text-3xl">
           Invite Staff Members
         </h1>
@@ -60,7 +60,7 @@ export const InviteStaff = () => {
               type="email"
               placeholder="janedoe@gmail.com"
               {...register("email")}
-              className="w-full bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none"
+              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-500">
@@ -73,7 +73,7 @@ export const InviteStaff = () => {
             <label className="mb-1 block text-sm">Role</label>
             <select
               {...register("role")}
-              className="w-full rounded border bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-gray-400 focus:bg-white focus:outline-none"
+              className="w-full rounded border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-gray-400 focus:bg-white focus:outline-none"
             >
               <option value="">Select Role</option>
               <option value="Manager">Manager</option>

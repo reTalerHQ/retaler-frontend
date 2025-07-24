@@ -66,7 +66,7 @@ export const Signup = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex w-xl flex-col rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+      <div className="my-0 flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
         <h1 className="mb-2 text-lg font-semibold md:text-3xl">
           Create your Retaler Account
         </h1>
