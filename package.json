@@ -26,6 +26,8 @@
     "lucide-react": "^0.525.0",
     "phosphor-react": "^1.4.1",
     "react": "^19.1.0",
+    "react-color": "^2.19.3",
+    "react-colorful": "^5.6.1",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
     "react-router-dom": "^7.6.3",

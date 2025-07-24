@@ -11,18 +11,7 @@ import GoogleIcon from "../assets/google-logo.svg";
 import AppleIcon from "../assets/apple-logo.svg";
 import { SocialAuthButton } from "@/components/SocialAuthButton";
 import clsx from "clsx";
-//  const HandleSubmit = () => {useForm({
-//   mode: "onChange",
-//   resolver: yupResolver(schema)
-//  })
-// if (isChecked) {
-//   localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify(email)), [email]
-//   localStorage.setItem(STORAGE_KEY_PASSWORD, JSON.stringify(password)), [password]
-// } else {
-//   localStorage.removeItem(STORAGE_KEY_EMAIL, JSON.stringify(email)), [email]
-//   localStorage.removeItem(STORAGE_KEY_PASSWORD, JSON.stringify(password)), [password]
-// }
-// }
+
 
 // yup validation schema
 const schema = yup.object({
@@ -67,7 +56,7 @@ const Signin = () => {
   localStorage.removeItem(STORAGE_KEY_PASSWORD)
 }
     console.log("Form Data:", data);
-    navigate("/dashboard-layout");
+    navigate("/dashboard");
   };
 
   const navigate = useNavigate();
