@@ -1,6 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import { DashboardPage, ForgotPasswordPage } from "@/pages";
+import {
+  DashboardPage,
+  ForgotPasswordPage,
+  ManageStaffRolesPage,
+  StaffDetailsPage,
+  StaffPage,
+  CreateStaffRolePage,
+  AddNewStaffPage,
+} from "@/pages";
+
+
+
 import { ResetPasswordPage, SigninPage } from "./pages";
 import {
   AddNewProductPage,
@@ -73,6 +84,31 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "staff",
+        children: [
+          {
+            index: true,
+            element: <StaffPage />,
+          },
+          {
+            path: "staff-details",
+            element: <StaffDetailsPage />,
+          },
+          {
+            path: "manage-staff-roles",
+            element: <ManageStaffRolesPage />,
+          },
+          {
+            path: "create-staff-role",
+            element: <CreateStaffRolePage />,
+          },
+          {
+            path: "add-new-staff",
+            element: <AddNewStaffPage />,
+          },
+        ],
+      },
     ],
   },
   {
@@ -84,8 +120,8 @@ export const router = createBrowserRouter([
     element: <SigninPage />,
   },
 
-   {
-    path: "/ResetPassword",
+  {
+    path: "/reset-password",
     element: <ResetPasswordPage />,
   },
 ]);

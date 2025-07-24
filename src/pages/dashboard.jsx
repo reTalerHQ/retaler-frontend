@@ -127,7 +127,7 @@ const Dashboard = () => {
     },
   ];
 
-  const hasOnboarded = false;
+  const hasOnboarded = true;
 
   return (
     <>
