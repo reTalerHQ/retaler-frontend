@@ -17,13 +17,13 @@ import { Notifications } from "./components/notifications";
 import { Theme } from "./components/theme";
 import { DataBackup } from "./components/dataBackup";
 import { SupportHelp } from "./components/supportHelp";
-import { PrivacyPolicy } from "./components/privacyPolicy";
+import { PrivacyPolicy } from "./components/privacy-policy";
 import { TermsCondition } from "./components/termsCondition";
 import { InviteFriend } from "./components/inviteFriend";
 import { AboutPage } from "./components/about";
 import { InventorySettings } from "./components/inventorySettings";
 // import { ResetPassword } from "@/pages/reset-password";
-import { ResetPassword } from "@/pages/reset-password";
+import ResetPassword from "@/pages/reset-password";
 
 import {
   AddNewProductPage,
