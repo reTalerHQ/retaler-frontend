@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useUser } from "../context/UserContext.jsx";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import {
   List,
@@ -21,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 export const DashboardLayout = () => {
+  const { avatar } = useUser();
   const [isSidebarOpened, setIsSidebarOpened] = useState(false);
 
   const handleToggleSidebar = () => setIsSidebarOpened((v) => !v);
@@ -61,7 +63,7 @@ export const DashboardLayout = () => {
               to={link.to}
               onClick={() => setIsSidebarOpened(false)}
               className={({ isActive }) =>
-                `flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
+                `flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors ${
                   isActive
                     ? "text-primary font-medium hover:bg-[#F6F8FD]"
                     : "text-gray-700 hover:bg-gray-100"
@@ -75,13 +77,19 @@ export const DashboardLayout = () => {
         </nav>
 
         <div className="border-t border-[#BBBBBB] px-6 py-4">
-          <Link
+          <NavLink
             to="/settings"
-            className="flex items-center gap-2 text-sm text-[#767474]"
+            onClick={() => setIsSidebarOpened(false)}
+            className={({ isActive }) =>`flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
+              isActive 
+              ? "text-primary font-medium hover:bg-[#F6F8FD]" 
+              : "text-gray-700 hover:bg-gray-100"
+            }`
+          }
           >
             <Gear />
             <span>Settings</span>
-          </Link>
+          </NavLink>
         </div>
       </aside>
 
@@ -127,9 +135,9 @@ export const DashboardLayout = () => {
               <PopoverTrigger asChild>
                 <button className="flex cursor-pointer items-center gap-1">
                   <img
-                    src="/assets/images/dummy-avatar.png"
+                    src={avatar || "/assets/images/dummy-avatar.png"}
                     alt="Avatar"
-                    className="h-7"
+                    className="h-7 w-7 rounded-full"
                   />
                   <span className="hidden lg:inline">Test User</span>
                   <CaretDown />

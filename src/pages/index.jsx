@@ -22,7 +22,7 @@ export const SigninPage = () => (
   </Suspense>
 );
 
-const ResetPassword = lazy(() => import("./ResetPassword"));
+const ResetPassword = lazy(() => import("./reset-password"));
 export const ResetPasswordPage = () => (
   <Suspense fallback={<PagePreLoader />}>
     <ResetPassword />
@@ -59,5 +59,38 @@ const Analytics = lazy(() => import("./analytics"));
 export const AnalyticsPage = () => (
   <Suspense fallback={<PagePreLoader />}>
     <Analytics />
+
+const Staff = lazy(() => import("./staff"));
+export const StaffPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Staff />
+  </Suspense>
+);
+
+const StaffDetails = lazy(() => import("./staff-details"));
+export const StaffDetailsPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <StaffDetails />
+  </Suspense>
+);
+
+const ManageStaffRoles = lazy(() => import("./manage-staff-roles"));
+export const ManageStaffRolesPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <ManageStaffRoles />
+  </Suspense>
+);
+
+const CreateStaffRole = lazy(() => import("./create-staff-role.jsx"));
+export const CreateStaffRolePage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <CreateStaffRole />
+  </Suspense>
+);
+
+const AddNewStaff = lazy(() => import("./add-new-staff.jsx"));
+export const AddNewStaffPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <AddNewStaff />
   </Suspense>
 );
