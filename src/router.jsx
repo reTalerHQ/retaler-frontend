@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { AnalyticsPage, DashboardPage, ForgotPasswordPage } from "@/pages";
 import {
   DashboardPage,
   ForgotPasswordPage,
@@ -9,9 +10,6 @@ import {
   CreateStaffRolePage,
   AddNewStaffPage,
 } from "@/pages";
-
-
-
 import { ResetPasswordPage, SigninPage } from "./pages";
 import { Account } from "./components/account";
 import { Notifications } from "./components/notifications";
@@ -98,6 +96,9 @@ export const router = createBrowserRouter([
         ],
       },
       {
+
+        path: "analytics",
+        element: <AnalyticsPage />,
         path: "settings",
         element: <Settings />,
         children: [
@@ -179,6 +180,7 @@ export const router = createBrowserRouter([
   },
 
   {
+    path: "/ResetPassword",
     path: "/reset-password",
     element: <ResetPasswordPage />,
   },

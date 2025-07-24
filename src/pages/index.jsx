@@ -47,7 +47,7 @@ export const BulkAddNewProductsPage = () => (
   <Suspense fallback={<PagePreLoader />}>
     <BulkAddNewProducts />
   </Suspense>
-)
+);
 
 const Sales = lazy(() => import("./sales"));
 export const SalesPage = () => (
@@ -55,6 +55,10 @@ export const SalesPage = () => (
     <Sales />
   </Suspense>
 );
+const Analytics = lazy(() => import("./analytics"));
+export const AnalyticsPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <Analytics />
 
 const Staff = lazy(() => import("./staff"));
 export const StaffPage = () => (
