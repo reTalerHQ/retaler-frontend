@@ -186,7 +186,7 @@ const StaffDetails = () => {
               <span className="text-sm text-[#0088FF]"> {role} </span>
             </button>
           </div>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center mt-2 lg:mt-0">
             <Button className="bg-[#F6F8FD] text-[#375ED9] hover:bg-inherit">
               <Mail /> Email {staffName}
             </Button>
@@ -196,7 +196,7 @@ const StaffDetails = () => {
           </div>
         </section>
 
-        <div className="mt-3.5 grid grid-cols-1 lg:grid-cols-3">
+        <div className="mt-3.5 grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2">
             <section className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
               <div className="">
