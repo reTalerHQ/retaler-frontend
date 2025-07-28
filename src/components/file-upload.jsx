@@ -1,7 +1,7 @@
 import { UploadSimple } from "phosphor-react";
 import React, { useState } from "react";
 
-const FileUpload = ({ file, handleFileChange, description }) => {
+const FileUpload = ({ file, title, handleFileChange, description }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragOver = (e) => {
@@ -44,7 +44,7 @@ const FileUpload = ({ file, handleFileChange, description }) => {
         <div className="rounded-full bg-white p-3">
           <UploadSimple className="text-2xl" />
         </div>
-        <p className="text-sm font-semibold">Drag or drop image</p>
+        <p className="text-sm font-semibold">{title ?? "Drag or drop image"}</p>
         {description && (
           <div className="space-y-0.5 text-xs text-gray-600">{description}</div>
         )}
