@@ -110,3 +110,9 @@ export const AddNewStaffPage = () => (
     <AddNewStaff />
   </Suspense>
 );
+const ProductDetail = lazy(() => import("./product-details"));
+export const ProductDetailsPage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <ProductDetail />
+  </Suspense>
+);

@@ -10,6 +10,7 @@ import {
   CreateStaffRolePage,
   AddNewStaffPage,
   SigninPage,
+  ProductDetailsPage,
 } from "@/pages";
 
 import { Account } from "./components/account";
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
           {
             path: "bulk-add-new-products",
             element: <BulkAddNewProductsPage />,
+          },
+          {
+            path: ":id",
+            element: <ProductDetailsPage />,
           },
         ],
       },
