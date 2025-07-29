@@ -11,6 +11,7 @@ import {
   AddNewStaffPage,
   SigninPage,
   ProductDetailsPage,
+  EditProductPage,
 } from "@/pages";
 
 import { Account } from "./components/account";
@@ -100,7 +101,16 @@ export const router = createBrowserRouter([
           },
           {
             path: ":id",
-            element: <ProductDetailsPage />,
+            children: [
+              {
+                index: true,
+                element: <ProductDetailsPage />,
+              },
+              {
+                path: "edit",
+                element: <EditProductPage />,
+              },
+            ],
           },
         ],
       },

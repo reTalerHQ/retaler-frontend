@@ -5,6 +5,7 @@ import { formatCurrency } from "@/utils/number-utilites";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
 import { X } from "phosphor-react";
+import { dummyProductDetails } from "@/data/dummy-product-details";
 
 const MODAL_TYPES = {
   CONFIRM_DELETE: "CONFIRM_DELETE",
@@ -13,30 +14,9 @@ const MODAL_TYPES = {
 const ProductDetails = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(dummyProductDetails.images[0]);
 
-  const productDetails = {
-    productName: "Iphone 15 Pro",
-    images: [
-      { id: 1, path: "/assets/images/iphone-image-1.png" },
-      { id: 2, path: "/assets/images/iphone-image-2.png" },
-      { id: 3, path: "/assets/images/iphone-image-3.png" },
-      { id: 4, path: "/assets/images/iphone-image-4.png" },
-    ],
-    status: "In stock",
-    description:
-      "Latest iPhone with A17 Pro chip, 48MP camera system, and titanium design. Available in Natural Titanium, Blue Titanium, White Titanium, and Black Titanium finishes. Features Action Button and USB-C connectivity.",
-    costPrice: 1000,
-    sellingPrice: 1500,
-    currency: "₦",
-    category: "Electronics",
-    expiryDate: "20/08/2027",
-    quantity: 2500,
-    lowStockCount: 6,
-  };
-
-  const [selectedImage, setSelectedImage] = useState(productDetails.images[0]);
-
-  const otherImages = productDetails.images.filter(
+  const otherImages = dummyProductDetails.images.filter(
     (img) => img.id !== selectedImage.id,
   );
 
@@ -64,7 +44,7 @@ const ProductDetails = () => {
             <CaretLeft className="text-xl" />
           </Link>
           <h1 className="text-lg font-bold lg:text-2xl">
-            {productDetails.productName}
+            {dummyProductDetails.productName}
           </h1>
         </div>
         <div className="flex justify-between gap-2">
@@ -120,47 +100,47 @@ const ProductDetails = () => {
           <div className="mt-3 flex flex-col gap-4 text-[#5A5858]">
             <p className="flex items-center justify-between text-sm">
               <span>Product Name: </span>
-              <span>{productDetails.productName}</span>
+              <span>{dummyProductDetails.productName}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Status: </span>
               <span
-                className={`${productDetails.status.toUpperCase() === IN_STOCK ? "text-green-600" : "text-red-600"}`}
+                className={`${dummyProductDetails.status.toUpperCase() === IN_STOCK ? "text-green-600" : "text-red-600"}`}
               >
-                {productDetails.status}
+                {dummyProductDetails.status}
               </span>
             </p>
             <p className="flex flex-col gap-2 text-sm">
               <span>Description: </span>
-              <span>{productDetails.description}</span>
+              <span>{dummyProductDetails.description}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Cost Price: </span>
               <span>
-                {productDetails.currency}{" "}
-                {formatCurrency(productDetails.costPrice)}
+                {dummyProductDetails.currency}{" "}
+                {formatCurrency(dummyProductDetails.costPrice)}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Selling Price: </span>
               <span>
-                {productDetails.currency}{" "}
-                {formatCurrency(productDetails.sellingPrice)}
+                {dummyProductDetails.currency}{" "}
+                {formatCurrency(dummyProductDetails.sellingPrice)}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Quantity: </span>
-              <span>{formatCurrency(productDetails.quantity, 0, false)}</span>
+              <span>{formatCurrency(dummyProductDetails.quantity, 0, false)}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Low Stock Count: </span>
               <span>
-                {formatCurrency(productDetails.lowStockCount, 0, false)}
+                {formatCurrency(dummyProductDetails.lowStockCount, 0, false)}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Expiry Date: </span>
-              <span>{productDetails.expiryDate}</span>
+              <span>{dummyProductDetails.expiryDate}</span>
             </p>
           </div>
         </div>
