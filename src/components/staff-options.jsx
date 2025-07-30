@@ -34,8 +34,8 @@ const StaffOptions = ({ staffName, role, status }) => {
       </button>
 
       {options ? (
-        <section className="relative overflow-visible">
-          <div className="absolute right-10.5 z-50 flex flex-col rounded-xl border border-[#EFEEEE] bg-[#eeecec] py-4">
+        <section className="relative z-50 overflow-visible">
+          <div className="absolute right-10.5 z-50 flex flex-col rounded-xl border border-[#EFEEEE] bg-[#eeecec] py-4 hover:opacity-100">
             <div className="flex flex-col gap-1 px-4">
               <button className="w-[12rem] rounded-sm py-3 hover:bg-[#375ED9]">
                 <Link

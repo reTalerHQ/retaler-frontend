@@ -1,7 +1,16 @@
+import { cn } from "@/lib/utils";
 import { UploadSimple } from "phosphor-react";
 import React, { useState } from "react";
 
-const FileUpload = ({ file, title, handleFileChange, description }) => {
+const FileUpload = ({
+  file,
+  title,
+  icon,
+  handleFileChange,
+  className,
+  description,
+  ...props
+}) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragOver = (e) => {
@@ -32,18 +41,24 @@ const FileUpload = ({ file, title, handleFileChange, description }) => {
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
-      className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-10 transition-colors ${isDragging ? "bg-[#CACDF6]" : "bg-gray-100"} `}
+      className={cn(
+        `flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed px-6 py-10 transition-colors ${isDragging ? "bg-[#CACDF6]" : "bg-gray-100"} `,
+        className,
+      )}
     >
       <input
         type="file"
         accept="image/*"
         onChange={onChange}
         className="hidden"
+        {...props}
       />
       <div className="flex flex-col items-center gap-2 text-center">
-        <div className="rounded-full bg-white p-3">
-          <UploadSimple className="text-2xl" />
-        </div>
+        {icon ?? (
+          <div className="rounded-full bg-white p-3">
+            <UploadSimple className="text-2xl" />
+          </div>
+        )}
         <p className="text-sm font-semibold">{title ?? "Drag or drop image"}</p>
         {description && (
           <div className="space-y-0.5 text-xs text-gray-600">{description}</div>

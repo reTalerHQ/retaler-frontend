@@ -10,17 +10,23 @@ import {
   Funnel,
   X,
   ChartBar,
+  DotsThreeVertical,
 } from "phosphor-react";
 import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Dot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { BulkUploadProducts } from "@/components/bulk-upload-products";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const MODAL_TYPES = {
   ADD_PRODUCTS: "ADD_PRODUCT",
@@ -234,6 +240,29 @@ const Inventory = () => {
       header: "Last Updated",
       accessorFn: (data) => format(data.lastUpdatedAt, "dd/MM/yyyy"),
     },
+    {
+      header: "",
+      accessorKey: "id",
+      cell: ({ row }) => {
+        const data = row.original;
+        console.log({ data });
+
+        return (
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="cursor-pointer">
+                  <DotsThreeVertical size={32} />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className={"max-w-[150px]"}>
+                <Link to={`${row.original.id}`}>View Details</Link>
+              </PopoverContent>
+            </Popover>
+          </>
+        );
+      },
+    },
   ];
 
   const handleAddProductContinueActionClick = () => {
@@ -433,7 +462,10 @@ const Inventory = () => {
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-center gap-2">
-                <Button className="bg-[#EFEEEE] text-[#767474] lg:min-w-[150px]">
+                <Button
+                  className="bg-[#EFEEEE] text-[#767474] lg:min-w-[150px]"
+                  onClick={() => handleToggleModal()}
+                >
                   Cancel
                 </Button>
                 <Button
