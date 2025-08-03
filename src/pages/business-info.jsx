@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { BASE_URL } from "@/constants/api";
+import axios from "axios";
+import { TOKEN_IDENTIFIER } from "@/constants";
 
 // yup schema validation
 const schema = yup.object().shape({
@@ -37,9 +40,28 @@ export const BusinessInfo = () => {
 
   const staffSize = ["None", "1-2", "3-6", "5+"];
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log("business info submitted:", data);
-    navigate("/invite-staff");
+
+    try {
+      console.log("Form Data:", data);
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.post(`${BASE_URL}/v1/store`, data, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+        },
+      });
+      console.log({ rsp });
+
+      navigate("/invite-staff");
+    } catch (error) {
+      console.log({ error });
+      const status = error.response.status;
+      console.log({ status });
+
+      const message = error.response.data.detail;
+      alert(message ?? "Something went wrong...");
+    }
   };
 
   const handleStaffSelect = (value) => {

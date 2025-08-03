@@ -11,7 +11,9 @@ import GoogleIcon from "../assets/google-logo.svg";
 import AppleIcon from "../assets/apple-logo.svg";
 import { SocialAuthButton } from "@/components/SocialAuthButton";
 import clsx from "clsx";
-
+import axios from "axios";
+import { BASE_URL } from "@/constants/api";
+import { TOKEN_IDENTIFIER } from "@/constants";
 
 // yup validation schema
 const schema = yup.object({
@@ -28,7 +30,7 @@ const Signin = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
   } = useForm({
     mode: "onChange",
@@ -47,16 +49,31 @@ const Signin = () => {
   }, [setValue]);
 
   // To save email and password to localStorage
-  const onSubmit = (data) => {
-    if (isChecked) {
-      localStorage.setItem(STORAGE_KEY_EMAIL, JSON.stringify(data.email));
-      localStorage.setItem(STORAGE_KEY_PASSWORD, JSON.stringify(data.password));
-    } else {
-      localStorage.removeItem(STORAGE_KEY_EMAIL);
-      localStorage.removeItem(STORAGE_KEY_PASSWORD);
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form Data:", data);
+      // const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.post(
+        `${BASE_URL}/v1/users/login`,
+        data,
+        //   , {
+        //   headers: {
+        //     Authorization: `Bearer ${tokenFromStorage}`,
+        //   },
+        // }
+      );
+      const token = rsp.data.token.access_token;
+      console.log({ token });
+      sessionStorage.setItem(TOKEN_IDENTIFIER, token);
+      navigate("/dashboard");
+    } catch (error) {
+      console.log({ error });
+      const status = error.response.status;
+      console.log({ status });
+
+      const message = error.response.data.detail;
+      alert(message ?? "Something went wrong...");
     }
-    console.log("Form Data:", data);
-    navigate("/dashboard");
   };
 
   const navigate = useNavigate();
@@ -135,7 +152,7 @@ const Signin = () => {
                 "hover:bg-blue-700",
               )}
             >
-              Sign in
+              {isSubmitting ? "Submitting" : "Sign In"}
             </Button>
           </form>
           <div className="my-4 flex items-center justify-center space-x-2">

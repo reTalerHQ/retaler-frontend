@@ -1,0 +1,1 @@
+export const TOKEN_IDENTIFIER = "RETALER_AUTH_TOKEN";
