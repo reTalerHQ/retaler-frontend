@@ -126,12 +126,12 @@ const Dashboard = () => {
       price: 600,
       currency: "NGN",
     },
-  ];
-
+ 
   const hasOnboarded = true;
   const { storeInfo } = useUser();
 
   console.log({ storeInfo });
+
 
   return (
     <>
