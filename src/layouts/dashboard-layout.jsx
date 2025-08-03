@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
-import { USER_INFO_KEY } from "@/constants";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { PagePreLoader } from "@/components/page-pre-loader";
@@ -32,11 +32,17 @@ export const DashboardLayout = () => {
   const { isLoading } = useQuery({
     queryKey: ["FETCH_USER_STORE"],
     queryFn: async () => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
       const response = await axios.get(
         `${BASE_URL}/v1/users/store/${userInfo.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
       );
-      const store = response?.data?.[0]
+      const store = response?.data?.[0];
       setStoreInfo(store);
       return store;
     },
