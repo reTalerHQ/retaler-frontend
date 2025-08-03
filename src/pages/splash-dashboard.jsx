@@ -10,21 +10,25 @@ export const SplashDashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-50">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-indigo-300">
       <div className="my-0 flex h-screen w-xl flex-col justify-center rounded-lg px-10 py-8 md:max-w-xl">
-        <div className="mx-auto mb-4 block md:hidden">
-          <img src="/assets/images/retaler-logo.svg" alt="ReTaler-logo" />
-        </div>
+        {/* <div className="mb-4 block md:hidden">
+          <img
+            src="/assets/images/retaler-logo.svg"
+            alt="ReTaler-logo"
+            className="mx-auto"
+          />
+        </div> */}
         <h1 className="mb-4 text-center text-xl font-semibold md:text-3xl">
           Welcome to ReTaler, <br /> Amina Stores
         </h1>
-        <p className="mb-4 text-center text-sm text-gray-600 md:text-lg">
+        <p className="text-center text-sm text-gray-600 md:text-lg">
           Let's help you manage your products, sales, and staff
         </p>
-        <div className="hidden md:block">
+        <div className="block">
           <img
-            src="/assets/images/video-demo.png"
-            className="mb-6"
+            src="/assets/images/dashboard-img.png"
+            className="mx-auto mb-8"
             alt="video-demo"
           />
         </div>
