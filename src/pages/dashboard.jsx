@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { format } from "date-fns";
+import { useUser } from "@/context/user-context";
 
 const Dashboard = () => {
   const actionsLinks = [
@@ -125,9 +126,12 @@ const Dashboard = () => {
       price: 600,
       currency: "NGN",
     },
-  ];
+ 
+  const hasOnboarded = true;
+  const { storeInfo } = useUser();
 
-  const hasOnboarded = false;
+  console.log({ storeInfo });
+
 
   return (
     <>
