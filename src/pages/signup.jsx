@@ -13,10 +13,14 @@ import GoogleIcon from "../assets/google-logo.svg";
 import AppleIcon from "../assets/apple-logo.svg";
 import { ProgressBar } from "@/components/ProgressBar";
 import clsx from "clsx";
+import axios from "axios";
+import { BASE_URL } from "@/constants/api";
+import { toast } from "sonner";
 
 // yup validation schema
 const schema = yup.object({
   email: yup.string().email("Inavlid email").required("Email is required"),
+  username: yup.string().required("Username is required"),
   password: yup
     .string()
     .required("password is required")
@@ -32,7 +36,7 @@ export const Signup = () => {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isLoading },
   } = useForm({
     mode: "onChange",
     resolver: yupResolver(schema),
@@ -59,9 +63,17 @@ export const Signup = () => {
     });
   }, [password]);
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    navigate("/business-info");
+  const onSubmit = async (data) => {
+    try {
+      console.log("Form Data:", data);
+      const rsp = await axios.post(`${BASE_URL}/v1/users/register/`, data);
+      toast.success(rsp.data.detail);
+      navigate("/business-info");
+    } catch (error) {
+      console.log({ error });
+      const message = error.response.data.detail[0].msg;
+      toast.success(message ?? "Something went wrong...");
+    }
   };
 
   return (
@@ -79,10 +91,11 @@ export const Signup = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="mb-1">
-            <label className="mb-1 block text-sm md:text-base">
+            {/* <label className="mb-1 block text-sm md:text-base">
               Email Adress
-            </label>
+            </label> */}
             <Input
+              label="Email Address"
               type="email"
               placeholder="Enter your email address"
               {...register("email")}
@@ -94,10 +107,23 @@ export const Signup = () => {
               </p>
             )}
           </div>
-
-          <div>
-            <label className="mb-1 block">Password</label>
+          <div className="mb-1">
             <Input
+              label="Username"
+              type="text"
+              placeholder="Enter your username"
+              {...register("username")}
+              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
+            />
+            {errors.username && (
+              <p className="w-full text-sm text-red-500">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Input
+              label="Password"
               type="password"
               placeholder="Enter a valid password"
               className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base"
@@ -154,7 +180,7 @@ export const Signup = () => {
               isValid ? "bg-blue-600 hover:bg-blue-700" : "",
             )}
           >
-            Continue
+            {isLoading ? "Submitting" : "Continue"}
           </Button>
         </form>
 
