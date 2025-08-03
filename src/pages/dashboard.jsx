@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { format } from "date-fns";
+import { useUser } from "@/context/user-context";
 
 const Dashboard = () => {
   const actionsLinks = [
@@ -128,6 +129,9 @@ const Dashboard = () => {
   ];
 
   const hasOnboarded = true;
+  const { storeInfo } = useUser();
+
+  console.log({ storeInfo });
 
   return (
     <>

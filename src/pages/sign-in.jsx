@@ -13,7 +13,8 @@ import { SocialAuthButton } from "@/components/SocialAuthButton";
 import clsx from "clsx";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
-import { TOKEN_IDENTIFIER } from "@/constants";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
+import { toast } from "sonner";
 
 // yup validation schema
 const schema = yup.object({
@@ -62,9 +63,13 @@ const Signin = () => {
         //   },
         // }
       );
-      const token = rsp.data.token.access_token;
-      console.log({ token });
-      sessionStorage.setItem(TOKEN_IDENTIFIER, token);
+      const {
+        token: { access_token },
+        user,
+      } = rsp.data;
+
+      sessionStorage.setItem(TOKEN_IDENTIFIER, access_token);
+      sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
       navigate("/dashboard");
     } catch (error) {
       console.log({ error });
@@ -72,7 +77,7 @@ const Signin = () => {
       console.log({ status });
 
       const message = error.response.data.detail;
-      alert(message ?? "Something went wrong...");
+      toast.error(message ?? "Something went wrong...");
     }
   };
 

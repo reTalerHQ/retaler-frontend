@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/constants/api";
 import axios from "axios";
 import { TOKEN_IDENTIFIER } from "@/constants";
+import { toast } from "sonner";
 
 // yup schema validation
 const schema = yup.object().shape({
@@ -46,11 +47,19 @@ export const BusinessInfo = () => {
     try {
       console.log("Form Data:", data);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.post(`${BASE_URL}/v1/store`, data, {
-        headers: {
-          Authorization: `Bearer ${tokenFromStorage}`,
+      const rsp = await axios.post(
+        `${BASE_URL}/v1/store`,
+        {
+          name: data.businessName,
+          category: data.businessCategory,
+          no_of_staff: data.staffSize,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
       console.log({ rsp });
 
       navigate("/invite-staff");
@@ -60,7 +69,7 @@ export const BusinessInfo = () => {
       console.log({ status });
 
       const message = error.response.data.detail;
-      alert(message ?? "Something went wrong...");
+      toast.error(message ?? "Something went wrong...");
     }
   };
 

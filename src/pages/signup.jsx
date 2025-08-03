@@ -15,6 +15,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import clsx from "clsx";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
+import { toast } from "sonner";
 
 // yup validation schema
 const schema = yup.object({
@@ -66,12 +67,12 @@ export const Signup = () => {
     try {
       console.log("Form Data:", data);
       const rsp = await axios.post(`${BASE_URL}/v1/users/register/`, data);
-      alert(rsp.data.detail);
+      toast.success(rsp.data.detail);
       navigate("/business-info");
     } catch (error) {
       console.log({ error });
       const message = error.response.data.detail[0].msg;
-      alert(message ?? "Something went wrong...");
+      toast.success(message ?? "Something went wrong...");
     }
   };
 
