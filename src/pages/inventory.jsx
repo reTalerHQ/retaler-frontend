@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { BusinessOverviewCard } from "../components/business-overview-card";
 import {
@@ -17,7 +17,7 @@ import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Dot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -27,6 +27,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { BASE_URL } from "@/constants/api";
+import { TOKEN_IDENTIFIER } from "@/constants";
 
 const MODAL_TYPES = {
   ADD_PRODUCTS: "ADD_PRODUCT",
@@ -45,125 +49,183 @@ const PAGE_MODE = {
 
 const Inventory = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { storeInfo } = useUser();
   const [pageMode, setPageMode] = useState(PAGE_MODE.INITIAL);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [selectedUploadOption, setSelectedUploadOption] = useState(null);
   const [bulkFile, setBulkFile] = useState(null);
-
-  const products = [
+  const [products, setProducts] = useState([
     {
       id: 1,
-      productName: "Garri",
-      price: 1500,
+      product_name: "Garri",
       currency: "₦",
-      costPrice: 1200,
-      sellingPrice: 1500,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-10"),
+      cost_price: 1200,
+      selling_price: 1500,
       quantity: 100,
-    },
-    {
-      id: 2,
-      productName: "Palm Oil",
-      price: 3000,
-      currency: "₦",
-      costPrice: 2500,
-      sellingPrice: 3000,
-      status: "Out of Stock",
-      lastUpdatedAt: new Date("2025-07-08"),
-      quantity: 0,
-    },
-    {
-      id: 3,
-      productName: "Yam",
-      price: 4000,
-      currency: "₦",
-      costPrice: 3300,
-      sellingPrice: 4000,
       status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-12"),
-      quantity: 50,
-    },
-    {
-      id: 4,
-      productName: "Beans",
-      price: 2200,
-      currency: "₦",
-      costPrice: 1900,
-      sellingPrice: 2200,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-09"),
-      quantity: 14,
-    },
-    {
-      id: 5,
-      productName: "Crayfish",
-      price: 1800,
-      currency: "₦",
-      costPrice: 1500,
-      sellingPrice: 1800,
-      status: "Out of Stock",
-      lastUpdatedAt: new Date("2025-07-07"),
-      quantity: 2,
-    },
-    {
-      id: 6,
-      productName: "Tomatoes",
-      price: 1000,
-      currency: "₦",
-      costPrice: 800,
-      sellingPrice: 1000,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-11"),
-      quantity: 100,
-    },
-    {
-      id: 7,
-      productName: "Onions",
-      price: 1200,
-      currency: "₦",
-      costPrice: 950,
-      sellingPrice: 1200,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-10"),
-      quantity: 22,
-    },
-    {
-      id: 8,
-      productName: "Groundnut Oil",
-      price: 3500,
-      currency: "₦",
-      costPrice: 3000,
-      sellingPrice: 3500,
-      status: "Out of Stock",
-      lastUpdatedAt: new Date("2025-07-06"),
-      quantity: 4,
-    },
-    {
-      id: 9,
-      productName: "Ogbono",
-      price: 2000,
-      currency: "₦",
-      costPrice: 1700,
-      sellingPrice: 2000,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-13"),
-      quantity: 11,
-    },
-    {
-      id: 10,
-      productName: "Vegetable",
-      price: 800,
-      currency: "₦",
-      costPrice: 600,
-      sellingPrice: 800,
-      status: "In Stock",
-      lastUpdatedAt: new Date("2025-07-14"),
-      quantity: 100,
-    },
-  ];
+      last_updated: new Date("2025-07-10"),
+    }
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  // const products = [
+  //   {
+  //     id: 1,
+  //     productName: "Garri",
+  //     price: 1500,
+  //     currency: "₦",
+  //     costPrice: 1200,
+  //     sellingPrice: 1500,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-10"),
+  //     quantity: 100,
+  //   },
+  //   {
+  //     id: 2,
+  //     productName: "Palm Oil",
+  //     price: 3000,
+  //     currency: "₦",
+  //     costPrice: 2500,
+  //     sellingPrice: 3000,
+  //     status: "Out of Stock",
+  //     lastUpdatedAt: new Date("2025-07-08"),
+  //     quantity: 0,
+  //   },
+  //   {
+  //     id: 3,
+  //     productName: "Yam",
+  //     price: 4000,
+  //     currency: "₦",
+  //     costPrice: 3300,
+  //     sellingPrice: 4000,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-12"),
+  //     quantity: 50,
+  //   },
+  //   {
+  //     id: 4,
+  //     productName: "Beans",
+  //     price: 2200,
+  //     currency: "₦",
+  //     costPrice: 1900,
+  //     sellingPrice: 2200,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-09"),
+  //     quantity: 14,
+  //   },
+  //   {
+  //     id: 5,
+  //     productName: "Crayfish",
+  //     price: 1800,
+  //     currency: "₦",
+  //     costPrice: 1500,
+  //     sellingPrice: 1800,
+  //     status: "Out of Stock",
+  //     lastUpdatedAt: new Date("2025-07-07"),
+  //     quantity: 2,
+  //   },
+  //   {
+  //     id: 6,
+  //     productName: "Tomatoes",
+  //     price: 1000,
+  //     currency: "₦",
+  //     costPrice: 800,
+  //     sellingPrice: 1000,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-11"),
+  //     quantity: 100,
+  //   },
+  //   {
+  //     id: 7,
+  //     productName: "Onions",
+  //     price: 1200,
+  //     currency: "₦",
+  //     costPrice: 950,
+  //     sellingPrice: 1200,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-10"),
+  //     quantity: 22,
+  //   },
+  //   {
+  //     id: 8,
+  //     productName: "Groundnut Oil",
+  //     price: 3500,
+  //     currency: "₦",
+  //     costPrice: 3000,
+  //     sellingPrice: 3500,
+  //     status: "Out of Stock",
+  //     lastUpdatedAt: new Date("2025-07-06"),
+  //     quantity: 4,
+  //   },
+  //   {
+  //     id: 9,
+  //     productName: "Ogbono",
+  //     price: 2000,
+  //     currency: "₦",
+  //     costPrice: 1700,
+  //     sellingPrice: 2000,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-13"),
+  //     quantity: 11,
+  //   },
+  //   {
+  //     id: 10,
+  //     productName: "Vegetable",
+  //     price: 800,
+  //     currency: "₦",
+  //     costPrice: 600,
+  //     sellingPrice: 800,
+  //     status: "In Stock",
+  //     lastUpdatedAt: new Date("2025-07-14"),
+  //     quantity: 100,
+  //   },
+  // ];
+
+useEffect(() => {
+  const fetchInventory = async () => {
+    try {
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const response = await axios.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/inventory`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      let inventoryData = response.data.inventory || [];
+       console.log("✅ Inventory IDs", inventoryData.map(p => p.id));
+
+
+      console.log("🧾 Final inventory list:", inventoryData);
+
+      const stored = localStorage.getItem("NEW_PRODUCT");
+      if (stored) {
+        const newProduct = JSON.parse(stored);
+        const alreadyExists = inventoryData.some(p => p.id === newProduct.id);
+        if (!alreadyExists) {
+          inventoryData = [newProduct, ...inventoryData];
+        }
+        localStorage.removeItem("NEW_PRODUCT");
+      };
+
+      setProducts(inventoryData);
+
+    } catch (error) {
+      console.error("Error fetching inventory:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (storeInfo?.id) {
+    fetchInventory();
+  }
+}, [storeInfo]);
 
   const handleToggleModal = (modalType) => {
     if (!modalType) {
@@ -182,30 +244,30 @@ const Inventory = () => {
 
   const columns = [
     {
-      accessorKey: "productName",
+      accessorKey: "product_name",
       header: "Product Name",
-    },
+  },
     {
-      accessorKey: "costPrice",
+      accessorKey: "cost_price",
       header: () => (
         <span className="inline-block w-full text-center">Cost Price</span>
       ),
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">{`${data.currency} ${formatCurrency(data.costPrice)}`}</span>
+          <span className="inline-block w-full text-right">{`${data.currency || '₦'} ${formatCurrency(data.cost_price)}`}</span>
         );
       },
     },
     {
-      accessorKey: "sellingPrice",
+      accessorKey: "selling_price",
       header: () => (
         <span className="inline-block w-full text-center">Selling Price</span>
       ),
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">{`${data.currency} ${formatCurrency(data.sellingPrice)}`}</span>
+          <span className="inline-block w-full text-right">{`${data.currency || '₦'} ${formatCurrency(data.selling_price)}`}</span>
         );
       },
     },
@@ -225,20 +287,22 @@ const Inventory = () => {
       header: "Status",
       accessorKey: "status",
       cell: ({ getValue }) => {
-        const IN_STOCK = "IN STOCK";
-        const value = getValue();
-        return (
-          <span
-            className={`${value.toUpperCase() === IN_STOCK ? "text-green-600" : "text-red-600"}`}
-          >
-            {value}
-          </span>
-        );
+        const rawStatus = getValue()?.toLowerCase();
+        const isInStock = rawStatus === "available" || rawStatus === "in stock";
+
+        const label = isInStock ? "In Stock" : "Out of Stock";
+        const colorClass = isInStock ? "text-green-600" : "text-red-600";
+
+        return <span className={colorClass}>{label}</span>;
       },
+
     },
     {
+      accessorKey: "last_updated",
       header: "Last Updated",
-      accessorFn: (data) => format(data.lastUpdatedAt, "dd/MM/yyyy"),
+      accessorFn: (data) =>
+        data.last_updated ? format(new Date(data.last_updated), "dd/MM/yyyy") : "N/A",
+
     },
     {
       header: "",
@@ -333,6 +397,9 @@ const Inventory = () => {
                 />
               </div>
             </div>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
             <DataTable
               columns={columns}
               data={products}
@@ -340,6 +407,7 @@ const Inventory = () => {
               onSelectedRowsChange={setSelectedProducts}
               selectedRowClassName="bg-[#CACDF6]/30"
             />
+            )}
           </div>
         </>
       )}

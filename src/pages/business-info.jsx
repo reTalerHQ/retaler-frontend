@@ -48,7 +48,7 @@ export const BusinessInfo = () => {
       console.log("Form Data:", data);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const rsp = await axios.post(
-        `${BASE_URL}/v1/store`,
+        `${BASE_URL}/v1/store/`,
         {
           name: data.businessName,
           category: data.businessCategory,

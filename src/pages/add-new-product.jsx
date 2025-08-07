@@ -1,11 +1,18 @@
 import { CaretLeft } from "phosphor-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ReactSelectCustomized from "@/components/react-select-customized";
+import { useUser } from "@/context/user-context";
+import { BASE_URL } from "@/constants/api";
+import { TOKEN_IDENTIFIER } from "@/constants";
+import axios from "axios";
+import { toast } from "sonner";
+
 
 const AddNewProduct = () => {
   const productCategories = [
@@ -16,11 +23,87 @@ const AddNewProduct = () => {
     { id: 5, name: "Sports & Outdoors" },
   ];
 
+  const navigate = useNavigate();
+  
+  const {storeInfo} = useUser()
+  // console.log(storeInfo)
+
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    category: "",
+    expiration_date: "",
+    cost_price: "",
+    selling_price: "",
+    quantity: "",
+    low_stock_count: "",
+  });
+
+  const handleChange = (key) => (e) => {
+    setFormData({ ...formData, [key]: e.target.value });
+  };
+
+  const handleCategoryChange = (selected) => {
+    setFormData({ ...formData, category: selected.value });
+  };
+
   const formattedCategories = productCategories.map((cat) => ({
     id: cat.id,
     label: cat.name,
     value: cat.id.toString(),
   }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER); 
+      console.log("Auth Token:", token);
+
+      const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/`;
+      console.log(url)
+
+      const response = await axios.post(
+        url,
+        {
+          product_name: formData.name,
+          description: formData.description,
+          // category: formData.category, 
+          cost_price: parseFloat(formData.cost_price),
+          selling_price: parseFloat(formData.selling_price),
+          quantity: parseInt(formData.quantity),
+          low_stock_threshold: parseInt(formData.low_stock_count),
+          high_stock_threshold: 999, // Or make another input for it
+          sku: `SKU-${Date.now()}`, // Simple SKU generation
+          status: "IN STOCK",
+          expiration_date: new Date(formData.expiration_date).toISOString(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.setItem("NEW_PRODUCT", JSON.stringify(response.data));
+      console.log(response.data);
+
+      toast.success("Product added successfully!");
+      localStorage.setItem("NEW_PRODUCT", JSON.stringify({
+        ...response.data,
+        currency: "₦",
+        last_updated: new Date().toISOString(),
+        status: "",
+      }));
+      navigate("/inventory/");
+
+    } catch (error) {
+      console.log({ error });
+      toast.error(
+        error.response?.data?.detail ?? "Failed to add product. Try again."
+      );
+    }
+  };
+
+
   return (
     <>
       <div className="flex items-center gap-1">
@@ -29,7 +112,7 @@ const AddNewProduct = () => {
         </Link>
         <h1 className="text-lg font-bold lg:text-2xl">Add Product</h1>
       </div>
-      <form className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5">
+      <form onSubmit={handleSubmit} className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5">
         <h4 className="text-accent-foreground font-medium">
           Product Images (optional)
         </h4>
@@ -48,19 +131,29 @@ const AddNewProduct = () => {
           Product Details
         </h4>
         <div className="flex flex-col gap-4">
-          <Input label="Product Name" placeholder="Enter product name" />
+          <Input 
+            label="Product Name" 
+            placeholder="Enter product name" 
+            value={formData.name}
+            onChange={handleChange("name")}
+          />
           <Input
             label="Product Description"
             placeholder="Enter product description"
+            value={formData.description}
+            onChange={handleChange("description")}
           />
           <ReactSelectCustomized
             options={formattedCategories}
             label={"Category"}
+            onChange={handleCategoryChange}
           />
           <Input
             label="Expiration Date"
             placeholder="Enter product description"
             type="date"
+            value={formData.expiration_date}
+            onChange={handleChange("expiration_date")}
           />
           <div className="flex flex-col items-start gap-4 lg:flex-row">
             <Input
@@ -68,19 +161,35 @@ const AddNewProduct = () => {
               placeholder="400"
               type="number"
               leftIcon={<span className="pl-1 text-xs">₦</span>}
+              value={formData.cost_price}
+              onChange={handleChange("cost_price")}
             />
             <Input
               label="Product Selling Price"
               placeholder="400"
               type="number"
               leftIcon={<span className="pl-1 text-xs">₦</span>}
+              value={formData.selling_price}
+              onChange={handleChange("selling_price")}
             />
           </div>
           <div className="flex flex-col items-start gap-4 lg:flex-row">
-            <Input label="Product Quantity" placeholder="400" type="number" />
-            <Input label="Low Stock Count" placeholder="400" type="number" />
+            <Input 
+              label="Product Quantity" 
+              placeholder="400" 
+              type="number" 
+              value={formData.quantity}
+              onChange={handleChange("quantity")}
+            />
+            <Input 
+              label="Low Stock Count" 
+              placeholder="400" 
+              type="number" 
+              value={formData.low_stock_count}
+              onChange={handleChange("low_stock_count")}
+            />
           </div>
-          <Button>Add new Product</Button>
+          <Button type="submit">Add new Product</Button>
         </div>
       </form>
     </>

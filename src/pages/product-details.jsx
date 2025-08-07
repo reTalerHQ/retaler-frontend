@@ -1,24 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useUser } from "@/context/user-context";
+
 import { Link } from "react-router-dom";
 import { CaretLeft, Trash } from "phosphor-react";
 import { formatCurrency } from "@/utils/number-utilites";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
 import { X } from "phosphor-react";
+
 import { dummyProductDetails } from "@/data/dummy-product-details";
+import axios from "axios";
+import { BASE_URL } from "@/constants/api";
+import { TOKEN_IDENTIFIER } from "@/constants";
 
 const MODAL_TYPES = {
   CONFIRM_DELETE: "CONFIRM_DELETE",
 };
 
 const ProductDetails = () => {
+  const { id } = useParams();
+  const { storeInfo } = useUser();
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+        const res = await axios.get(`${BASE_URL}/v1/${storeInfo.id}/inventory`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const allInventory = res.data.inventory || [];
+        const foundProduct = allInventory.find((item) => item.id === id);
+
+        if (!foundProduct) {
+          console.error("❌ Product not found in inventory list");
+        }
+
+        setProduct(foundProduct);
+      } catch (error) {
+        console.error("❌ Failed to fetch product", error);
+      }
+    };
+
+    if (storeInfo?.id && id) {
+      fetchProduct();
+    }
+  }, [storeInfo, id]);
+
+
+
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(dummyProductDetails.images[0]);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const otherImages = dummyProductDetails.images.filter(
-    (img) => img.id !== selectedImage.id,
-  );
+  // const otherImages = dummyProductDetails.images.filter(
+  //   (img) => img.id !== selectedImage.id,
+  // );
 
   const handleSelectImage = (image) => {
     setSelectedImage(image);
@@ -35,6 +74,9 @@ const ProductDetails = () => {
       setOpenedModalType(modalType);
     }
   };
+  if (!product) {
+    return <p>Loading product details...</p>;
+  }
 
   return (
     <>
@@ -44,7 +86,7 @@ const ProductDetails = () => {
             <CaretLeft className="text-xl" />
           </Link>
           <h1 className="text-lg font-bold lg:text-2xl">
-            {dummyProductDetails.productName}
+            {product.product_name}
           </h1>
         </div>
         <div className="flex justify-between gap-2">
@@ -78,12 +120,13 @@ const ProductDetails = () => {
         <div>
           <div className="flex items-center justify-center rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
             <img
-              src={selectedImage?.path}
+              src={selectedImage?.path || "/assets/images/placeholder.png"}
               alt="product details"
               className="max-h-[50vh] w-full object-center"
             />
+
           </div>
-          <div className="mt-3 flex flex-wrap justify-start gap-2">
+          {/* <div className="mt-3 flex flex-wrap justify-start gap-2">
             {otherImages.map((image) => (
               <img
                 onClick={() => handleSelectImage(image)}
@@ -93,54 +136,58 @@ const ProductDetails = () => {
                 className="aspect-square h-20 cursor-pointer object-center hover:opacity-85 lg:h-30"
               />
             ))}
-          </div>
+          </div> */}
         </div>
         <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
           <h2 className="font-semibold lg:text-lg">Product Details</h2>
           <div className="mt-3 flex flex-col gap-4 text-[#5A5858]">
             <p className="flex items-center justify-between text-sm">
               <span>Product Name: </span>
-              <span>{dummyProductDetails.productName}</span>
+              <span>{product.product_name}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Status: </span>
               <span
-                className={`${dummyProductDetails.status.toUpperCase() === IN_STOCK ? "text-green-600" : "text-red-600"}`}
+                className={
+                  (product.status?.toLowerCase() === "available" || product.status?.toLowerCase() === "in stock")
+                    ? "text-green-600"
+                    : "text-red-600"
+                }
               >
-                {dummyProductDetails.status}
+                {(product.status?.toLowerCase() === "available" || product.status?.toLowerCase() === "in stock")
+                  ? "In Stock"
+                  : "Out of Stock"}
               </span>
             </p>
             <p className="flex flex-col gap-2 text-sm">
               <span>Description: </span>
-              <span>{dummyProductDetails.description}</span>
+              <span>{product.description}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Cost Price: </span>
               <span>
-                {dummyProductDetails.currency}{" "}
-                {formatCurrency(dummyProductDetails.costPrice)}
+                {`${product.currency || '₦'} ${formatCurrency(product.cost_price)}`}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Selling Price: </span>
               <span>
-                {dummyProductDetails.currency}{" "}
-                {formatCurrency(dummyProductDetails.sellingPrice)}
+                {`${product.currency || '₦'} ${formatCurrency(product.selling_price)}`}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Quantity: </span>
-              <span>{formatCurrency(dummyProductDetails.quantity, 0, false)}</span>
+              <span>{formatCurrency(product.quantity, 0, false)}</span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Low Stock Count: </span>
               <span>
-                {formatCurrency(dummyProductDetails.lowStockCount, 0, false)}
+                {formatCurrency(product.low_stock_threshold, 0, false)}
               </span>
             </p>
             <p className="flex items-center justify-between text-sm">
               <span>Expiry Date: </span>
-              <span>{dummyProductDetails.expiryDate}</span>
+              <span>{product.expiration_date}</span>
             </p>
           </div>
         </div>
