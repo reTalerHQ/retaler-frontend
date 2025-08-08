@@ -33,7 +33,7 @@ export const DashboardLayout = () => {
     queryKey: ["FETCH_USER_STORE"],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      console.log("🔐 Token:", token);
+      console.log("🔐 Token:", tokenFromStorage);
       const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
       const response = await axios.get(
         `${BASE_URL}/v1/store/`,
@@ -44,8 +44,15 @@ export const DashboardLayout = () => {
         },
       );
       console.log("🏪 Store Response:", response.data);
-      const store = response?.data?.[0];
+
+      const store = response?.data?.stores?.[0];
+      if (!store) {
+        console.log("no store")
+      throw new Error("No store data found for this user.");
+    }
+
       setStoreInfo(store);
+      console.log("✅ Set store in context:", store);
       return store;
     },
   });

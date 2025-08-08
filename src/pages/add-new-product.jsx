@@ -26,7 +26,7 @@ const AddNewProduct = () => {
   const navigate = useNavigate();
   
   const {storeInfo} = useUser()
-  // console.log(storeInfo)
+  console.log("STOREINFO", storeInfo)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -55,27 +55,41 @@ const AddNewProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const token = sessionStorage.getItem(TOKEN_IDENTIFIER); 
+
+    const token = sessionStorage.getItem(TOKEN_IDENTIFIER); 
       console.log("Auth Token:", token);
 
+      if (!token) {
+        toast.error("You must be logged in to add a product.");
+        return;
+      }
+
+      if (!storeInfo?.id) {
+        toast.error("No store found. Please check your store setup.");
+        return;
+      }
+
+    try {
+
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/`;
-      console.log(url)
+      console.log('Post To;', url)
 
       const response = await axios.post(
         url,
         {
           product_name: formData.name,
-          description: formData.description,
-          // category: formData.category, 
+          description: formData.description, 
           cost_price: parseFloat(formData.cost_price),
           selling_price: parseFloat(formData.selling_price),
           quantity: parseInt(formData.quantity),
           low_stock_threshold: parseInt(formData.low_stock_count),
-          high_stock_threshold: 999, // Or make another input for it
-          sku: `SKU-${Date.now()}`, // Simple SKU generation
+          high_stock_threshold: 999, 
+          sku: `SKU-${Date.now()}`, 
           status: "IN STOCK",
-          expiration_date: new Date(formData.expiration_date).toISOString(),
+          expiration_date: formData.expiration_date
+          ? new Date(formData.expiration_date).toISOString()
+          : null,
+
         },
         {
           headers: {
@@ -83,20 +97,20 @@ const AddNewProduct = () => {
           },
         }
       );
-      localStorage.setItem("NEW_PRODUCT", JSON.stringify(response.data));
-      console.log(response.data);
-
-      toast.success("Product added successfully!");
+      console.log("response is", response.data)
+      
       localStorage.setItem("NEW_PRODUCT", JSON.stringify({
         ...response.data,
+        id: crypto.randomUUID(), 
         currency: "₦",
         last_updated: new Date().toISOString(),
         status: "",
       }));
+      toast.success("Product added successfully!");
       navigate("/inventory/");
 
     } catch (error) {
-      console.log({ error });
+      console.error("❌ API error:", error);
       toast.error(
         error.response?.data?.detail ?? "Failed to add product. Try again."
       );
