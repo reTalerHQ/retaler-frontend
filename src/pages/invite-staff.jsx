@@ -6,11 +6,19 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import axios from "axios";
+import { toast } from "sonner";
+import { BASE_URL } from "@/constants/api";
+import { useUser } from "@/context/user-context";
+import { useQuery } from "@tanstack/react-query";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 
 // ✅ Yup validation schema
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   role: yup.string().required("Role is required"),
+  name: yup.string().required("Name is required"),
+  phone_number: yup.string().required("Phone number is required"),
 });
 
 export const InviteStaff = () => {
@@ -27,14 +35,75 @@ export const InviteStaff = () => {
     defaultValues: {
       email: "",
       role: "",
+      name: "",
+      phone_number: "",
+    },
+  });
+  const { setStoreInfo } = useUser();
+
+  const { isLoading } = useQuery({
+    queryKey: ["FETCH_USER_STORE"],
+    queryFn: async () => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
+      console.log(userInfo);
+
+      const response = await axios.get(`${BASE_URL}/v1/store/`, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+        },
+      });
+      const store = response?.data?.stores?.[0];
+      setStoreInfo(store);
+      return store;
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("Staff invited:", data);
-    // Here you'd normally call your invite API
+  const { storeInfo } = useUser();
+  console.log("storeInfo:", storeInfo);
+  const onSubmit = async (data) => {
+    try {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.post(
+        `${BASE_URL}/v1/store/${storeInfo.id}/staff`,
+        {
+          email: data.email,
+          role: data.role,
+          name: data.name,
+          phone_number: data.phone_number,
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      // console.log("storeInfo:", storeInfo);
+      toast.success(rsp.data.detail);
+      navigate("/watch-demo");
+    } catch (error) {
+      console.log({ error });
+      console.log("Full error response:", error.response);
+      let message;
+
+      if (
+        error.response &&
+        Array.isArray(error.response.data?.detail) &&
+        error.response.data.detail[0]?.msg
+      ) {
+        message = error.response.data.detail[0].msg;
+      } else if (typeof error.response?.data?.detail === "string") {
+        message = error.response.data.detail;
+      } else if (error.message) {
+        message = error.message;
+      } else {
+        message = "Something went wrong...";
+      }
+
+      toast.error(message);
+    }
     reset();
-    navigate("/watch-demo");
   };
 
   const handleSkip = () => {
@@ -54,9 +123,26 @@ export const InviteStaff = () => {
         <ProgressBar currentStep={3} />
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
+          {/* <label className="mb-1 block text-sm">Name</label> */}
+          <Input label="Name" type="text" {...register("name")} />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+          )}
+          {/* <label className="mb-1 block text-sm">Phone Number</label> */}
+          <Input
+            label="Phone Number"
+            type="number"
+            {...register("phone_number")}
+          />
+          {errors.phone_number && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.phone_number.message}
+            </p>
+          )}
           <div>
-            <label className="mb-1 block text-sm">Email Address</label>
+            {/* <label className="mb-1 block text-sm">Email Address</label> */}
             <Input
+              label="Email Address"
               type="email"
               placeholder="janedoe@gmail.com"
               {...register("email")}
