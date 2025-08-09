@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/user-context";
 
 import { Link } from "react-router-dom";
@@ -13,13 +13,17 @@ import { dummyProductDetails } from "@/data/dummy-product-details";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
+import { toast } from "sonner";
 
 const MODAL_TYPES = {
   CONFIRM_DELETE: "CONFIRM_DELETE",
 };
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
   const { id } = useParams();
+  // const sameId = (a, b) => String(a) === String(b);
   const { storeInfo } = useUser();
   const [product, setProduct] = useState(null);
 
@@ -27,7 +31,7 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-        const res = await axios.get(`${BASE_URL}/v1/${storeInfo.id}/inventory`, {
+        const res = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -77,6 +81,52 @@ const ProductDetails = () => {
   if (!product) {
     return <p>Loading product details...</p>;
   }
+
+  const handleDelete = async () => {
+    if (!storeInfo?.id || !id) return;
+
+    const token =
+      sessionStorage.getItem(TOKEN_IDENTIFIER) ||
+      localStorage.getItem(TOKEN_IDENTIFIER);
+
+    if (!token) {
+      toast.error("Please log in.");
+      return;
+    }
+
+    try {
+      setDeleting(true);
+
+      const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/${id}`;
+      const res = await axios.delete(url, 
+        {
+        headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Backend returns { status_code, detail }
+      if (res.status === 200) {
+        toast.success(res.data?.detail || "Product deleted");
+        handleToggleModal();           // close modal
+        navigate("/inventory");        // go back to list
+      } else {
+        toast.error("Unexpected response while deleting.");
+      }
+    } catch (err) {
+      const msg =
+        err.response?.data?.detail ||
+        (err.response?.status === 404
+          ? "Product not found."
+          : err.response?.status === 422
+          ? "Invalid id."
+          : "Failed to delete product.");
+      toast.error(msg);
+      console.error("Delete failed", err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
 
   return (
     <>
@@ -247,13 +297,10 @@ const ProductDetails = () => {
                   </Button>
                   <Button
                     className="bg-red-600 text-sm text-white hover:bg-red-400 lg:min-w-[150px]"
-
-                    // onClick={() => {
-                    //   setPageMode(PAGE_MODE.BULK_UPLOAD);
-                    //   handleToggleModal();
-                    // }}
+                    onClick={handleDelete}
+                    disabled={deleting}
                   >
-                    Delete
+                    {deleting ? "Deleting…" : "Delete"}
                   </Button>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import { CaretLeft } from "phosphor-react";
 import React from "react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Label } from "@/components/ui/label";
@@ -12,21 +12,22 @@ import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import axios from "axios";
 import { toast } from "sonner";
+import { dummyProductCategories } from "@/data/dummy-product-categories";
 
 
 const AddNewProduct = () => {
-  const productCategories = [
-    { id: 1, name: "Electronics" },
-    { id: 2, name: "Fashion" },
-    { id: 3, name: "Home & Kitchen" },
-    { id: 4, name: "Books" },
-    { id: 5, name: "Sports & Outdoors" },
-  ];
-
   const navigate = useNavigate();
   
   const {storeInfo} = useUser()
   console.log("STOREINFO", storeInfo)
+
+  const productCategories = useMemo(() => {
+      // adjust to match your ReactSelectCustomized expected shape
+      return dummyProductCategories.map((c) => ({
+        label: c.label ?? c.name ?? String(c),
+        value: String(c.value ?? c.id ?? c.name ?? c),
+      }));
+    }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -46,12 +47,6 @@ const AddNewProduct = () => {
   const handleCategoryChange = (selected) => {
     setFormData({ ...formData, category: selected.value });
   };
-
-  const formattedCategories = productCategories.map((cat) => ({
-    id: cat.id,
-    label: cat.name,
-    value: cat.id.toString(),
-  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -78,7 +73,7 @@ const AddNewProduct = () => {
         url,
         {
           product_name: formData.name,
-          description: formData.description, 
+          description: formData.description || null, 
           cost_price: parseFloat(formData.cost_price),
           selling_price: parseFloat(formData.selling_price),
           quantity: parseInt(formData.quantity),
@@ -89,6 +84,7 @@ const AddNewProduct = () => {
           expiration_date: formData.expiration_date
           ? new Date(formData.expiration_date).toISOString()
           : null,
+          category: formData.category ? Number(formData.category) : null,
 
         },
         {
@@ -158,7 +154,7 @@ const AddNewProduct = () => {
             onChange={handleChange("description")}
           />
           <ReactSelectCustomized
-            options={formattedCategories}
+            options={productCategories}
             label={"Category"}
             onChange={handleCategoryChange}
           />
