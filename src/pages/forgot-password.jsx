@@ -17,11 +17,16 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post(`${BASE_URL}/v1/users/reset-password`, data);
-      toast.success(res.data.detail);
+      const res = await axios.patch(
+        `${BASE_URL}/v1/users/reset-password`,
+        data,
+      );
+      toast.success(res.data?.detail);
       navigate("/reset-password");
     } catch (error) {
       console.log({ error });
+      const message = error.res?.data?.detail;
+      toast.error(message ?? "An error occurred while resetting the password");
     }
   };
 
