@@ -1,10 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "../context/user-context";
 import { Button } from "./ui/button";
 import { PencilSimple, X, Eye, EyeSlash } from "phosphor-react";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
 import * as yup from "yup";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 
 const MODAL_TYPES = {
   DELETE_ACCOUNT: "DELETE_ACCOUNT",
@@ -24,10 +27,48 @@ const schema = yup.object({
 
 export const Account = () => {
   const [userData, setUserData] = useState({
-    name: "Temi",
-    email: "temi@email.com",
-    business: "ReTaler",
+    name: "",
+    email: "",
+    business: "",
   });
+  const [storeData, setStoreData] = useState({
+    name: "",
+  });
+  useEffect(() => {
+    const token = localStorage.getItem(TOKEN_IDENTIFIER);
+
+    if (!token) return;
+
+    const decoded = jwtDecode(token);
+    const userId = decoded.user_id || decoded.sub || decoded.id; // adjust as per your actual token
+
+    // fetch all users
+    axios.get("/v1/users/users/")
+      .then((res) => {
+        const currentUser = res.data.find((user) => user.id === userId);
+        if (currentUser) {
+          setUserData({
+            username: currentUser.username,
+            email: currentUser.email,
+          });
+        }
+      })
+      .catch((err) => console.error("Error fetching user", err));
+
+    // fetch store info
+    axios.get(`/v1/users/store/${userId}`)
+      .then((res) => {
+        const store = res.data[0]; // assuming it returns an array
+        setStoreData({
+          name: store.name,
+          category: store.category,
+          no_of_staff: store.no_of_staff,
+        });
+      })
+      .catch((err) => console.error("Error fetching store", err));
+  }, []);
+
+  
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [editedData, setEditedData] = useState(userData);
@@ -51,6 +92,10 @@ export const Account = () => {
   const imageInputRef = useRef(null);
   const { avatar, setAvatar } = useUser();
   const [avatarPreview, setAvatarPreview] = useState(avatar);
+
+  if (!editedData) {
+  return <div className="p-4 text-gray-600">Loading account info...</div>;
+}
 
   // Update password criteria when new password changes
   const handleNewPasswordChange = (value) => {
@@ -108,6 +153,10 @@ export const Account = () => {
       reader.readAsDataURL(file);
     }
   };
+  console.log("editedData before render:", editedData);
+  console.log("userData before render:", userData);
+
+
   return (
     <>
       <div className="flex flex-col justify-between gap-3 lg:flex-col">
