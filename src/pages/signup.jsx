@@ -66,7 +66,11 @@ export const Signup = () => {
   const onSubmit = async (data) => {
     try {
       console.log("Form Data:", data);
-      const rsp = await axios.post(`${BASE_URL}/v1/users/register`, data);
+
+      
+      const rsp = await axios.post(`${BASE_URL}/v1/users/register/`, data);
+
+
       toast.success(rsp.data.detail);
       navigate("/business-info");
     } catch (error) {
