@@ -33,16 +33,12 @@ export const DashboardLayout = () => {
     queryKey: ["FETCH_USER_STORE"],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
-      const response = await axios.get(
-        `${BASE_URL}/v1/users/store/${userInfo.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenFromStorage}`,
-          },
+      const response = await axios.get(`${BASE_URL}/v1/store/`, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
         },
-      );
-      const store = response?.data?.[0];
+      });
+      const store = response?.data?.stores?.[0];
       setStoreInfo(store);
       return store;
     },

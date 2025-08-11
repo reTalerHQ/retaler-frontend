@@ -14,9 +14,13 @@ import {
 } from "phosphor-react";
 import { DataTable } from "../components/data-table";
 import { formatCurrency } from "../utils/number-utilites";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Link } from "react-router-dom";
+import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { TOKEN_IDENTIFIER } from "@/constants";
+import { BASE_URL } from "@/constants/api";
 
 import {
   Dialog,
@@ -27,94 +31,112 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import { PagePreLoader } from "@/components/page-pre-loader";
+import { FETCH_SALES, FETCH_SALES_STATS } from "@/constants/query-key";
 
 const Sales = () => {
   const [selectedSalesIds, setSelectedSalesIds] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const sales = [
-    {
-      id: 1,
-      productName: "Garri",
-      totalPrice: 7500,
-      currency: "₦",
-      soldBy: "Chinedu Okafor",
-      status: "Paid",
-      date: new Date("2025-07-14"),
+
+  const { storeInfo } = useUser();
+
+  const { isLoading: isLoadingSales, data: salesData } = useQuery({
+    queryKey: [FETCH_SALES],
+    queryFn: async () => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      return rsp?.data;
     },
-    {
-      id: 2,
-      productName: "Yam",
-      totalPrice: 10000,
-      currency: "₦",
-      soldBy: "Amaka Obi",
-      status: "Unpaid",
-      date: new Date("2025-07-13"),
+    enabled: Boolean(storeInfo?.id),
+  });
+
+  const { isLoading: isLoadingSalesStats, data: salesStats } = useQuery({
+    queryKey: [FETCH_SALES_STATS],
+    queryFn: async () => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales/stats`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      return rsp?.data;
     },
-    {
-      id: 3,
-      productName: "Palm Oil",
-      totalPrice: 3000,
-      currency: "₦",
-      soldBy: "Ifeanyi Umeh",
-      status: "Paid",
-      date: new Date("2025-07-12"),
-    },
-    {
-      id: 4,
-      productName: "Beans",
-      totalPrice: 4500,
-      currency: "₦",
-      soldBy: "Ngozi Nwosu",
-      status: "Paid",
-      date: new Date("2025-07-11"),
-    },
-    {
-      id: 5,
-      productName: "Crayfish",
-      totalPrice: 6000,
-      currency: "₦",
-      soldBy: "Tunde Adebayo",
-      status: "Unpaid",
-      date: new Date("2025-07-10"),
-    },
-  ];
+    enabled: Boolean(storeInfo?.id),
+  });
+
 
   const columns = [
     {
-      accessorKey: "productName",
-      header: "Product Name",
+      accessorKey: "items",
+      header: "Number of Products",
+      accessorFn: (data) => data?.items?.length,
     },
     {
-      accessorKey: "totalPrice",
+      accessorKey: "total_amount",
       header: "Total Price",
       cell: ({ row }) => {
         const data = row.original;
         return (
           <span className="inline-block w-full text-right">
-            {`${data.currency} ${formatCurrency(data.totalPrice)}`}
+            {`N ${formatCurrency(data.total_amount)}`}
           </span>
         );
       },
     },
     {
-      accessorKey: "soldBy",
-      header: "Sold By",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ getValue }) => {
-        const value = getValue();
-        const paid = value?.toLowerCase() === "paid";
+      accessorKey: "amount_paid",
+      header: "Amount Paid",
+      cell: ({ row }) => {
+        const data = row.original;
         return (
-          <span className={paid ? "text-green-600" : "text-red-600"}>
-            {value}
+          <span className="inline-block w-full text-right">
+            {`N ${formatCurrency(data.amount_paid)}`}
           </span>
         );
       },
     },
     {
-      accessorKey: "date",
+      accessorKey: "outstanding_balance",
+      header: "Outstanding Amount",
+      cell: ({ row }) => {
+        const data = row.original;
+        return (
+          <span className="inline-block w-full text-right">
+            {`N ${formatCurrency(data.outstanding_balance)}`}
+          </span>
+        );
+      },
+    },
+    // {
+    //   accessorKey: "soldBy",
+    //   header: "Sold By",
+    // },
+    // {
+    //   accessorKey: "status",
+    //   header: "Status",
+    //   cell: ({ getValue }) => {
+    //     const value = getValue();
+    //     const paid = value?.toLowerCase() === "paid";
+    //     return (
+    //       <span className={paid ? "text-green-600" : "text-red-600"}>
+    //         {value}
+    //       </span>
+    //     );
+    //   },
+    // },
+    {
+      accessorKey: "created_at",
       header: "Date",
       cell: ({ getValue }) => {
         const date = getValue();
@@ -164,21 +186,33 @@ const Sales = () => {
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <BusinessOverviewCard
           title="Total Sales"
-          count={"₦ 100,000"}
+          count={
+            salesStats?.revenue_generated
+              ? `N ${formatCurrency(salesStats?.revenue_generated)}`
+              : 0
+          }
           icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
           color="#E6F3E8"
           border="#98CEA1"
         />
         <BusinessOverviewCard
           title="Revenue Generate"
-          count={"₦ 354,200"}
+          count={
+            salesStats?.revenue_generated
+              ? `N ${formatCurrency(salesStats?.revenue_generated)}`
+              : 0
+          }
           icon={<ChartBar className="text-2xl text-[#375ED9]" />}
           color="#F6F8FD"
           border="#ADBDEF"
         />
         <BusinessOverviewCard
           title="Avg. Sale Value"
-          count={"₦ 5,000"}
+          count={
+            salesStats?.avg_sales_value
+              ? `N ${formatCurrency(salesStats?.avg_sales_value)}`
+              : 0
+          }
           icon={<Star className="text-2xl text-[#FFF5CC]" />}
           color="#FFF5CC"
           border="#FFD633"
@@ -228,7 +262,7 @@ const Sales = () => {
         {/* TABLE */}
         <DataTable
           columns={columns}
-          data={sales}
+          data={salesData ?? []}
           enableRowSelection
           onSelectedRowsChange={setSelectedSalesIds}
           selectedRowClassName="bg-[#CACDF6]/30"
@@ -278,6 +312,7 @@ const Sales = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {isLoadingSales || (isLoadingSalesStats && <PagePreLoader />)}
     </>
   );
 };
