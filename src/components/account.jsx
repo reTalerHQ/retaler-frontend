@@ -8,6 +8,8 @@ import * as yup from "yup";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
+import { BASE_URL } from "@/constants/api";
+import { toast } from "sonner";
 
 const MODAL_TYPES = {
   DELETE_ACCOUNT: "DELETE_ACCOUNT",
@@ -43,7 +45,8 @@ export const Account = () => {
     const userId = decoded.user_id || decoded.sub || decoded.id; // adjust as per your actual token
 
     // fetch all users
-    axios.get("/v1/users/users/")
+    axios
+      .get("/v1/users/users/")
       .then((res) => {
         const currentUser = res.data.find((user) => user.id === userId);
         if (currentUser) {
@@ -56,7 +59,8 @@ export const Account = () => {
       .catch((err) => console.error("Error fetching user", err));
 
     // fetch store info
-    axios.get(`/v1/users/store/${userId}`)
+    axios
+      .get(`/v1/users/store/${userId}`)
       .then((res) => {
         const store = res.data[0]; // assuming it returns an array
         setStoreData({
@@ -68,7 +72,6 @@ export const Account = () => {
       .catch((err) => console.error("Error fetching store", err));
   }, []);
 
-  
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [editedData, setEditedData] = useState(userData);
@@ -94,8 +97,8 @@ export const Account = () => {
   const [avatarPreview, setAvatarPreview] = useState(avatar);
 
   if (!editedData) {
-  return <div className="p-4 text-gray-600">Loading account info...</div>;
-}
+    return <div className="p-4 text-gray-600">Loading account info...</div>;
+  }
 
   // Update password criteria when new password changes
   const handleNewPasswordChange = (value) => {
@@ -139,8 +142,33 @@ export const Account = () => {
       setOpenedModalType(modalType);
     }
   };
-  const handleDeleteAccount = () => {
-    console.log("Account deleted");
+  const handleDeleteAccount = async () => {
+    const deleteToken = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
+    const userId = userInfo?.id;
+
+    try {
+      await axios.delete(`${BASE_URL}/v1/users/${userId}/`, {
+        headers: {
+          Authorization: `Bearer ${deleteToken}`,
+        },
+      });
+      toast.success("Account deleted successfully");
+    } catch (error) {
+      // const status = error?.response?.status;
+
+      // if (status === 400) {
+      //   toast.error("Bad request. the account might already been deleted");
+      // } else if (status === 404) {
+      //   toast.error("Account not found . It might have been deleted already");
+      // } else {
+      //   toast.error("Failed to delete account. Pleae try again");
+      // }
+      // toast.error("Failed to delete account");
+      console.error(error);
+    }
+
+    // console.log("Account deleted");
     setOpenModal(false);
   };
   const handleImageChange = (e) => {
@@ -155,7 +183,6 @@ export const Account = () => {
   };
   console.log("editedData before render:", editedData);
   console.log("userData before render:", userData);
-
 
   return (
     <>
