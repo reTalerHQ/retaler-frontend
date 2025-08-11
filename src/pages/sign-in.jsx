@@ -49,7 +49,6 @@ const Signin = () => {
     setValue("password", storedPassword);
   }, [setValue]);
 
-  // To save email and password to localStorage
   const onSubmit = async (data) => {
     try {
       console.log("Form Data:", data);
@@ -70,14 +69,16 @@ const Signin = () => {
 
       sessionStorage.setItem(TOKEN_IDENTIFIER, access_token);
       sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
+
       navigate("/dashboard");
     } catch (error) {
       console.log({ error });
-      const status = error.response.status;
+      const status = error?.response?.status;
       console.log({ status });
 
-      const message = error.response.data.detail;
-      toast.error(message ?? "Something went wrong...");
+      const message =
+        error?.response?.data?.detail ?? "Something went wrong...";
+      toast.error(message);
     }
   };
 
