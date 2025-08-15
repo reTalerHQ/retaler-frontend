@@ -1,0 +1,3 @@
+export const FETCH_INVENTORY = "FETCH_INVENTORY";
+export const FETCH_SALES = "FETCH_SALES";
+export const FETCH_SALES_STATS = "FETCH_SALES_STATS"

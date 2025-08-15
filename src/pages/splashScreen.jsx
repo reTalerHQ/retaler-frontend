@@ -1,5 +1,5 @@
 import React from "react";
-import { useIsMobile } from "@/hook/use-is-mobile";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

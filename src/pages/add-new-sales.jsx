@@ -8,8 +8,65 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import ReactSelectCustomized from "@/components/react-select-customized";
 import { formatCurrency } from "@/utils/number-utilites";
+import { useUser } from "@/context/user-context";
+import { useFetchInventory } from "@/hooks/use-fetch-inventory";
+import { PagePreLoader } from "@/components/page-pre-loader";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { BASE_URL } from "@/constants/api";
+import axios from "axios";
+import { TOKEN_IDENTIFIER } from "@/constants";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { FETCH_SALES, FETCH_SALES_STATS } from "@/constants/query-key";
+
+const schema = yup.object({
+  paymentMethod: yup.string().required("Payment Method is Required"),
+  amountPaid: yup.string().required("Amount paid is required"),
+});
+
+const PAYMENT_METHOD_OPTIONS = [
+  {
+    id: "1",
+    label: "Cash",
+    value: "Cash",
+  },
+  {
+    id: "2",
+    label: "Transfer",
+    value: "Transfer",
+  },
+  {
+    id: "3",
+    label: "POS",
+    value: "POS",
+  },
+];
 
 export const AddNewSales = () => {
+  const { storeInfo } = useUser();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid, isSubmitting },
+    setValue,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "all",
+    defaultValues: {
+      paymentMethod: "",
+    },
+  });
+
+  const [paymentMethod] = watch(["paymentMethod"]);
+
+  const { isLoading: isLoadingInventory, data: inventoryData } =
+    useFetchInventory(storeInfo?.id);
+
+  const queryClient = useQueryClient();
   //staff  options for reactSelect
   const NameCategories = [
     { id: 1, name: "Isaac" },
@@ -19,21 +76,7 @@ export const AddNewSales = () => {
     { id: 5, name: "Rukky" },
   ];
 
-  const formattedNames = NameCategories.map((cat) => ({
-    id: cat.id,
-    label: cat.name,
-    value: cat.id.toString(),
-  }));
-
   //search inventory product
-  const allproducts = [
-    { id: 1, name: "Peak Milk Sachet", price: 1000, stock: 20 },
-    { id: 2, name: "Peak Milk Tin", price: 2300, stock: 0 },
-    { id: 3, name: "Bournvita", price: 2200, stock: 70 },
-    { id: 4, name: "Coca-Cola", price: 900, stock: 0 },
-    { id: 5, name: "Eva water", price: 700, stock: 16 },
-    { id: 6, name: "Always pad", price: 800, stock: 0 },
-  ];
 
   //states
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,8 +93,8 @@ export const AddNewSales = () => {
       return;
     }
 
-    const results = allproducts.filter((p) =>
-      p.name.toLowerCase().includes(value.toLowerCase()),
+    const results = inventoryData?.inventory?.filter((p) =>
+      p?.product_name?.toLowerCase()?.includes(value.toLowerCase()),
     );
     setFilteredProducts(results);
   };
@@ -85,13 +128,66 @@ export const AddNewSales = () => {
   };
 
   const totalPrice = addedProducts.reduce((total, product) => {
-    return total + product.price * product.quantity;
+    return total + product.selling_price * product.quantity;
   }, 0);
 
   //delete button
   const handleDeleteProduct = (productId) => {
     setAddedProducts((prev) => prev.filter((prod) => prod.id !== productId));
   };
+
+  const onSubmit = async (data) => {
+    console.log("business info submitted:", data);
+
+    try {
+      console.log("Form Data:", data);
+      if (!(addedProducts?.length > 0)) {
+        toast.error("Please add a product");
+        return;
+      }
+
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const payload = {
+        store_id: storeInfo?.id,
+        staff_id: storeInfo?.user_id,
+        payment_method: data?.paymentMethod,
+        amount_paid: data?.amountPaid,
+        items: addedProducts?.map((prod) => ({
+          inventory_id: prod.id,
+          quantity: prod.quantity,
+          price: prod.selling_price,
+        })),
+      };
+
+      await axios.post(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, payload, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+        },
+      });
+      setAddedProducts([]);
+
+      reset();
+      toast.success("Sales added successfully");
+      queryClient.invalidateQueries({
+        queryKey: [FETCH_SALES],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [FETCH_SALES_STATS],
+      });
+    } catch (error) {
+      console.log({ error });
+      const status = error.response.status;
+      console.log({ status });
+
+      const message = error.response.data.detail;
+      toast.error(
+        typeof message === "string"
+          ? (message ?? "Something went wrong...")
+          : "Unable to add sales",
+      );
+    }
+  };
+
   return (
     <>
       <div className="flex items-center gap-1">
@@ -101,7 +197,10 @@ export const AddNewSales = () => {
         <h1 className="text-lg font-bold lg:text-2xl">Record New sale</h1>
       </div>
 
-      <form className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5"
+      >
         {/* search products */}
         <h4 className="text-accent-foreground font-medium">
           Select product sold
@@ -144,21 +243,21 @@ export const AddNewSales = () => {
                         }}
                       />
                       <div>
-                        <p className="font-medium">{product.name}</p>
+                        <p className="font-medium">{product.product_name}</p>
                         <span
                           className={`text-sm ${
-                            product.stock > 0
+                            product.quantity > 0
                               ? "text-green-600"
                               : "text-red-600"
                           }`}
                         >
                           {product.stock > 0
-                            ? `In Stock: ${product.stock}`
+                            ? `In Stock: ${product.quantity}`
                             : "Out of Stock"}
                         </span>
                       </div>
                     </div>
-                    <p className="text-gray-700">₦{product.price}</p>
+                    <p className="text-gray-700">₦{product.selling_price}</p>
                   </div>
                 );
               })}
@@ -177,8 +276,8 @@ export const AddNewSales = () => {
                   className="flex justify-between rounded px-4 py-2"
                 >
                   <div className="space-y-1">
-                    <p className="text-xs">{prod.name}</p>
-                    <p>₦{prod.price}</p>
+                    <p className="text-xs">{prod.product_name}</p>
+                    <p>₦{formatCurrency(prod.selling_price)}</p>
                   </div>
 
                   <div className="bg:space-x-6 inline-flex items-center space-x-2">
@@ -222,8 +321,33 @@ export const AddNewSales = () => {
           Sale Details
         </h4>
 
-        <ReactSelectCustomized options={formattedNames} label={"Sold by"} />
-        <div className="flex justify-between space-x-4 border-0 pt-8 focus:outline-0">
+        <div className="grid grid-cols-1 space-x-4 border-0 pt-8 focus:outline-0 lg:grid-cols-2 lg:flex-row">
+          <div>
+            <ReactSelectCustomized
+              options={PAYMENT_METHOD_OPTIONS}
+              label={"Payment Method"}
+              onChange={(data) => {
+                setValue("paymentMethod", data?.value ?? "", {
+                  shouldValidate: true,
+                });
+              }}
+              value={
+                PAYMENT_METHOD_OPTIONS?.find(
+                  (method) => method.value === paymentMethod,
+                ) ?? null
+              }
+              error={errors?.paymentMethod?.message}
+            />
+          </div>
+          <Input
+            label="Amount Paid"
+            {...register("amountPaid")}
+            error={errors?.amountPaid?.message}
+            type="number"
+          />
+        </div>
+
+        {/* <div className="flex flex-col justify-between space-x-4 border-0 pt-8 focus:outline-0 lg:flex-row">
           <Input
             type="text"
             placeholder="Enter date"
@@ -240,16 +364,21 @@ export const AddNewSales = () => {
           type="text"
           placeholder="Write note about sale"
           className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-900 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
-        />
+        /> */}
 
         {/* footer button */}
         <div className="mt-3 flex items-center justify-end gap-3">
-          <Button variant="outline" className="bg-gray-200 text-gray-700">
+          <Button
+            variant="outline"
+            className="bg-gray-200 text-gray-700"
+            type="button"
+          >
             Cancel
           </Button>
           <Button className="px-6">Save</Button>
         </div>
       </form>
+      {isLoadingInventory || (isSubmitting && <PagePreLoader />)}
     </>
   );
 };
