@@ -88,7 +88,7 @@ const Sales = () => {
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">
+          <span >
             {`N ${formatCurrency(data.total_amount)}`}
           </span>
         );
@@ -100,7 +100,7 @@ const Sales = () => {
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">
+          <span >
             {`N ${formatCurrency(data.amount_paid)}`}
           </span>
         );
@@ -112,7 +112,7 @@ const Sales = () => {
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">
+          <span className="">
             {`N ${formatCurrency(data.outstanding_balance)}`}
           </span>
         );
@@ -262,7 +262,9 @@ const Sales = () => {
         {/* TABLE */}
         <DataTable
           columns={columns}
-          data={salesData ?? []}
+          data={(salesData ?? [])
+           .slice()
+           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))}
           enableRowSelection
           onSelectedRowsChange={setSelectedSalesIds}
           selectedRowClassName="bg-[#CACDF6]/30"

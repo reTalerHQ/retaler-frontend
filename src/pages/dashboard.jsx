@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { BusinessOverviewCard } from "../components/business-overview-card";
 import {
   CheckCircle,
@@ -10,16 +10,74 @@ import {
 } from "phosphor-react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
+import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { useUser } from "@/context/user-context";
 
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_SALES, FETCH_INVENTORY } from "@/constants/query-key";
+
+import axios from "axios";
+import { BASE_URL } from "@/constants/api";
+import { TOKEN_IDENTIFIER } from "@/constants";
+
 const Dashboard = () => {
+
+  const { storeInfo } = useUser();
+    
+  const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
+    queryKey: [FETCH_SALES, storeInfo?.id],
+    queryFn: async () => {
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return rsp?.data;
+    },
+    enabled: Boolean(storeInfo?.id),
+  });
+
+    const { data: InventoryData = [], isLoading: isLoadingInventory } = useQuery({
+    queryKey: [FETCH_INVENTORY, storeInfo?.id],
+    queryFn: async () => {
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return rsp?.data;
+    },
+    select: (data) => Array.isArray(data) ? data : (data?.inventory ?? []),
+    enabled: Boolean(storeInfo?.id),
+  });
+
+  const inventoryNameById = useMemo(() => {
+    return (InventoryData ?? []).reduce((acc, p) => {
+      acc[p.id] = p.product_name;
+      return acc;
+    }, {});
+  }, [InventoryData]);
+
+  const displayName = useMemo(() => {
+    // Try common spots the backend might put it
+    const raw =
+      storeInfo?.user?.username ??
+      storeInfo?.username ??
+      storeInfo?.user?.first_name ??
+      storeInfo?.owner_name ??
+      storeInfo?.name ??
+      "";
+
+    // Capitalize first letter (optional)
+    return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+  }, [storeInfo]);
+
+
   const actionsLinks = [
     {
       id: 1,
       title: "Add a New Product ",
       icon: <Tag />,
-      actionLink: "/products?action=add-product",
+      actionLink: "/inventory?action=add-product",
     },
     {
       id: 2,
@@ -62,81 +120,24 @@ const Dashboard = () => {
     },
   ];
 
-  const soldItems = [
-    {
-      id: 1,
-      name: "Garri",
-      date: new Date("2025-07-10"),
-      soldBy: "Chinedu Okafor",
-      imgurl: "https://example.com/images/garri.jpg",
-      price: 1200,
-      currency: "NGN",
-    },
-    {
-      id: 2,
-      name: "Yam Tubers",
-      date: new Date("2025-07-09"),
-      soldBy: "Amina Musa",
-      imgurl: "https://example.com/images/yam.jpg",
-      price: 3500,
-      currency: "NGN",
-    },
-    {
-      id: 3,
-      name: "Palm Oil",
-      date: new Date("2025-07-08"),
-      soldBy: "Ifeanyi Nwosu",
-      imgurl: "https://example.com/images/palm-oil.jpg",
-      price: 2500,
-      currency: "NGN",
-    },
-    {
-      id: 4,
-      name: "Ogbono Seeds",
-      date: new Date("2025-07-11"),
-      soldBy: "Ngozi Umeh",
-      imgurl: "https://example.com/images/ogbono.jpg",
-      price: 1800,
-      currency: "NGN",
-    },
-    {
-      id: 5,
-      name: "Crayfish",
-      date: new Date("2025-07-07"),
-      soldBy: "Tunde Balogun",
-      imgurl: "https://example.com/images/crayfish.jpg",
-      price: 900,
-      currency: "NGN",
-    },
-    {
-      id: 6,
-      name: "Beans",
-      date: new Date("2025-07-12"),
-      soldBy: "Kemi Adebayo",
-      imgurl: "https://example.com/images/beans.jpg",
-      price: 1500,
-      currency: "NGN",
-    },
-    {
-      id: 7,
-      name: "Pepper",
-      date: new Date("2025-07-13"),
-      soldBy: "Sani Abdullahi",
-      imgurl: "https://example.com/images/pepper.jpg",
-      price: 600,
-      currency: "NGN",
-    },
-  ];
+  
   const hasOnboarded = true;
 
-  const { storeInfo } = useUser();
-
   console.log({ storeInfo });
+
+
+  const totalRevenue = salesData.reduce((sum, sale) => sum + sale.total_amount, 0);
+
+  
+  const totalProducts = InventoryData.reduce(
+  (sum, p) => sum + (Number(p?.quantity) || 0),
+  0
+);
 
   return (
     <>
       <h1 className="mb-3 text-2xl font-bold lg:text-3xl">
-        Welcome back, Amina
+        Welcome back{displayName ? `, ${displayName}` : ""}
       </h1>
       <p className="text-sm lg:text-base">
         Track your sales, manage inventory, and stay on top of your products
@@ -147,22 +148,20 @@ const Dashboard = () => {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <BusinessOverviewCard
               title="Total Products"
-              count={0}
+              count={totalProducts}
               icon={<Tag className="text-2xl text-[#4C518F]" />}
               color="#F2F3FD"
               border="#CACDF6"
             />
             <BusinessOverviewCard
               title="Total Sales"
-              count={0}
-              icon={
-                <CurrencyCircleDollar className="text-2xl text-[#038719]" />
-              }
+              count={`N ${formatCurrency(totalRevenue)}`}
+              icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
               color="#E6F3E8"
               border="#98CEA1"
             />
             <BusinessOverviewCard
-              title="Total Products"
+              title="Restock Needed"
               count={0}
               icon={<Warning className="text-2xl text-[#CCA300]" />}
               color="#FFF5CC"
@@ -200,28 +199,62 @@ const Dashboard = () => {
               </Link>
             </div>
             <div className="flex flex-col gap-8">
-              {soldItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between gap-2 lg:items-center"
-                >
-                  <span className="inline-block aspect-square h-10 w-10 rounded-sm bg-[#CACDF6]"></span>
-                  <div className="flex flex-1 flex-col items-start justify-start gap-2 lg:flex-row lg:justify-between">
-                    <div>
-                      <h4 className="mb-2 font-semibold">{item.name}</h4>
-                      <p className="text-sm">Sold by: {item.soldBy}</p>
-                    </div>
-                    <div>
-                      <h4 className="mb-2 text-sm font-semibold lg:text-base">
-                        {item.currency} {item.price}
-                      </h4>
-                      <p className="text-sm">
-                        {format(item.date, "hh:mm:ss a")}
-                      </p>
+              {(salesData ?? [])
+               .slice() 
+               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
+               .slice(0, 6)
+               .map((item) => {
+                const productLines = item?.items?.length ?? 0;     
+                const amount = Number(item?.total_amount) || 0;
+                const currency = item?.currency || "₦";
+                const createdAt =
+                  item?.created_at ? new Date(item.created_at) : null;
+                 const lineItems = (item?.items ?? []).map((it) => {
+                  const qty = Number(it?.quantity) || 1;
+                  const name =
+                    it?.product?.product_name ||      // if backend expands product
+                    it?.product_name ||               // if backend flattens name
+                    inventoryNameById[it?.inventory_id] || // fallback to inventory lookup
+                    "Item";
+                  return `${qty} ${name}`;
+                });
+
+                 const fullList = lineItems.join(", ");
+
+                return (
+                  <div
+                    key={item.id}
+                    className="flex justify-between gap-2 lg:items-center"
+                  >
+                    <span className="inline-block aspect-square h-10 w-10 rounded-sm bg-[#CACDF6]"></span>
+
+                    <div className="flex flex-1 flex-col items-start justify-start gap-2 lg:flex-row lg:justify-between">
+                      <div>
+                        <h4 className="mb-2 font-semibold">
+                          {/* {productLines} {productLines === 1 ? "product" : "products"} */}
+                          <span
+                          className="block max-w-[360px] truncate"
+                          title={fullList} // hover shows full content
+                        >
+                          {fullList || "No items"}
+                        </span>
+                        </h4>
+                        {/* <p className="text-sm">Sold by: {item.created_by}</p> */}
+                      </div>
+
+                      <div className="">
+                        <h4 className="mb-2 text-sm font-semibold lg:text-base">
+                          {currency} {formatCurrency(amount)}
+                        </h4>
+                        <p className="text-sm">
+                          {createdAt ? format(createdAt, "hh:mm:ss a") : "—"}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
+
             </div>
           </article>
         ) : (
