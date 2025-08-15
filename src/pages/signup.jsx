@@ -16,6 +16,7 @@ import clsx from "clsx";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 
 // yup validation schema
 const schema = yup.object({
@@ -67,11 +68,17 @@ export const Signup = () => {
     try {
       console.log("Form Data:", data);
 
-      
       const rsp = await axios.post(`${BASE_URL}/v1/users/register/`, data);
 
-
       toast.success(rsp.data.detail);
+
+      const {
+        token: { access_token },
+        user,
+      } = rsp.data;
+
+      sessionStorage.setItem(TOKEN_IDENTIFIER, access_token);
+      sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
       navigate("/business-info");
     } catch (error) {
       console.log({ error });
@@ -82,7 +89,7 @@ export const Signup = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+      <div className="my-0 flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
         <h1 className="mb-2 text-lg font-semibold md:text-3xl">
           Create your Retaler Account
         </h1>
