@@ -31,6 +31,9 @@ import { useUser } from "@/context/user-context";
 import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_SALES } from "@/constants/query-key";
+import { FETCH_INVENTORY } from "@/constants/query-key";
 
 const MODAL_TYPES = {
   ADD_PRODUCTS: "ADD_PRODUCT",
@@ -72,118 +75,30 @@ const Inventory = () => {
   ]);
   const [loading, setLoading] = useState(true);
 
-  // const products = [
-  //   {
-  //     id: 1,
-  //     productName: "Garri",
-  //     price: 1500,
-  //     currency: "₦",
-  //     costPrice: 1200,
-  //     sellingPrice: 1500,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-10"),
-  //     quantity: 100,
+  const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
+    queryKey: [FETCH_INVENTORY],
+    queryFn: async () => {
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return rsp?.data;
+    },
+    enabled: Boolean(storeInfo?.id),
+  });
+
+  //   const { data: InventoryData = [], isLoading: isLoadingInventory } = useQuery({
+  //   queryKey: [FETCH_SALES],
+  //   queryFn: async () => {
+  //     const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+  //     const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     return rsp?.data;
   //   },
-  //   {
-  //     id: 2,
-  //     productName: "Palm Oil",
-  //     price: 3000,
-  //     currency: "₦",
-  //     costPrice: 2500,
-  //     sellingPrice: 3000,
-  //     status: "Out of Stock",
-  //     lastUpdatedAt: new Date("2025-07-08"),
-  //     quantity: 0,
-  //   },
-  //   {
-  //     id: 3,
-  //     productName: "Yam",
-  //     price: 4000,
-  //     currency: "₦",
-  //     costPrice: 3300,
-  //     sellingPrice: 4000,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-12"),
-  //     quantity: 50,
-  //   },
-  //   {
-  //     id: 4,
-  //     productName: "Beans",
-  //     price: 2200,
-  //     currency: "₦",
-  //     costPrice: 1900,
-  //     sellingPrice: 2200,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-09"),
-  //     quantity: 14,
-  //   },
-  //   {
-  //     id: 5,
-  //     productName: "Crayfish",
-  //     price: 1800,
-  //     currency: "₦",
-  //     costPrice: 1500,
-  //     sellingPrice: 1800,
-  //     status: "Out of Stock",
-  //     lastUpdatedAt: new Date("2025-07-07"),
-  //     quantity: 2,
-  //   },
-  //   {
-  //     id: 6,
-  //     productName: "Tomatoes",
-  //     price: 1000,
-  //     currency: "₦",
-  //     costPrice: 800,
-  //     sellingPrice: 1000,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-11"),
-  //     quantity: 100,
-  //   },
-  //   {
-  //     id: 7,
-  //     productName: "Onions",
-  //     price: 1200,
-  //     currency: "₦",
-  //     costPrice: 950,
-  //     sellingPrice: 1200,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-10"),
-  //     quantity: 22,
-  //   },
-  //   {
-  //     id: 8,
-  //     productName: "Groundnut Oil",
-  //     price: 3500,
-  //     currency: "₦",
-  //     costPrice: 3000,
-  //     sellingPrice: 3500,
-  //     status: "Out of Stock",
-  //     lastUpdatedAt: new Date("2025-07-06"),
-  //     quantity: 4,
-  //   },
-  //   {
-  //     id: 9,
-  //     productName: "Ogbono",
-  //     price: 2000,
-  //     currency: "₦",
-  //     costPrice: 1700,
-  //     sellingPrice: 2000,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-13"),
-  //     quantity: 11,
-  //   },
-  //   {
-  //     id: 10,
-  //     productName: "Vegetable",
-  //     price: 800,
-  //     currency: "₦",
-  //     costPrice: 600,
-  //     sellingPrice: 800,
-  //     status: "In Stock",
-  //     lastUpdatedAt: new Date("2025-07-14"),
-  //     quantity: 100,
-  //   },
-  // ];
+  //   enabled: Boolean(storeInfo?.id),
+  // });
+
 
 useEffect(() => {
   const fetchInventory = async () => {
@@ -345,6 +260,13 @@ useEffect(() => {
     }
   };
 
+  const totalRevenue = salesData.reduce((sum, sale) => sum + sale.total_amount, 0);
+
+  const totalProducts = products.reduce(
+  (sum, p) => sum + (Number(p?.quantity) || 0),
+  0
+);
+
   return (
     <>
       {pageMode === PAGE_MODE.INITIAL && (
@@ -358,17 +280,15 @@ useEffect(() => {
           <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
             <BusinessOverviewCard
               title="Total Products"
-              count={45}
+              count={totalProducts}
               icon={<Tag className="text-2xl text-[#4C518F]" />}
               color="#F2F3FD"
               border="#CACDF6"
             />
             <BusinessOverviewCard
               title="Total Sales"
-              count={"N 100.00"}
-              icon={
-                <CurrencyCircleDollar className="text-2xl text-[#038719]" />
-              }
+              count={`N ${formatCurrency(totalRevenue)}`}
+              icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
               color="#E6F3E8"
               border="#98CEA1"
             />
