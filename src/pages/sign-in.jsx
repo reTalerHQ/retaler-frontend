@@ -86,7 +86,7 @@ const Signin = () => {
   return (
     <>
       <section className="flex min-h-screen items-center justify-center bg-blue-50">
-        <div className="flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+        <div className="flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
           <h1 className="text-[20px] font-semibold md:text-[36px] md:font-bold">
             Welcome Back!
           </h1>
@@ -157,6 +157,7 @@ const Signin = () => {
                 "mt-7 w-full transition-colors",
                 "hover:bg-blue-700",
               )}
+              disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting" : "Sign In"}
             </Button>

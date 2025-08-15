@@ -12,6 +12,7 @@ import {
   SigninPage,
   ProductDetailsPage,
   EditProductPage,
+  AcceptStaffInvitePage,
 } from "@/pages";
 
 import { Account } from "./components/account";
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+  {
+    path: "accept-staff-invite",
+    element: <AcceptStaffInvitePage />
   },
   {
     path: "/business-info",

@@ -103,7 +103,6 @@ export const InviteStaff = () => {
 
       toast.error(message);
     }
-    reset();
   };
 
   const handleSkip = () => {
@@ -163,8 +162,8 @@ export const InviteStaff = () => {
             >
               <option value="">Select Role</option>
               <option value="Manager">Manager</option>
-              <option value="Cashier">Cashier</option>
-              <option value="Staff">Staff</option>
+              <option value="Sales Rep">Sales Rep</option>
+              <option value="Admin">Admin</option>
             </select>
             {errors.role && (
               <p className="mt-1 text-sm text-red-500">{errors.role.message}</p>

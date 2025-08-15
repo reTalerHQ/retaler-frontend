@@ -124,3 +124,9 @@ export const EditProductPage = () => (
     <EditProduct />
   </Suspense>
 );
+const AcceptStaffInvite = lazy(() => import("./accept-staff-invite"));
+export const AcceptStaffInvitePage = () => (
+  <Suspense fallback={<PagePreLoader />}>
+    <AcceptStaffInvite />
+  </Suspense>
+);
