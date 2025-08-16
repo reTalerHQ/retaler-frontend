@@ -113,12 +113,29 @@ export const Account = () => {
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
-    // simulate/save to backend
-    setUserData(editedData);
-    setAvatar(avatarPreview); // Only update context avatar on save
-    setIsSaving(false);
-    setEditedData(editedData); // ensures hasChanges is false, button returns to secondary
+    const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    // setIsSaving(true);
+    // // simulate/save to backend
+    // setUserData(editedData);
+    // setAvatar(avatarPreview); // Only update context avatar on save
+    // setIsSaving(false);
+    // setEditedData(editedData); // ensures hasChanges is false, button returns to secondary
+    const file = imageInputRef?.current?.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await axios.post(
+        `${BASE_URL}/v1/users/upload-profile-image`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/formData",
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      console.log({ response });
+    }
   };
   const hasProfileChanges =
     JSON.stringify(userData) !== JSON.stringify(editedData);
@@ -136,7 +153,7 @@ export const Account = () => {
     if (!modalType) {
       setOpenModal(false);
       setOpenedModalType(null);
-      setSelectedUploadOption(null);
+      // setSelectedUploadOption(null);
     } else {
       setOpenModal(true);
       setOpenedModalType(modalType);
