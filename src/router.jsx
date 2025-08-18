@@ -1,4 +1,4 @@
-import { createHashRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import {
   AnalyticsPage,
@@ -48,7 +48,7 @@ import { AddNewSales } from "@/pages/add-new-sales";
 
 import { Bus } from "lucide-react";
 
-export const router = createHashRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootEntry />,
