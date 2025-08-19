@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { PagePreLoader } from "@/components/page-pre-loader";
 
@@ -35,7 +35,7 @@ export const DashboardLayout = () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       console.log("🔐 Token:", tokenFromStorage);
       const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${BASE_URL}/v1/store/`,
         {
           headers: {

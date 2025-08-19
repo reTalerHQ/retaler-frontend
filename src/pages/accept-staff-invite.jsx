@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { yupResolver } from "@hookform/resolvers/yup";
 import clsx from "clsx";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
 import { PagePreLoader } from "@/components/page-pre-loader";
@@ -82,7 +82,7 @@ const AcceptStaffInvite = () => {
         username: data.username,
       };
 
-      const rsp = await axios.post(
+      const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/store/accept-invitation?token=${accessToken}`,
         payload,
       );

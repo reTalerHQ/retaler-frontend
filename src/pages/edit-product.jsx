@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { CaretLeft, PencilSimple } from "phosphor-react";
 
@@ -91,7 +91,7 @@ const EditProduct = () => {
         // });
 
         // Otherwise fetch list and find:
-        const res = await axios.get(
+        const res = await axiosInstance.get(
           `${BASE_URL}/v1/store/${storeInfo.id}/inventory`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -191,7 +191,7 @@ const EditProduct = () => {
       // If your backend supports nested route (common in your app):
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/${id}`;
 
-      await axios.patch(url, payload, {
+      await axiosInstance.patch(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

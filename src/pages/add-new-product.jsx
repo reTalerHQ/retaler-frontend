@@ -10,7 +10,7 @@ import ReactSelectCustomized from "@/components/react-select-customized";
 import { useUser } from "@/context/user-context";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { dummyProductCategories } from "@/data/dummy-product-categories";
 
@@ -69,7 +69,7 @@ const AddNewProduct = () => {
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/`;
       console.log('Post To;', url)
 
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         url,
         {
           product_name: formData.name,

@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "../components/ui/input";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.patch(
+      const res = await axiosInstance.patch(
         `${BASE_URL}/v1/users/reset-password`,
         data,
       );

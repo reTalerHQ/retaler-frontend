@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/constants/api";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { toast } from "sonner";
 
@@ -47,7 +47,7 @@ export const BusinessInfo = () => {
     try {
       console.log("Form Data:", data);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.post(
+      const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/store/`,
         {
           name: data.businessName,

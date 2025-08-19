@@ -11,9 +11,9 @@ import GoogleIcon from "../assets/google-logo.svg";
 import AppleIcon from "../assets/apple-logo.svg";
 import { SocialAuthButton } from "@/components/SocialAuthButton";
 import clsx from "clsx";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
-import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
+import { TOKEN_IDENTIFIER, USER_INFO_KEY, REFRESH_TOKEN_IDENTIFIER } from "@/constants";
 import { toast } from "sonner";
 
 // yup validation schema
@@ -53,7 +53,7 @@ const Signin = () => {
     try {
       console.log("Form Data:", data);
       // const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.post(
+      const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/users/login`,
         data,
         //   , {
@@ -63,11 +63,12 @@ const Signin = () => {
         // }
       );
       const {
-        token: { access_token },
+        token: { access_token, refresh_token },
         user,
       } = rsp.data;
 
       sessionStorage.setItem(TOKEN_IDENTIFIER, access_token);
+      sessionStorage.setItem(REFRESH_TOKEN_IDENTIFIER, refresh_token);
       sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
 
       navigate("/dashboard");

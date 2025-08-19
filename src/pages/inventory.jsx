@@ -28,7 +28,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useUser } from "@/context/user-context";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
@@ -79,7 +79,7 @@ const Inventory = () => {
     queryKey: [FETCH_INVENTORY],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
+      const rsp = await axiosInstance.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return rsp?.data;
@@ -104,7 +104,7 @@ useEffect(() => {
   const fetchInventory = async () => {
     try {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const response = await axios.get(
+      const response = await axiosInstance.get(
         `${BASE_URL}/v1/store/${storeInfo.id}/inventory`,
         {
           headers: {

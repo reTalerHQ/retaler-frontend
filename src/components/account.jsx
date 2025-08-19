@@ -5,7 +5,7 @@ import { PencilSimple, X, Eye, EyeSlash } from "phosphor-react";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
 import * as yup from "yup";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { jwtDecode } from "jwt-decode";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 import { BASE_URL } from "@/constants/api";
@@ -45,7 +45,7 @@ export const Account = () => {
     const userId = decoded.user_id || decoded.sub || decoded.id; // adjust as per your actual token
 
     // fetch all users
-    axios
+    axiosInstance
       .get("/v1/users/users/")
       .then((res) => {
         const currentUser = res.data.find((user) => user.id === userId);
@@ -59,7 +59,7 @@ export const Account = () => {
       .catch((err) => console.error("Error fetching user", err));
 
     // fetch store info
-    axios
+    axiosInstance
       .get(`/v1/users/store/${userId}`)
       .then((res) => {
         const store = res.data[0]; // assuming it returns an array
@@ -124,7 +124,7 @@ export const Account = () => {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${BASE_URL}/v1/users/upload-profile-image`,
         formData,
         {
@@ -165,7 +165,7 @@ export const Account = () => {
     const userId = userInfo?.id;
 
     try {
-      await axios.delete(`${BASE_URL}/v1/users/${userId}/`, {
+      await axiosInstance.delete(`${BASE_URL}/v1/users/${userId}/`, {
         headers: {
           Authorization: `Bearer ${deleteToken}`,
         },
