@@ -13,7 +13,7 @@ import ReactSelectCustomized from "@/components/react-select-customized";
 import { useUser } from "@/context/user-context";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { dummyProductCategories } from "@/data/dummy-product-categories";
 
@@ -100,7 +100,7 @@ const AddNewProduct = () => {
 
     try {
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/`;
-      const response = await axios.post(url, formData, {
+      const response = await axiosInstance.post(url, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

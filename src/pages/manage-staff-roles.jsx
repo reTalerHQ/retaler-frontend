@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { Link } from "react-router-dom";
 import { CaretLeft, MagnifyingGlass, Funnel } from "phosphor-react";
 import { Plus } from "lucide-react";
@@ -8,6 +9,7 @@ import { DataTable } from "@/components/data-table";
 import StaffOptions from "../components/staff-options";
 
 const ManageStaffRoles = () => {
+  useRoleAccess(["Manager", "Admin"]);
   const [selectedStaffRoleIds, setSelectedStaffRoleIds] = useState([]);
 
   const staff = [

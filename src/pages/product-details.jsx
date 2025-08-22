@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
 import { X } from "phosphor-react";
 
 import { dummyProductDetails } from "@/data/dummy-product-details";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { toast } from "sonner";
@@ -31,7 +31,7 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-        const res = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
+        const res = await axiosInstance.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -98,7 +98,7 @@ const ProductDetails = () => {
       setDeleting(true);
 
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/${id}`;
-      const res = await axios.delete(url, 
+      const res = await axiosInstance.delete(url, 
         {
         headers: { Authorization: `Bearer ${token}` },
         }

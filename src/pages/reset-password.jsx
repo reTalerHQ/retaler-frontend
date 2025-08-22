@@ -2,7 +2,7 @@ import { Input } from "../components/ui/input";
 import { BASE_URL } from "@/constants/api";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { useSearchParams } from "react-router-dom";
 import { Password } from "phosphor-react";
 
@@ -28,7 +28,7 @@ const ResetPassword = () => {
 
     console.log("sending request with token:", resetToken);
     try {
-      const response = await axios.patch(
+      const response = await axiosInstance.patch(
         `${BASE_URL}/v1/users/change-password`,
         {
           password: data.password,

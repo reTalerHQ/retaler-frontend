@@ -1,4 +1,5 @@
 import React from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { BASE_URL } from "@/constants/api";
 import { useUser } from "@/context/user-context";
@@ -22,6 +23,7 @@ const schema = yup.object().shape({
 });
 
 export const InviteStaff = () => {
+  useRoleAccess(["Manager", "Admin"]);
   const navigate = useNavigate();
 
   const {
@@ -48,7 +50,7 @@ export const InviteStaff = () => {
       const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
       console.log(userInfo);
 
-      const response = await axios.get(`${BASE_URL}/v1/store/`, {
+      const response = await axiosInstance.get(`${BASE_URL}/v1/store/`, {
         headers: {
           Authorization: `Bearer ${tokenFromStorage}`,
         },
@@ -64,7 +66,7 @@ export const InviteStaff = () => {
   const onSubmit = async (data) => {
     try {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.post(
+      const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/store/${storeInfo.id}/staff`,
         {
           email: data.email,

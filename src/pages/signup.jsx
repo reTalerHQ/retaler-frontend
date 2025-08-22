@@ -13,7 +13,7 @@ import GoogleIcon from "../assets/google-logo.svg";
 import AppleIcon from "../assets/apple-logo.svg";
 import { ProgressBar } from "@/components/ProgressBar";
 import clsx from "clsx";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
@@ -68,7 +68,7 @@ export const Signup = () => {
     try {
       console.log("Form Data:", data);
 
-      const rsp = await axios.post(`${BASE_URL}/v1/users/register/`, data);
+      const rsp = await axiosInstance.post(`${BASE_URL}/v1/users/register/`, data);
 
       toast.success(rsp.data.detail);
 

@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
+import useRoleAccess from "../hooks/use-role-access";
 import { CaretLeft, MagnifyingGlass, Funnel } from "phosphor-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 const AddNewStaff = () => {
+  useRoleAccess(["Manager", "Admin"]);
   return (
     <>
       <section>

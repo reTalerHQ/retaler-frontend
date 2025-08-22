@@ -15,7 +15,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/constants/api";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -159,7 +159,7 @@ export const AddNewSales = () => {
         })),
       };
 
-      await axios.post(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, payload, {
+      await axiosInstance.post(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, payload, {
         headers: {
           Authorization: `Bearer ${tokenFromStorage}`,
         },

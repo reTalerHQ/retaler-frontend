@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Link } from "react-router-dom";
 import { useUser } from "@/context/user-context";
-import axios from "axios";
+import axiosInstance from "@/lib/axios";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { BASE_URL } from "@/constants/api";
 
@@ -45,7 +45,7 @@ const Sales = () => {
     queryKey: [FETCH_SALES],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.get(
+      const rsp = await axiosInstance.get(
         `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
         {
           headers: {
@@ -62,7 +62,7 @@ const Sales = () => {
     queryKey: [FETCH_SALES_STATS],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.get(
+      const rsp = await axiosInstance.get(
         `${BASE_URL}/v1/store/${storeInfo.id}/sales/stats`,
         {
           headers: {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { FilterIcon, Share2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -9,6 +10,7 @@ import { DataTable } from "@/components/data-table";
 import StaffOptions from "../components/staff-options";
 
 const Staff = () => {
+  useRoleAccess(["Manager", "Admin"]);
   const [selectedStaffIds, setSelectedStaffIds] = useState([]);
   const staff = [
     {
