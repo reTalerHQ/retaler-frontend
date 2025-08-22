@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { UploadSimple } from "phosphor-react";
-import React, { useState } from "react";
+import { UploadSimple, X } from "phosphor-react";
+import React, { useState, useEffect } from "react";
 
 const FileUpload = ({
   file,
@@ -12,6 +12,15 @@ const FileUpload = ({
   ...props
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState(file ? URL.createObjectURL(file) : null);
+
+  useEffect(() => {
+    if (file) {
+      const newPreview = URL.createObjectURL(file);
+      setPreview(newPreview);
+      return () => URL.revokeObjectURL(newPreview);
+    }
+  }, [file]);
 
   const onDragOver = (e) => {
     e.preventDefault();
@@ -35,6 +44,26 @@ const FileUpload = ({
       handleFileChange(e.target.files[0]);
     }
   };
+
+  const onRemove = () => {
+    handleFileChange(null);
+    setPreview(null);
+  };
+
+  if (preview) {
+    return (
+      <div className="relative">
+        <img src={preview} alt="preview" className="w-full h-auto rounded-xl" />
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <label

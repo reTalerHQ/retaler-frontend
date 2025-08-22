@@ -71,7 +71,7 @@ const Inventory = () => {
       quantity: 100,
       status: "In Stock",
       last_updated: new Date("2025-07-10"),
-    }
+    },
   ]);
   const [loading, setLoading] = useState(true);
 
@@ -79,9 +79,12 @@ const Inventory = () => {
     queryKey: [FETCH_INVENTORY],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axios.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const rsp = await axios.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       return rsp?.data;
     },
     enabled: Boolean(storeInfo?.id),
@@ -99,48 +102,47 @@ const Inventory = () => {
   //   enabled: Boolean(storeInfo?.id),
   // });
 
-
-useEffect(() => {
-  const fetchInventory = async () => {
-    try {
-      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const response = await axios.get(
-        `${BASE_URL}/v1/store/${storeInfo.id}/inventory`,
-        {
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+        const response = await axios.get(`${BASE_URL}/v1/store/inventory`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+        });
+        let inventoryData = response.data.inventory || [];
+        console.log(
+          "✅ Inventory IDs",
+          inventoryData.map((p) => p.id),
+        );
+
+        console.log("🧾 Final inventory list:", inventoryData);
+
+        const stored = localStorage.getItem("NEW_PRODUCT");
+        if (stored) {
+          const newProduct = JSON.parse(stored);
+          const alreadyExists = inventoryData.some(
+            (p) => p.id === newProduct.id,
+          );
+          if (!alreadyExists) {
+            inventoryData = [newProduct, ...inventoryData];
+          }
+          localStorage.removeItem("NEW_PRODUCT");
         }
-      );
-      let inventoryData = response.data.inventory || [];
-       console.log("✅ Inventory IDs", inventoryData.map(p => p.id));
 
+        setProducts(inventoryData);
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      console.log("🧾 Final inventory list:", inventoryData);
-
-      const stored = localStorage.getItem("NEW_PRODUCT");
-      if (stored) {
-        const newProduct = JSON.parse(stored);
-        const alreadyExists = inventoryData.some(p => p.id === newProduct.id);
-        if (!alreadyExists) {
-          inventoryData = [newProduct, ...inventoryData];
-        }
-        localStorage.removeItem("NEW_PRODUCT");
-      };
-
-      setProducts(inventoryData);
-
-    } catch (error) {
-      console.error("Error fetching inventory:", error);
-    } finally {
-      setLoading(false);
+    if (storeInfo?.id) {
+      fetchInventory();
     }
-  };
-
-  if (storeInfo?.id) {
-    fetchInventory();
-  }
-}, [storeInfo]);
+  }, [storeInfo]);
 
   const handleToggleModal = (modalType) => {
     if (!modalType) {
@@ -161,7 +163,7 @@ useEffect(() => {
     {
       accessorKey: "product_name",
       header: "Product Name",
-  },
+    },
     {
       accessorKey: "cost_price",
       header: () => (
@@ -170,7 +172,7 @@ useEffect(() => {
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">{`${data.currency || '₦'} ${formatCurrency(data.cost_price)}`}</span>
+          <span className="inline-block w-full text-right">{`${data.currency || "₦"} ${formatCurrency(data.cost_price)}`}</span>
         );
       },
     },
@@ -182,7 +184,7 @@ useEffect(() => {
       cell: ({ row }) => {
         const data = row.original;
         return (
-          <span className="inline-block w-full text-right">{`${data.currency || '₦'} ${formatCurrency(data.selling_price)}`}</span>
+          <span className="inline-block w-full text-right">{`${data.currency || "₦"} ${formatCurrency(data.selling_price)}`}</span>
         );
       },
     },
@@ -210,14 +212,14 @@ useEffect(() => {
 
         return <span className={colorClass}>{label}</span>;
       },
-
     },
     {
       accessorKey: "last_updated",
       header: "Last Updated",
       accessorFn: (data) =>
-        data.last_updated ? format(new Date(data.last_updated), "dd/MM/yyyy") : "N/A",
-
+        data.last_updated
+          ? format(new Date(data.last_updated), "dd/MM/yyyy")
+          : "N/A",
     },
     {
       header: "",
@@ -260,12 +262,15 @@ useEffect(() => {
     }
   };
 
-  const totalRevenue = salesData.reduce((sum, sale) => sum + sale.total_amount, 0);
+  const totalRevenue = salesData.reduce(
+    (sum, sale) => sum + sale.total_amount,
+    0,
+  );
 
   const totalProducts = products.reduce(
-  (sum, p) => sum + (Number(p?.quantity) || 0),
-  0
-);
+    (sum, p) => sum + (Number(p?.quantity) || 0),
+    0,
+  );
 
   return (
     <>
@@ -288,7 +293,9 @@ useEffect(() => {
             <BusinessOverviewCard
               title="Total Sales"
               count={`N ${formatCurrency(totalRevenue)}`}
-              icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
+              icon={
+                <CurrencyCircleDollar className="text-2xl text-[#038719]" />
+              }
               color="#E6F3E8"
               border="#98CEA1"
             />
@@ -320,13 +327,13 @@ useEffect(() => {
             {loading ? (
               <p>Loading...</p>
             ) : (
-            <DataTable
-              columns={columns}
-              data={products}
-              enableRowSelection
-              onSelectedRowsChange={setSelectedProducts}
-              selectedRowClassName="bg-[#CACDF6]/30"
-            />
+              <DataTable
+                columns={columns}
+                data={products}
+                enableRowSelection
+                onSelectedRowsChange={setSelectedProducts}
+                selectedRowClassName="bg-[#CACDF6]/30"
+              />
             )}
           </div>
         </>
