@@ -75,23 +75,18 @@ const Sales = () => {
     enabled: Boolean(storeInfo?.id),
   });
 
-
   const columns = [
     {
       accessorKey: "items",
-      header: "Number of Products",
-      accessorFn: (data) => data?.items?.length,
+      header: "Product Names",
+      accessorFn: (data) => data?.items?.map((p) => p.inventory_id).join(","),
     },
     {
       accessorKey: "total_amount",
       header: "Total Price",
       cell: ({ row }) => {
         const data = row.original;
-        return (
-          <span >
-            {`N ${formatCurrency(data.total_amount)}`}
-          </span>
-        );
+        return <span>{`N ${formatCurrency(data.total_amount)}`}</span>;
       },
     },
     {
@@ -99,11 +94,7 @@ const Sales = () => {
       header: "Amount Paid",
       cell: ({ row }) => {
         const data = row.original;
-        return (
-          <span >
-            {`N ${formatCurrency(data.amount_paid)}`}
-          </span>
-        );
+        return <span>{`N ${formatCurrency(data.amount_paid)}`}</span>;
       },
     },
     {
@@ -263,8 +254,8 @@ const Sales = () => {
         <DataTable
           columns={columns}
           data={(salesData ?? [])
-           .slice()
-           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))}
+            .slice()
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))}
           enableRowSelection
           onSelectedRowsChange={setSelectedSalesIds}
           selectedRowClassName="bg-[#CACDF6]/30"

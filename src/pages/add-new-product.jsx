@@ -2,6 +2,9 @@ import { CaretLeft } from "phosphor-react";
 import React from "react";
 import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import FileUpload from "@/components/file-upload";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -14,97 +17,108 @@ import axiosInstance from "@/lib/axios";
 import { toast } from "sonner";
 import { dummyProductCategories } from "@/data/dummy-product-categories";
 
+const schema = yup.object().shape({
+  name: yup.string().required("Product name is required"),
+  description: yup.string(),
+  category: yup.string().required("Category is required"),
+  expiration_date: yup.string(),
+  cost_price: yup.number().required("Cost price is required"),
+  selling_price: yup.number().required("Selling price is required"),
+  quantity: yup.number().required("Quantity is required"),
+  low_stock_count: yup.number().required("Low stock count is required"),
+  status: yup.string().required("Status is required"),
+  file: yup.mixed().required("Product image is required"),
+});
 
 const AddNewProduct = () => {
   const navigate = useNavigate();
-  
-  const {storeInfo} = useUser()
-  console.log("STOREINFO", storeInfo)
+  const { storeInfo } = useUser();
+  const [file, setFile] = useState(null);
 
-  const productCategories = useMemo(() => {
-      // adjust to match your ReactSelectCustomized expected shape
-      return dummyProductCategories.map((c) => ({
-        label: c.label ?? c.name ?? String(c),
-        value: String(c.value ?? c.id ?? c.name ?? c),
-      }));
-    }, []);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    category: "",
-    expiration_date: "",
-    cost_price: "",
-    selling_price: "",
-    quantity: "",
-    low_stock_count: "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  const handleChange = (key) => (e) => {
-    setFormData({ ...formData, [key]: e.target.value });
+  const productCategories = useMemo(() => {
+    return dummyProductCategories.map((c) => ({
+      label: c.label ?? c.name ?? String(c),
+      value: String(c.value ?? c.id ?? c.name ?? c),
+    }));
+  }, []);
+
+  const statusOptions = [{ label: "Available", value: "available" }];
+
+  const handleFileChange = (file) => {
+    setFile(file);
+    setValue("file", file);
   };
 
   const handleCategoryChange = (selected) => {
-    setFormData({ ...formData, category: selected.value });
+    setValue("category", selected.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleStatusChange = (selected) => {
+    setValue("status", selected.value);
+  };
 
-    const token = sessionStorage.getItem(TOKEN_IDENTIFIER); 
-      console.log("Auth Token:", token);
+  const onSubmit = async (data) => {
+    const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
 
-      if (!token) {
-        toast.error("You must be logged in to add a product.");
-        return;
-      }
+    if (!token) {
+      toast.error("You must be logged in to add a product.");
+      return;
+    }
 
-      if (!storeInfo?.id) {
-        toast.error("No store found. Please check your store setup.");
-        return;
-      }
+    if (!storeInfo?.id) {
+      toast.error("No store found. Please check your store setup.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("product_name", data.name);
+    formData.append("description", data.description || null);
+    formData.append("cost_price", parseFloat(data.cost_price));
+    formData.append("selling_price", parseFloat(data.selling_price));
+    formData.append("quantity", parseInt(data.quantity));
+    formData.append("low_stock_threshold", parseInt(data.low_stock_count));
+    formData.append("high_stock_threshold", 999);
+    formData.append("sku", `SKU-${Date.now()}`);
+    formData.append("status", data.status);
+    formData.append(
+      "expiration_date",
+      data.expiration_date
+        ? new Date(data.expiration_date).toISOString()
+        : null
+    );
+    formData.append("category", data.category ? Number(data.category) : null);
+    formData.append("file", file);
 
     try {
-
       const url = `${BASE_URL}/v1/store/${storeInfo.id}/inventory/`;
-      console.log('Post To;', url)
-
-      const response = await axiosInstance.post(
-        url,
-        {
-          product_name: formData.name,
-          description: formData.description || null, 
-          cost_price: parseFloat(formData.cost_price),
-          selling_price: parseFloat(formData.selling_price),
-          quantity: parseInt(formData.quantity),
-          low_stock_threshold: parseInt(formData.low_stock_count),
-          high_stock_threshold: 999, 
-          sku: `SKU-${Date.now()}`, 
-          status: "IN STOCK",
-          expiration_date: formData.expiration_date
-          ? new Date(formData.expiration_date).toISOString()
-          : null,
-          category: formData.category ? Number(formData.category) : null,
-
+      const response = await axiosInstance.post(url, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      });
+
+      localStorage.setItem(
+        "NEW_PRODUCT",
+        JSON.stringify({
+          ...response.data,
+          id: crypto.randomUUID(),
+          currency: "₦",
+          last_updated: new Date().toISOString(),
+          status: "",
+        })
       );
-      console.log("response is", response.data)
-      
-      localStorage.setItem("NEW_PRODUCT", JSON.stringify({
-        ...response.data,
-        id: crypto.randomUUID(), 
-        currency: "₦",
-        last_updated: new Date().toISOString(),
-        status: "",
-      }));
       toast.success("Product added successfully!");
       navigate("/inventory/");
-
     } catch (error) {
       console.error("❌ API error:", error);
       toast.error(
@@ -112,7 +126,6 @@ const AddNewProduct = () => {
       );
     }
   };
-
 
   return (
     <>
@@ -122,13 +135,18 @@ const AddNewProduct = () => {
         </Link>
         <h1 className="text-lg font-bold lg:text-2xl">Add Product</h1>
       </div>
-      <form onSubmit={handleSubmit} className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5"
+      >
         <h4 className="text-accent-foreground font-medium">
           Product Images (optional)
         </h4>
         <div>
           <Label className="mt-3 mb-2 block">Upload Product Image</Label>
           <FileUpload
+            file={file}
+            handleFileChange={handleFileChange}
             description={
               <div className="flex flex-col gap-2">
                 <h5 className="text-sm">Upload Product Image</h5>
@@ -136,34 +154,46 @@ const AddNewProduct = () => {
               </div>
             }
           />
+          {errors.file && (
+            <p className="mt-0.5 h-1 text-[10px] text-red-500">
+              {errors.file.message}
+            </p>
+          )}
         </div>
         <h4 className="text-accent-foreground mt-10 mb-6 font-medium">
           Product Details
         </h4>
         <div className="flex flex-col gap-4">
-          <Input 
-            label="Product Name" 
-            placeholder="Enter product name" 
-            value={formData.name}
-            onChange={handleChange("name")}
+          <Input
+            label="Product Name"
+            placeholder="Enter product name"
+            {...register("name")}
+            error={errors.name?.message}
           />
           <Input
             label="Product Description"
             placeholder="Enter product description"
-            value={formData.description}
-            onChange={handleChange("description")}
+            {...register("description")}
+            error={errors.description?.message}
           />
           <ReactSelectCustomized
             options={productCategories}
             label={"Category"}
             onChange={handleCategoryChange}
+            error={errors.category?.message}
+          />
+          <ReactSelectCustomized
+            options={statusOptions}
+            label={"Status"}
+            onChange={handleStatusChange}
+            error={errors.status?.message}
           />
           <Input
             label="Expiration Date"
             placeholder="Enter product description"
             type="date"
-            value={formData.expiration_date}
-            onChange={handleChange("expiration_date")}
+            {...register("expiration_date")}
+            error={errors.expiration_date?.message}
           />
           <div className="flex flex-col items-start gap-4 lg:flex-row">
             <Input
@@ -171,32 +201,32 @@ const AddNewProduct = () => {
               placeholder="400"
               type="number"
               leftIcon={<span className="pl-1 text-xs">₦</span>}
-              value={formData.cost_price}
-              onChange={handleChange("cost_price")}
+              {...register("cost_price")}
+              error={errors.cost_price?.message}
             />
             <Input
               label="Product Selling Price"
               placeholder="400"
               type="number"
               leftIcon={<span className="pl-1 text-xs">₦</span>}
-              value={formData.selling_price}
-              onChange={handleChange("selling_price")}
+              {...register("selling_price")}
+              error={errors.selling_price?.message}
             />
           </div>
           <div className="flex flex-col items-start gap-4 lg:flex-row">
-            <Input 
-              label="Product Quantity" 
-              placeholder="400" 
-              type="number" 
-              value={formData.quantity}
-              onChange={handleChange("quantity")}
+            <Input
+              label="Product Quantity"
+              placeholder="400"
+              type="number"
+              {...register("quantity")}
+              error={errors.quantity?.message}
             />
-            <Input 
-              label="Low Stock Count" 
-              placeholder="400" 
-              type="number" 
-              value={formData.low_stock_count}
-              onChange={handleChange("low_stock_count")}
+            <Input
+              label="Low Stock Count"
+              placeholder="400"
+              type="number"
+              {...register("low_stock_count")}
+              error={errors.low_stock_count?.message}
             />
           </div>
           <Button type="submit">Add new Product</Button>
@@ -207,3 +237,4 @@ const AddNewProduct = () => {
 };
 
 export default AddNewProduct;
+
