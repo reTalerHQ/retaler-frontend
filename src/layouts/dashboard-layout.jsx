@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../context/user-context";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import {
@@ -33,23 +33,16 @@ export const DashboardLayout = () => {
     queryKey: ["FETCH_USER_STORE"],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      console.log("🔐 Token:", tokenFromStorage);
-      const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
-      const response = await axiosInstance.get(
-        `${BASE_URL}/v1/store/`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenFromStorage}`,
-          },
+      const response = await axiosInstance.get(`${BASE_URL}/v1/store/`, {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
         },
-      );
-      console.log("🏪 Store Response:", response.data);
+      });
 
       const store = response?.data?.stores?.[0];
       if (!store) {
-        console.log("no store")
-      throw new Error("No store data found for this user.");
-    }
+        throw new Error("No store data found for this user.");
+      }
 
       setStoreInfo(store);
       console.log("✅ Set store in context:", store);
@@ -58,16 +51,60 @@ export const DashboardLayout = () => {
   });
 
   const [isSidebarOpened, setIsSidebarOpened] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
+    if (user) {
+      setUserRole(user.role);
+    }
+  }, []);
+
+  console.log({userRole});
+  
   const handleToggleSidebar = () => setIsSidebarOpened((v) => !v);
 
-  const sidebarLinks = [
-    { id: 1, title: "Dashboard", icon: <House />, to: "/dashboard" },
-    { id: 2, title: "Inventory", icon: <FolderSimple />, to: "/inventory" },
-    { id: 3, title: "Sales", icon: <CurrencyCircleDollar />, to: "/sales" },
-    { id: 4, title: "Analytics", icon: <TrendUp />, to: "/analytics" },
-    { id: 5, title: "Staff", icon: <User />, to: "/staff" },
+  const allSidebarLinks = [
+    {
+      id: 1,
+      title: "Dashboard",
+      icon: <House />,
+      to: "/dashboard",
+      roles: ["Manager", "Admin"],
+    },
+    {
+      id: 2,
+      title: "Inventory",
+      icon: <FolderSimple />,
+      to: "/inventory",
+      roles: ["Admin", "Manager", "Staff", "Sales Person"],
+    },
+    {
+      id: 3,
+      title: "Sales",
+      icon: <CurrencyCircleDollar />,
+      to: "/sales",
+      roles: ["Admin", "Manager", "Staff", "Sales Person"],
+    },
+    {
+      id: 4,
+      title: "Analytics",
+      icon: <TrendUp />,
+      to: "/analytics",
+      roles: ["Manager", "Admin"],
+    },
+    {
+      id: 5,
+      title: "Staff",
+      icon: <User />,
+      to: "/staff",
+      roles: ["Manager", "Admin"],
+    },
   ];
+
+  const sidebarLinks = allSidebarLinks.filter((link) =>
+    link.roles.includes(userRole),
+  );
 
   const showNotificationBadge = true;
 
@@ -76,7 +113,7 @@ export const DashboardLayout = () => {
       <div className="flex h-screen overflow-hidden bg-[#FAFAFA]">
         {/* Sidebar */}
         <aside
-          className={`fixed top-0 left-0 z-40 h-full w-full transform border-r border-[#BBBBBB] bg-white transition-transform duration-300 ease-in-out lg:w-[250px] ${isSidebarOpened ? "translate-x-0" : "-translate-x-full"} lg:static lg:translate-x-0 lg:transform-none`}
+          className={`fixed top-0 left-0 z-[9999999] h-full w-full transform border-r border-[#BBBBBB] bg-white transition-transform duration-300 ease-in-out lg:w-[250px] ${isSidebarOpened ? "translate-x-0" : "-translate-x-full"} lg:static lg:translate-x-0 lg:transform-none`}
         >
           <div className="flex h-24 items-center justify-between border-b border-[#BBBBBB] px-4">
             <Link to="/" className="hidden lg:block">

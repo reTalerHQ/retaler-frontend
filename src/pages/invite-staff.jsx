@@ -1,4 +1,5 @@
 import React from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ const schema = yup.object().shape({
 });
 
 export const InviteStaff = () => {
+  useRoleAccess(["Manager", "Admin"]);
   const navigate = useNavigate();
 
   const {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { useLocation } from "react-router-dom";
 import { BusinessOverviewCard } from "../components/business-overview-card";
 import { Mail, PhoneCallIcon } from "lucide-react";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { CustomLineChart } from "@/components/custom-line-chart";
 
 const StaffDetails = () => {
+  useRoleAccess(["Manager", "Admin"]);
   const [saleIds, setSaleIds] = useState([]);
   const dummySales = [
     {
@@ -186,7 +188,7 @@ const StaffDetails = () => {
               <span className="text-sm text-[#0088FF]"> {role} </span>
             </button>
           </div>
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center mt-2 lg:mt-0">
+          <div className="mt-2 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:items-center">
             <Button className="bg-[#F6F8FD] text-[#375ED9] hover:bg-inherit">
               <Mail /> Email {staffName}
             </Button>
@@ -196,7 +198,7 @@ const StaffDetails = () => {
           </div>
         </section>
 
-        <div className="mt-3.5 grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="mt-3.5 grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <section className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
               <div className="">
@@ -292,7 +294,7 @@ const StaffDetails = () => {
                   Role Assigned Permissions
                 </h2>
                 <button className="mt-5 rounded-lg border border-[#99CFFF] bg-[#E5F3FF] px-3 text-center">
-                  <span className="text-[#0088FF] text-sm"> {role} </span>
+                  <span className="text-sm text-[#0088FF]"> {role} </span>
                 </button>
                 <ul className="mt-5 list-none">
                   <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">

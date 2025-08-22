@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import useRoleAccess from "../hooks/use-role-access";
 import { BusinessOverviewCard } from "../components/business-overview-card";
 import {
   CheckCircle,
@@ -20,33 +21,41 @@ import { FETCH_SALES, FETCH_INVENTORY } from "@/constants/query-key";
 import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
+import { PagePreLoader } from "@/components/page-pre-loader";
 
 const Dashboard = () => {
+  useRoleAccess(["Manager", "Admin"]);
 
   const { storeInfo } = useUser();
-    
+
   const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
     queryKey: [FETCH_SALES, storeInfo?.id],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axiosInstance.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const rsp = await axiosInstance.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       return rsp?.data;
     },
     enabled: Boolean(storeInfo?.id),
   });
 
-    const { data: InventoryData = [], isLoading: isLoadingInventory } = useQuery({
+  const { data: InventoryData = [], isLoading: isLoadingInventory } = useQuery({
     queryKey: [FETCH_INVENTORY, storeInfo?.id],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axiosInstance.get(`${BASE_URL}/v1/store/${storeInfo.id}/inventory`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const rsp = await axiosInstance.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/inventory`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       return rsp?.data;
     },
-    select: (data) => Array.isArray(data) ? data : (data?.inventory ?? []),
+    select: (data) => (Array.isArray(data) ? data : (data?.inventory ?? [])),
     enabled: Boolean(storeInfo?.id),
   });
 
@@ -70,7 +79,6 @@ const Dashboard = () => {
     // Capitalize first letter (optional)
     return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
   }, [storeInfo]);
-
 
   const actionsLinks = [
     {
@@ -120,19 +128,17 @@ const Dashboard = () => {
     },
   ];
 
-  
   const hasOnboarded = true;
 
-  console.log({ storeInfo });
+  const totalRevenue = salesData.reduce(
+    (sum, sale) => sum + sale.total_amount,
+    0,
+  );
 
-
-  const totalRevenue = salesData.reduce((sum, sale) => sum + sale.total_amount, 0);
-
-  
   const totalProducts = InventoryData.reduce(
-  (sum, p) => sum + (Number(p?.quantity) || 0),
-  0
-);
+    (sum, p) => sum + (Number(p?.quantity) || 0),
+    0,
+  );
 
   return (
     <>
@@ -156,7 +162,9 @@ const Dashboard = () => {
             <BusinessOverviewCard
               title="Total Sales"
               count={`N ${formatCurrency(totalRevenue)}`}
-              icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
+              icon={
+                <CurrencyCircleDollar className="text-2xl text-[#038719]" />
+              }
               color="#E6F3E8"
               border="#98CEA1"
             />
@@ -200,61 +208,61 @@ const Dashboard = () => {
             </div>
             <div className="flex flex-col gap-8">
               {(salesData ?? [])
-               .slice() 
-               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) 
-               .slice(0, 6)
-               .map((item) => {
-                const productLines = item?.items?.length ?? 0;     
-                const amount = Number(item?.total_amount) || 0;
-                const currency = item?.currency || "₦";
-                const createdAt =
-                  item?.created_at ? new Date(item.created_at) : null;
-                 const lineItems = (item?.items ?? []).map((it) => {
-                  const qty = Number(it?.quantity) || 1;
-                  const name =
-                    it?.product?.product_name ||      // if backend expands product
-                    it?.product_name ||               // if backend flattens name
-                    inventoryNameById[it?.inventory_id] || // fallback to inventory lookup
-                    "Item";
-                  return `${qty} ${name}`;
-                });
+                .slice()
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 6)
+                .map((item) => {
+                  const productLines = item?.items?.length ?? 0;
+                  const amount = Number(item?.total_amount) || 0;
+                  const currency = item?.currency || "₦";
+                  const createdAt = item?.created_at
+                    ? new Date(item.created_at)
+                    : null;
+                  const lineItems = (item?.items ?? []).map((it) => {
+                    const qty = Number(it?.quantity) || 1;
+                    const name =
+                      it?.product?.product_name || // if backend expands product
+                      it?.product_name || // if backend flattens name
+                      inventoryNameById[it?.inventory_id] || // fallback to inventory lookup
+                      "Item";
+                    return `${qty} ${name}`;
+                  });
 
-                 const fullList = lineItems.join(", ");
+                  const fullList = lineItems.join(", ");
 
-                return (
-                  <div
-                    key={item.id}
-                    className="flex justify-between gap-2 lg:items-center"
-                  >
-                    <span className="inline-block aspect-square h-10 w-10 rounded-sm bg-[#CACDF6]"></span>
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex justify-between gap-2 lg:items-center"
+                    >
+                      <span className="inline-block aspect-square h-10 w-10 rounded-sm bg-[#CACDF6]"></span>
 
-                    <div className="flex flex-1 flex-col items-start justify-start gap-2 lg:flex-row lg:justify-between">
-                      <div>
-                        <h4 className="mb-2 font-semibold">
-                          {/* {productLines} {productLines === 1 ? "product" : "products"} */}
-                          <span
-                          className="block max-w-[360px] truncate"
-                          title={fullList} // hover shows full content
-                        >
-                          {fullList || "No items"}
-                        </span>
-                        </h4>
-                        {/* <p className="text-sm">Sold by: {item.created_by}</p> */}
-                      </div>
+                      <div className="flex flex-1 flex-col items-start justify-start gap-2 lg:flex-row lg:justify-between">
+                        <div>
+                          <h4 className="mb-2 font-semibold">
+                            {/* {productLines} {productLines === 1 ? "product" : "products"} */}
+                            <span
+                              className="block max-w-[360px] truncate"
+                              title={fullList} // hover shows full content
+                            >
+                              {fullList || "No items"}
+                            </span>
+                          </h4>
+                          {/* <p className="text-sm">Sold by: {item.created_by}</p> */}
+                        </div>
 
-                      <div className="">
-                        <h4 className="mb-2 text-sm font-semibold lg:text-base">
-                          {currency} {formatCurrency(amount)}
-                        </h4>
-                        <p className="text-sm">
-                          {createdAt ? format(createdAt, "hh:mm:ss a") : "—"}
-                        </p>
+                        <div className="">
+                          <h4 className="mb-2 text-sm font-semibold lg:text-base">
+                            {currency} {formatCurrency(amount)}
+                          </h4>
+                          <p className="text-sm">
+                            {createdAt ? format(createdAt, "hh:mm:ss a") : "—"}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-
+                  );
+                })}
             </div>
           </article>
         ) : (
@@ -287,6 +295,7 @@ const Dashboard = () => {
           </>
         )}
       </section>
+      {(isLoadingInventory || isLoadingSales) && <PagePreLoader />}
     </>
   );
 };
