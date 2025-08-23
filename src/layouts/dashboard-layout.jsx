@@ -59,15 +59,15 @@ export const DashboardLayout = () => {
       const staff_profile = response?.data?.user?.staff_profile?.[0];
       console.log({ stores, staff_profile });
 
-      const store = stores?.[0];
-      if (store) {
-        setStoreInfo(store);
+      const store_id = staff_profile?.store_id;
+      if (store_id) {
+        setStoreInfo({ id: store_id });
       }
 
       if (staff_profile) {
         userInfo.role = staff_profile?.role?.name;
         sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
-        setUserRole(staff_profile?.role?.name)
+        setUserRole(staff_profile?.role?.name);
       }
 
       // const staff = staffResponse?.data?.data ?? [];
@@ -142,7 +142,7 @@ export const DashboardLayout = () => {
 
   return (
     <>
-      <div className="flex h-screen dark:bg-[var(--background)] dark:text-white overflow-hidden bg-[#FAFAFA]">
+      <div className="flex h-screen overflow-hidden bg-[#FAFAFA] dark:bg-[var(--background)] dark:text-white">
         {/* Sidebar */}
         <aside
           className={`fixed top-0 left-0 z-[9999999] h-full w-full transform border-r border-[#BBBBBB] bg-white transition-transform duration-300 ease-in-out lg:w-[250px] ${isSidebarOpened ? "translate-x-0" : "-translate-x-full"} lg:static lg:translate-x-0 lg:transform-none`}
