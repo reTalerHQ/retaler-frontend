@@ -88,12 +88,12 @@ export const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+    <div className="flex min-h-screen items-center justify-center bg-blue-50 dark:bg-[#121212]">
+      <div className="my-0 flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl dark:bg-[#1e1e1e]">
         <h1 className="mb-2 text-lg font-semibold md:text-3xl">
           Create your Retaler Account
         </h1>
-        <p className="mb-2 text-sm text-gray-600 md:text-lg">
+        <p className="mb-2 text-sm text-gray-600 md:text-lg dark:text-white">
           Start by creating your account
         </p>
 
@@ -110,7 +110,7 @@ export const Signup = () => {
               type="email"
               placeholder="Enter your email address"
               {...register("email")}
-              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
+              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
             />
             {errors.email && (
               <p className="w-full text-sm text-red-500">
@@ -124,7 +124,7 @@ export const Signup = () => {
               type="text"
               placeholder="Enter your username"
               {...register("username")}
-              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
+              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
             />
             {errors.username && (
               <p className="w-full text-sm text-red-500">
@@ -137,7 +137,7 @@ export const Signup = () => {
               label="Password"
               type="password"
               placeholder="Enter a valid password"
-              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base"
+              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
               {...register("password")}
             />
             {errors.password && (
@@ -207,13 +207,13 @@ export const Signup = () => {
             label="Continue with Google"
             icon={GoogleIcon}
             onClick={() => console.log("Google login")}
-            className="text-sm font-semibold text-blue-700"
+            className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
           />
           <SocialAuthButton
             label="Continue with Apple"
             icon={AppleIcon}
             onClick={() => console.log("Apple login")}
-            className="text-sm font-semibold text-blue-700"
+            className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
           />
         </div>
 

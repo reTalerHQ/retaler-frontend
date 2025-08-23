@@ -19,8 +19,8 @@ export const Welcome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex h-screen w-xl flex-col items-center justify-center space-y-4 rounded-lg bg-white p-8 shadow-md md:my-1 md:max-w-xl">
+    <div className="flex min-h-screen items-center justify-center bg-blue-50 dark:bg-[var(--background)]">
+      <div className="my-0 flex h-screen w-xl flex-col items-center justify-center space-y-4 rounded-lg bg-white p-8 shadow-md md:my-1 md:max-w-xl dark:bg-[#1e1e1e]">
         <h1 className="font-trap mb-12 text-2xl font-bold text-gray-800 md:text-3xl">
           Welcome to ReTaler
         </h1>

@@ -279,7 +279,7 @@ const Inventory = () => {
               <Plus /> Add new Product
             </Button>
           </div>
-          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3 dark:text-black">
             <BusinessOverviewCard
               title="Total Products"
               count={totalProducts}
@@ -304,7 +304,7 @@ const Inventory = () => {
               border="#FFD633"
             />
           </div>
-          <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9">
+          <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border dark:rounded-2xl ">
             <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
               <h1 className="text-lg font-bold">All Products</h1>
               <div className="flex items-center gap-2">
@@ -325,6 +325,7 @@ const Inventory = () => {
               <p>Loading...</p>
             ) : (
               <DataTable
+            className="dark:bg-[#1e1e1e] "
                 columns={columns}
                 data={products}
                 enableRowSelection
@@ -361,7 +362,7 @@ const Inventory = () => {
                   onClick={() =>
                     handleUploadOptionSelect(UPLOAD_OPTIONS.MANUAL)
                   }
-                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.MANUAL ? "border-primary border" : ""}`}
+                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm dark:bg-[#1e1e1e] bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.MANUAL ? "border-primary border" : ""}`}
                 >
                   <div className="bg-primary flex aspect-square h-10 items-center justify-center rounded-full lg:h-14">
                     <Tag className="text-lg text-white lg:text-2xl" />
@@ -373,7 +374,7 @@ const Inventory = () => {
                   </p>
                 </div>
                 <div
-                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.SPREAD_SHEET ? "border-primary border" : ""}`}
+                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm dark:bg-[#1e1e1e] bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.SPREAD_SHEET ? "border-primary border" : ""}`}
                   onClick={() =>
                     handleUploadOptionSelect(UPLOAD_OPTIONS.SPREAD_SHEET)
                   }

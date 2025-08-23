@@ -18,6 +18,12 @@ import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { CustomLineChart } from "@/components/custom-line-chart";
+import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { TOKEN_IDENTIFIER } from "@/constants";
+import { BASE_URL } from "@/constants/api";
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_PERMISSIONS } from "@/constants/query-key";
 
 const StaffDetails = () => {
   useRoleAccess(["Manager", "Admin"]);
@@ -164,7 +170,33 @@ const StaffDetails = () => {
   ];
 
   const location = useLocation();
-  const { staffName, role, status } = location.state || {};
+  const { name, role, status, id } = location.state || {};
+  const { storeInfo, staffInfo } = useUser();
+
+  console.log(staffInfo);
+
+  const { isLoading: isLoadingRoles, data: permissions } = useQuery({
+    queryKey: [FETCH_PERMISSIONS],
+    queryFn: async () => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const rsp = await axios.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/permission/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      return rsp?.data?.data;
+    },
+  });
+
+  const roleList = permissions
+    ? Array.isArray(permissions)
+      ? permissions
+      : [permissions]
+    : [];
+  // console.log("permissions are:", roleList);
 
   return (
     <>
@@ -175,9 +207,9 @@ const StaffDetails = () => {
           </Link>
           <h1 className="text-lg font-bold lg:text-2xl">Staff Details</h1>
         </div>
-        <section className="mt-5 flex flex-col rounded-xl border border-[#EFEEEE] bg-white px-3.5 py-3.5 lg:flex-row lg:justify-between">
+        <section className="mt-5 flex flex-col rounded-xl border border-[#EFEEEE] bg-white px-3.5 py-3.5 lg:flex-row lg:justify-between dark:bg-[#1e1e1e] dark:border dark:border-white">
           <div>
-            <h2 className="text-2xl font-semibold lg:text-3xl">{staffName}</h2>
+            <h2 className="text-2xl font-semibold lg:text-3xl">{name}</h2>
             <button className="rounded-lg border border-[#98CEA1] bg-[#E6F3E8] px-3 text-center">
               <span className="flex items-center justify-center gap-1 text-sm text-[#038719]">
                 <span className="aspect-square h-1.5 rounded-full bg-[#038719]"></span>{" "}
@@ -188,19 +220,20 @@ const StaffDetails = () => {
               <span className="text-sm text-[#0088FF]"> {role} </span>
             </button>
           </div>
+          {/* <div className="mt-2 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:items-center"> */}
           <div className="mt-2 flex flex-col gap-4 lg:mt-0 lg:flex-row lg:items-center">
             <Button className="bg-[#F6F8FD] text-[#375ED9] hover:bg-inherit">
-              <Mail /> Email {staffName}
+              <Mail /> Email {name}
             </Button>
             <Button className="bg-[#375ED9]">
-              <PhoneCallIcon /> Call {staffName}
+              <PhoneCallIcon /> Call {name}
             </Button>
           </div>
         </section>
 
         <div className="mt-3.5 grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <section className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
+            <section className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:bg-[#1e1e1e]">
               <div className="">
                 <h3 className="text-xl font-semibold">Performance Review</h3>
                 <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -230,7 +263,7 @@ const StaffDetails = () => {
                 </div>
               </div>
             </section>
-            <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white lg:p-4 lg:px-5">
+            <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white lg:p-4 lg:px-5 dark:bg-[#1e1e1e]">
               <div className="mt-3 mb-8 flex gap-3 lg:flex-row lg:justify-between">
                 <h2 className="text-xl font-semibold">Sale History</h2>
                 <div className="flex gap-2 lg:items-center">
@@ -261,7 +294,7 @@ const StaffDetails = () => {
 
           <div>
             <section>
-              <div className="mx-2 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
+              <div className="mx-2 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:bg-[#1e1e1e]">
                 <h2 className="text-xl font-semibold text-[#373636]">
                   Revenue Generated
                 </h2>
@@ -289,7 +322,7 @@ const StaffDetails = () => {
                   />
                 </div>
               </div>
-              <div className="mx-2 mt-8 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
+              <div className="mx-2 mt-8 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:bg-[#1e1e1e]">
                 <h2 className="text-xl font-semibold text-[#373636]">
                   Role Assigned Permissions
                 </h2>
@@ -297,18 +330,38 @@ const StaffDetails = () => {
                   <span className="text-sm text-[#0088FF]"> {role} </span>
                 </button>
                 <ul className="mt-5 list-none">
-                  <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
-                    View Products
-                  </li>
-                  <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
-                    View All Sales
+                  {roleList.map((perm, index) => {
+                    const [module, action] = perm.split(".");
+                    const formatted =
+                      module.charAt(0).toUpperCase() +
+                      module.slice(1) +
+                      " - " +
+                      action.charAt(0).toUpperCase() +
+                      action.slice(1);
+
+                    return (
+                      <li
+                        className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5 text-black dark:bg-[#2e2e2e] dark:text-white"
+                        key={index}
+                      >
+                        {formatted}
+                      </li>
+                    );
+                  })}
+
+                  {/* <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
+                    View All Sales {roleList.forEach((perm, index) => {
+                      <a key={index}>{perm}</a>
+                    })}
+                   
+                    
                   </li>
                   <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
                     Resord New Sales
                   </li>
                   <li className="rounded-md bg-[#F6F8FD] px-5 py-1.5">
                     Edit Sales Records
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </section>

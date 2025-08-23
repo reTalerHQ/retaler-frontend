@@ -7,42 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/data-table";
 import StaffOptions from "../components/staff-options";
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_STAFFS } from "@/constants/query-key";
+import { useUser } from "@/context/user-context";
 
 const ManageStaffRoles = () => {
   useRoleAccess(["Manager", "Admin"]);
-  const [selectedStaffRoleIds, setSelectedStaffRoleIds] = useState([]);
+  const [, setSelectedStaffRoleIds] = useState([]);
 
-  const staff = [
-    {
-      id: 1,
-      staffName: "John",
-      role: "Manager",
-    },
-    {
-      id: 2,
-      staffName: "Boma Amaechi",
-      role: "Sales Rep",
-    },
-    {
-      id: 1,
-      staffName: "Miriam",
-      role: "Inventory Manager",
-    },
-    {
-      id: 1,
-      staffName: "Kunle",
-      role: "Logistics",
-    },
-    {
-      id: 1,
-      staffName: "Amina Stores",
-      role: "Owner",
-    },
-  ];
+  const { storeInfo } = useUser();
+  const { data: staffs } = useQuery({
+    queryKey: [FETCH_STAFFS, storeInfo?.id],
+    enabled: !!storeInfo?.id,
+  });
+  const staffList = staffs ? (Array.isArray(staffs) ? staffs : [staffs]) : [];
+
+  const staffListFormated = staffList.map((s) => ({
+    name: s.name || "--",
+    role: s.role || "--",
+  }));
 
   const columns = [
     {
-      accessorKey: "staffName",
+      accessorKey: "name",
       header: "Staff Name",
     },
     {
@@ -53,10 +40,9 @@ const ManageStaffRoles = () => {
       id: "actions",
       header: "",
       cell: ({ row }) => {
-        const name = row.original.staffName;
+        const name = row.original.name;
         const role = row.original.role;
-        const status = row.original.status;
-        return <StaffOptions staffName={name} role={role} status={status} />;
+        return <StaffOptions name={name} role={role} />;
       },
     },
   ];
@@ -82,7 +68,7 @@ const ManageStaffRoles = () => {
             </Button>
           </div>
         </section>
-        <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white px-3 py-4 lg:p-4 lg:px-5">
+        <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white px-3 py-4 lg:p-4 lg:px-5 dark:bg-[#1e1e1e] dark:border">
           <div className="mt-3 flex flex-row justify-between gap-3 lg:flex-row">
             <h2 className="text-xl font-semibold">All Staff</h2>
             <div className="flex gap-2 lg:items-center">
@@ -102,7 +88,7 @@ const ManageStaffRoles = () => {
           <div className="mt-10">
             <DataTable
               columns={columns}
-              data={staff}
+              data={staffListFormated}
               enableRowSelection
               onSelectedRowsChange={setSelectedStaffRoleIds}
               selectedRowClassName="bg-[#CACDF6]/30"

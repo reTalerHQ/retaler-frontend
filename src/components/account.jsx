@@ -205,7 +205,7 @@ export const Account = () => {
     <>
       <div className="flex flex-col justify-between gap-3 lg:flex-col">
         <h1 className="text-lg font-bold lg:text-2xl"> Account</h1>
-        <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw]">
+        <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[#1e1e1e]">
           <section>
             <div className="mb-2 flex w-full flex-row items-center justify-between">
               <h2 className="text-md font-semibold">Personal Information</h2>
@@ -237,7 +237,7 @@ export const Account = () => {
                     type="file"
                     accept="image/*"
                     ref={imageInputRef}
-                    className="absolute inset-0 cursor-pointer opacity-0"
+                    className="absolute inset-0 cursor-pointer opacity-0 dark:bg-[#383838]"
                     style={{ zIndex: 10 }}
                     onChange={handleImageChange}
                   />
@@ -251,6 +251,7 @@ export const Account = () => {
                     setEditedData({ ...editedData, name: e.target.value })
                   }
                   onFocus={(e) => e.target.select()}
+                  className="dark:bg-[#383838]"
                 />
                 <Input
                   label="Email Address"
@@ -259,6 +260,7 @@ export const Account = () => {
                     setEditedData({ ...editedData, email: e.target.value })
                   }
                   onFocus={(e) => e.target.select()}
+                  className="dark:bg-[#383838]"
                 />
                 <Input
                   label="Business Name"
@@ -267,6 +269,7 @@ export const Account = () => {
                     setEditedData({ ...editedData, business: e.target.value })
                   }
                   onFocus={(e) => e.target.select()}
+                  className="dark:bg-[#383838]"
                 />
               </div>
             </div>
@@ -283,6 +286,7 @@ export const Account = () => {
                   value={passwords.current}
                   readOnly
                   placeholder="Enter current password"
+                  className="dark:bg-[#383838]"
                 />
                 <button
                   type="button"
@@ -372,7 +376,7 @@ export const Account = () => {
                     setPasswords({ ...passwords, confirm: e.target.value });
                   }}
                   placeholder="Confirm new password"
-                  className={` ${passwords.confirm && passwords.new !== passwords.confirm ? "border-red-500" : ""}`}
+                  className={` ${passwords.confirm && passwords.new !== passwords.confirm ? "border-red-500" : ""} dark:bg-[#383838]`}
                 />
                 <button
                   type="button"
@@ -400,6 +404,7 @@ export const Account = () => {
             </div>
             <Button
               variant="destructive"
+              className={`dark:bg-[#c6100f]`}
               onClick={() => handleToggleModal(MODAL_TYPES.DELETE_ACCOUNT)}
             >
               Delete Account
@@ -422,7 +427,7 @@ export const Account = () => {
                 <h2 className="mb-2 text-center text-lg font-bold text-red-600">
                   Delete Your Account
                 </h2>
-                <p className="mb-4 text-center text-sm text-gray-700">
+                <p className="mb-4 text-center text-sm text-gray-700 dark:text-white">
                   This will permanently erase all your data including products,
                   sales, staff, and backups. You won't be able to recover this
                   information.
@@ -437,7 +442,7 @@ export const Account = () => {
                   <Button
                     variant="destructive"
                     onClick={handleDeleteAccount}
-                    className="min-w-[120px]"
+                    className="min-w-[120px] dark:bg-[#c6100f]"
                   >
                     Delete Account
                   </Button>

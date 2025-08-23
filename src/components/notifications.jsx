@@ -8,7 +8,7 @@ export const Notifications = () => {
         <>
             <div className="flex flex-col justify-between gap-3 lg:flex-col">
                 <h1 className="text-lg font-bold lg:text-2xl"> Notifications</h1>
-                <section className="flex flex-col gap-4 rounded-xl border bg-white px-4 py-4 w-full md:max-w-[50vw] md:w-[50vw]">
+                <section className="flex flex-col gap-4 rounded-xl border bg-white px-4 py-4 w-full md:max-w-[50vw] md:w-[50vw] dark:bg-[#1e1e1e]">
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row">
                             <h2 className="text-md font-semibold">

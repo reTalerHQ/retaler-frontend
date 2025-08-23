@@ -147,7 +147,7 @@ const Analytics = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-between gap-3 lg:flex-row">
+      <div className="flex flex-col justify-between gap-3 lg:flex-row dark:bg-[var(--background)]">
         <h1 className="text-lg font-bold lg:text-2xl">Analytics</h1>
         <div className="items-ceter flex justify-between gap-3">
           <Button
@@ -167,7 +167,7 @@ const Analytics = () => {
         </div>
       </div>
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border">
           <h2 className="text-sm font-bold lg:text-base">
             Total Sales Revenue
           </h2>
@@ -199,7 +199,7 @@ const Analytics = () => {
             />
           </div>
         </div>
-        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border">
           <h2 className="text-sm font-bold lg:text-base">Profit Margin</h2>
           <div className="my-2 flex items-center justify-end">
             <p className="text-xs">Jan 1st – Dec 31st 2025</p>
@@ -224,7 +224,7 @@ const Analytics = () => {
             />
           </div>
         </div>
-        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+        <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border">
           <h2 className="text-sm font-bold lg:text-base">
             Top Product Performance
           </h2>
@@ -265,7 +265,7 @@ const Analytics = () => {
           </div>
         </div>
         <article className="relative z-50 flex min-h-[30vh] flex-col gap-3">
-          <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+          <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border">
             <h2 className="text-sm font-bold lg:text-base">
               Top Selling Product
             </h2>
@@ -290,7 +290,7 @@ const Analytics = () => {
               </p>
             </div>
           </div>
-          <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+          <div className="rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border">
             <h2 className="text-sm font-bold lg:text-base">
               Least Selling Product
             </h2>

@@ -27,12 +27,12 @@ export const InventorySettings = () => {
       <div className="flex flex-col justify-between gap-3 lg:flex-col">
         <h1 className="text-lg font-bold lg:text-2xl">Inventory</h1>
         <div className="flex w-full flex-col justify-between gap-3 md:w-[50vw] md:max-w-[50vw] lg:flex-col">
-          <section className="flex flex-col gap-4 rounded-xl border bg-white px-4 py-4">
+          <section className="flex flex-col gap-4 rounded-xl border bg-white px-4 py-4 dark:bg-[#1e1e1e]">
             <div className="flex flex-col gap-5">
               <div className="flex flex-row">
                 <h2 className="text-md font-semibold">
                   Low Stock Alert Threshold
-                  <p className="text-sm font-normal text-gray-500">
+                  <p className="text-sm font-normal text-gray-500 dark:text-white">
                     Get notified when product stock falls below this number
                   </p>
                 </h2>
@@ -62,12 +62,12 @@ export const InventorySettings = () => {
               )}
             </div>
           </section>
-          <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4">
+          <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 dark:bg-[#1e1e1e]">
             <div className="flex flex-col gap-5">
               <div className="flex flex-row">
                 <h2 className="text-md font-semibold">
                   Critical Stock Threshold
-                  <p className="text-sm font-normal text-gray-500">
+                  <p className="text-sm font-normal text-gray-500 dark:text-white">
                     Urgent alerts when stock is critically low
                   </p>
                 </h2>
@@ -103,7 +103,7 @@ export const InventorySettings = () => {
           <Button
             variant={canSave ? "default" : "secondary"}
             onClick={handleSave}
-            className={`w-[140px] min-w-[120px] ${canSave ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-700"} mt-4 self-end`}
+            className={`w-[140px] min-w-[120px] ${canSave ? "bg-blue-600 text-white" : "bg-gray-300 text-gray-700"} mt-4 self-end dark:bg-[#1e1e1e] dark:text-white`}
           >
             Save Settings
           </Button>

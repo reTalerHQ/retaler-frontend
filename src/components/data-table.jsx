@@ -76,7 +76,7 @@ export function DataTable({
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className={`dark:bg-[#1e1e1e] dark:border dark:hover:bg-[#2e2e2e]`}>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -100,7 +100,7 @@ export function DataTable({
               return (
                 <TableRow
                   key={row.id}
-                  className={`transition-colors ${
+                  className={`transition-colors dark:bg-[#1e1e1e] dark:hover:bg-[#2e2e2e] ${
                     isSelected ? selectedRowClassName : "bg-[#F9F9F9]/30" // gray background for unselected
                   }`}
                 >

@@ -199,7 +199,7 @@ export const AddNewSales = () => {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5"
+        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 dark:bg-[#1e1e1e]"
       >
         {/* search products */}
         <h4 className="text-accent-foreground font-medium">
