@@ -148,8 +148,8 @@ const Dashboard = () => {
       <p className="text-sm lg:text-base">
         Track your sales, manage inventory, and stay on top of your products
       </p>
-      <section className="mt-6 grid grid-cols-1 gap-6 lg:mt-10 lg:grid-cols-10 lg:gap-4">
-        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9">
+      <section className="mt-6 grid grid-cols-1 gap-6 lg:mt-10 lg:grid-cols-10 lg:gap-4 ">
+        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
           <h2 className="mb-6 text-lg font-bold">Business Overview</h2>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <BusinessOverviewCard
@@ -158,6 +158,7 @@ const Dashboard = () => {
               icon={<Tag className="text-2xl text-[#4C518F]" />}
               color="#F2F3FD"
               border="#CACDF6"
+              className="dark:text-black"
             />
             <BusinessOverviewCard
               title="Total Sales"
@@ -184,7 +185,7 @@ const Dashboard = () => {
             />
           </div>
         </article>
-        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-3 lg:px-5 lg:py-9">
+        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-3 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
           <h2 className="mb-6 text-lg font-bold">Quick Action</h2>
           <div className="flex flex-col gap-4">
             {actionsLinks.map((link) => (
@@ -199,7 +200,7 @@ const Dashboard = () => {
           </div>
         </article>
         {hasOnboarded ? (
-          <article className="col-span-full rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9">
+          <article className="col-span-full rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold">Recent Sales</h2>
               <Link to="/sales" className="text-sm text-[#767474]">

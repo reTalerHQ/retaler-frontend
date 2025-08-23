@@ -158,7 +158,7 @@ const Sales = () => {
         <div className="items-ceter flex justify-between gap-3">
           <Button
             className={
-              "text-primary border-0 bg-transparent shadow-none hover:bg-transparent hover:opacity-50"
+              "text-primary border-0 bg-transparent shadow-none hover:bg-transparent hover:opacity-50 dark:bg-[#1e1e1e] dark:text-white"
             }
           >
             <Export />
@@ -174,7 +174,7 @@ const Sales = () => {
       </div>
 
       {/* OVERVIEW CARDS */}
-      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3 dark:text-black">
         <BusinessOverviewCard
           title="Total Sales"
           count={
@@ -211,7 +211,7 @@ const Sales = () => {
       </div>
 
       {/* SALES TABLE */}
-      <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9">
+      <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border dark:rounded-sm">
         <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
           <h1 className="text-lg font-bold">All Sales</h1>
 

@@ -5,7 +5,7 @@ import { Label } from "./ui/label"; // Ensure you have this or replace with a na
 const ReactSelectCustomized = ({ label, error, onChange, ...props }) => {
   return (
     <div className="flex flex-col gap-3">
-      {label && <Label htmlFor={props.id}>{label}</Label>}
+      {label && <Label className={`dark:text-white`} htmlFor={props.id}>{label}</Label>}
       <Select
         maxMenuHeight={200}
         onChange={onChange}

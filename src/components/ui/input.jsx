@@ -34,7 +34,7 @@ const Input = forwardRef(
 
     return (
       <div className="flex w-full flex-col gap-3">
-        {label ? <Label htmlFor={id}>{label}</Label> : null}
+        {label ? <Label className={`dark:text-white`} htmlFor={id}>{label}</Label> : null}
         <div className="relative">
           {leftIcon ? (
             <span className="text-fade absolute top-[1.75px] bottom-[1.75px] left-[1.5px] z-10 flex items-center justify-center">
@@ -44,7 +44,7 @@ const Input = forwardRef(
           <input
             type={type}
             className={cn(
-              `focus-visible:ring-primary flex h-9.5 w-full rounded-sm border border-[#BBBBBB] px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-300 focus:border-none focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
+              `dark:bg-[#383838] focus-visible:ring-primary flex h-9.5 w-full rounded-sm border border-[#BBBBBB] px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-300 focus:border-none focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${
                 leftIcon ? "pl-5" : ""
               } ${rightIcon ? "pr-5" : ""}`,
               type === "number" && "hide-number-arrows",

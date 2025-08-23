@@ -8,57 +8,38 @@ import { Input } from "@/components/ui/input";
 import { Funnel, MagnifyingGlass, FolderSimple, User } from "phosphor-react";
 import { DataTable } from "@/components/data-table";
 import StaffOptions from "../components/staff-options";
+import { useUser } from "@/context/user-context";
+import { useQuery } from "@tanstack/react-query";
+import { FETCH_STAFFS } from "@/constants/query-key";
 
 const Staff = () => {
   useRoleAccess(["Manager", "Admin"]);
-  const [selectedStaffIds, setSelectedStaffIds] = useState([]);
-  const staff = [
-    {
-      id: 1,
-      staffName: "John",
-      role: "Manager",
-      status: "Online",
-      loginTime: "9:00 AM",
-      logoutTime: "5:00 PM",
-    },
-    {
-      id: 2,
-      staffName: "Boma Amaechi",
-      role: "Sales Rep",
-      status: "Online",
-      loginTime: "9:00 AM",
-      logoutTime: "5:00 PM",
-    },
-    {
-      id: 1,
-      staffName: "Miriam",
-      role: "Inventory Manager",
-      status: "Offline",
-      loginTime: "9:00 AM",
-      logoutTime: "5:00 PM",
-    },
-    {
-      id: 1,
-      staffName: "Kunle",
-      role: "Logistics",
-      status: "Offline",
-      loginTime: "9:00 AM",
-      logoutTime: "5:00 PM",
-    },
-    {
-      id: 1,
-      staffName: "Amina Stores",
-      role: "Owner",
-      status: "Online",
-      loginTime: "8:00 AM",
-      logoutTime: "5:00 PM",
-    },
-  ];
+  const [, setSelectedStaffIds] = useState([]);
+  // const [staff, setStaff] = useState([])
+
+  const { storeInfo } = useUser();
+  // This uses a default queryfn from main.jsx
+  const { isLoading: isLoadingStaffs, data: staffs } = useQuery({
+    queryKey: [FETCH_STAFFS, storeInfo?.id],
+    enabled: !!storeInfo?.id,
+  });
+
+  // confirms if staffList is an array
+  const staffList = staffs ? (Array.isArray(staffs) ? staffs : [staffs]) : [];
+
+  const staffListFormated = staffList.map((s) => ({
+    name: s.name || "--",
+    role: s.role || "--",
+    id: s.id || "--",
+    status: s.status || "--",
+    login_time: s.login_time || "--",
+    logout_time: s.logout_time || "--",
+  }));
 
   const columns = [
     {
-      accessorKey: "staffName",
-      header: "Staff Name",
+      accessorKey: "name",
+      header: "Name",
     },
     {
       accessorKey: "role",
@@ -78,21 +59,22 @@ const Staff = () => {
       },
     },
     {
-      accessorKey: "loginTime",
+      accessorKey: "login_time",
       header: "Login Time",
     },
     {
-      accessorKey: "logoutTime",
+      accessorKey: "logout_time",
       header: "Logout Time",
     },
     {
       id: "actions",
       header: "",
       cell: ({ row }) => {
-        const name = row.original.staffName;
+        const name = row.original.name;
         const role = row.original.role;
         const status = row.original.status;
-        return <StaffOptions staffName={name} role={role} status={status} />;
+        const id = row.original.id;
+        return <StaffOptions name={name} role={role} status={status} id={id} />;
       },
     },
   ];
@@ -105,24 +87,28 @@ const Staff = () => {
         <section className="flex flex-col md:flex-row md:justify-between">
           <h1 className="mb-3 text-xl font-bold lg:text-3xl">Staff</h1>
           <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-            <Button className="bg-[#EFEEEE] hover:bg-[#EFEEEE]">
+            <Button className="bg-[#EFEEEE] hover:bg-[#EFEEEE] dark:bg-[#383838]">
               <Link
                 to="/invite-staff"
-                className="inline-flex gap-1.5 text-black"
+                className="inline-flex gap-1.5 text-black dark:text-white"
               >
                 <Share2Icon /> Invite staff
               </Link>
             </Button>
-            <Button className="bg-[#EFEEEE] hover:bg-[#EFEEEE]">
+            <Button className="bg-[#EFEEEE] hover:bg-[#EFEEEE] dark:bg-[#383838]">
               <Link
                 to="/staff/manage-staff-roles"
-                className="inline-flex gap-1.5 text-black"
+                className="inline-flex gap-1.5 text-black dark:text-white"
+                state={{
+                  name: staffListFormated.name,
+                  role: staffListFormated.role,
+                }}
               >
                 <User /> Manage Staff Roles
               </Link>
             </Button>
-            <Button>
-              <Link to="/staff/add-new-staff" className="inline-flex gap-1.5">
+            <Button className="dark:bg-[#365ed8]">
+              <Link to="/staff/add-new-staff" className="inline-flex gap-1.5 dark:text-white">
                 <Plus />
                 Add New Staff
               </Link>
@@ -131,7 +117,7 @@ const Staff = () => {
         </section>
 
         {hasAddedStaff ? (
-          <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white lg:p-4 lg:px-5">
+          <section className="mt-8 rounded-sm border border-[#EFEEEE] bg-white lg:p-4 lg:px-5 dark:bg-[var(--background)] dark:border">
             <div className="mt-3 flex flex-row justify-between gap-3 lg:flex-row">
               <h2 className="text-xl font-semibold">All Staff</h2>
               <div className="flex gap-2 lg:items-center">
@@ -151,7 +137,7 @@ const Staff = () => {
             <div className="mt-10">
               <DataTable
                 columns={columns}
-                data={staff}
+                data={staffListFormated}
                 enableRowSelection
                 onSelectedRowsChange={setSelectedStaffIds}
                 selectedRowClassName="bg-[#CACDF6]/30"

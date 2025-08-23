@@ -1,28 +1,38 @@
-import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { ThemeContext } from "@/context/theme-context";
 import { Switch } from "@/components/ui/switch";
 
 export const Theme = () => {
-  const [inAppAlerts, setInAppAlerts] = useState(true);
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "light";
-  });
+  // const [inAppAlerts, setInAppAlerts] = useState(true);
+  const {theme, setTheme} = useContext(ThemeContext);
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+  // useEffect(() => {
+  //   if (theme === 'dark') {
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  //     document.documentElement.classList.add('dark');
+  //   } else {
+
+  //     document.documentElement.classList.remove('dark');
+  //   }
+  //   // document.documentElement.setAttribute("data-theme", theme);
+  //   localStorage.setItem("theme", theme);
+  // }, [theme]);
+
+  // const toggleTheme = () => {
+  //   setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  // };
+
+  //   const toggleTheme = (checked) => {
+  //   setTheme((prev) => (prev === checked ? "dark" : "light"));
+  // };
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3 dark:bg-[var(--background)]">
       <header>
         <h1 className="text-lg font-bold lg:text-2xl">Theme</h1>
       </header>
 
-      <section className="flex flex-col gap-4 rounded-xl border bg-white px-4 py-4 w-full md:max-w-[50vw] md:w-[50vw]">
+      <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[var(--background)]">
         <article className="flex items-center justify-between">
           <div>
             <h2 className="text-md font-semibold">System</h2>
@@ -31,8 +41,12 @@ export const Theme = () => {
             thumbSize="size-5"
             trackWidth="w-10"
             trackHeight="h-6"
-            checked={inAppAlerts}
-            onCheckedChange={setInAppAlerts}
+            checked={theme === "light"}
+            // checked={inAppAlerts}
+            // onCheckedChange={setInAppAlerts}
+            onCheckedChange={() =>
+              setTheme(theme === "light" ? "dark" : "light")
+            }
           />
         </article>
 
@@ -45,7 +59,9 @@ export const Theme = () => {
             trackWidth="w-10"
             trackHeight="h-6"
             checked={theme === "dark"}
-            onCheckedChange={toggleTheme}
+            onCheckedChange={() =>
+              setTheme(theme === "light" ? "dark" : "light")
+            }
           />
         </article>
       </section>

@@ -10,6 +10,8 @@ import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
 import { PagePreLoader } from "@/components/page-pre-loader";
+import { useContext } from "react";
+import { UserContext } from "@/context/user-context";
 
 // ✅ New validation schema
 const schema = yup.object({
@@ -35,6 +37,7 @@ const AcceptStaffInvite = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [accessToken, setAccessToken] = useState(null);
+  const { setStaffInfo } = useContext(UserContext);
 
   const {
     register,
@@ -86,6 +89,7 @@ const AcceptStaffInvite = () => {
         `${BASE_URL}/v1/store/accept-invitation?token=${accessToken}`,
         payload,
       );
+      setStaffInfo(data.staffInfo);
       toast.success(rsp.data.detail);
       navigate("/sign-in");
     } catch (error) {

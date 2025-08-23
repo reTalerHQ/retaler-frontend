@@ -127,6 +127,14 @@ const AddNewProduct = () => {
     }
   };
 
+  if (formData.quantity > formData.low_stock_count) {
+    formData.status === 'IN STOCK'
+  } else if (formData.quantity < formData.low_stock_count) {
+    formData.status === 'OUT OF STOCK'
+  } else {
+    formData.status === ''
+  }
+
   return (
     <>
       <div className="flex items-center gap-1">
@@ -137,20 +145,21 @@ const AddNewProduct = () => {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5"
+        className="mt-6 rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 dark:bg-[#1e1e1e]"
       >
         <h4 className="text-accent-foreground font-medium">
           Product Images (optional)
         </h4>
         <div>
-          <Label className="mt-3 mb-2 block">Upload Product Image</Label>
+          <Label className="mt-3 mb-2 block dark:text-white">Upload Product Image</Label>
           <FileUpload
+          className={`dark:bg-[#2e2e2e]`}
             file={file}
             handleFileChange={handleFileChange}
             description={
               <div className="flex flex-col gap-2">
                 <h5 className="text-sm">Upload Product Image</h5>
-                <p className="text-xs font-light">Max file size: 5mb</p>
+                <p className="text-xs font-light dark:text-white">Max file size: 5mb</p>
               </div>
             }
           />
@@ -164,22 +173,25 @@ const AddNewProduct = () => {
           Product Details
         </h4>
         <div className="flex flex-col gap-4">
-          <Input
-            label="Product Name"
-            placeholder="Enter product name"
-            {...register("name")}
-            error={errors.name?.message}
+          <Input 
+            label="Product Name" 
+            placeholder="Enter product name" 
+            value={formData.name}
+            onChange={handleChange("name")}
+            className={`dark:bg-[#383838]`}
           />
           <Input
             label="Product Description"
             placeholder="Enter product description"
-            {...register("description")}
-            error={errors.description?.message}
+            value={formData.description}
+            onChange={handleChange("description")}
+               className={`dark:bg-[#383838]`}
           />
           <ReactSelectCustomized
             options={productCategories}
             label={"Category"}
             onChange={handleCategoryChange}
+               className={`dark:bg-[#383838]`}
             error={errors.category?.message}
           />
           <ReactSelectCustomized
@@ -194,6 +206,7 @@ const AddNewProduct = () => {
             type="date"
             {...register("expiration_date")}
             error={errors.expiration_date?.message}
+               className={`dark:bg-[#383838]`}
           />
           <div className="flex flex-col items-start gap-4 lg:flex-row">
             <Input
@@ -203,6 +216,7 @@ const AddNewProduct = () => {
               leftIcon={<span className="pl-1 text-xs">₦</span>}
               {...register("cost_price")}
               error={errors.cost_price?.message}
+                 className={`dark:bg-[#383838]`}
             />
             <Input
               label="Product Selling Price"
@@ -211,6 +225,7 @@ const AddNewProduct = () => {
               leftIcon={<span className="pl-1 text-xs">₦</span>}
               {...register("selling_price")}
               error={errors.selling_price?.message}
+                 className={`dark:bg-[#383838]`}
             />
           </div>
           <div className="flex flex-col items-start gap-4 lg:flex-row">
@@ -220,6 +235,7 @@ const AddNewProduct = () => {
               type="number"
               {...register("quantity")}
               error={errors.quantity?.message}
+                 className={`dark:bg-[#383838]`}
             />
             <Input
               label="Low Stock Count"
@@ -227,6 +243,7 @@ const AddNewProduct = () => {
               type="number"
               {...register("low_stock_count")}
               error={errors.low_stock_count?.message}
+                 className={`dark:bg-[#383838]`}
             />
           </div>
           <Button type="submit">Add new Product</Button>

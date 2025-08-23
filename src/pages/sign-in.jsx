@@ -86,19 +86,19 @@ const Signin = () => {
   const navigate = useNavigate();
   return (
     <>
-      <section className="flex min-h-screen items-center justify-center bg-blue-50">
-        <div className="flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl">
+      <section className="flex min-h-screen items-center justify-center bg-[var(--background)] dark:bg-[var(--background)]">
+        <div className="flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl dark:bg-[#1e1e1e]">
           <h1 className="text-[20px] font-semibold md:text-[36px] md:font-bold">
             Welcome Back!
           </h1>
-          <p className="mb:text-[20px] text-[14px] text-[#373636] md:text-xl">
+          <p className="mb:text-[20px] text-[14px] text-[#373636] md:text-xl dark:text-white">
             Log in with your email and password
           </p>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="mt-4">
               <label
                 htmlFor="email"
-                className="mb:text-[14px] text-[16px] text-[#373636]"
+                className="mb:text-[14px] text-[16px] text-[#373636] dark:text-white"
               >
                 Email Address
               </label>
@@ -106,7 +106,7 @@ const Signin = () => {
                 type="email"
                 required={true}
                 placeholder="Enter your email address"
-                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base"
+                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
                 {...register("email")}
               />
               {errors.email && (
@@ -119,7 +119,7 @@ const Signin = () => {
             <div>
               <label
                 htmlFor="password"
-                className="mb:text-[14px] text-[16px] text-[#373636]"
+                className="mb:text-[14px] text-[16px] text-[#373636] dark:text-white"
               >
                 Password
               </label>
@@ -127,7 +127,7 @@ const Signin = () => {
                 type="password"
                 required={true}
                 placeholder="Enter a valid password"
-                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base"
+                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
                 {...register("password")}
               />
               {errors.password && (
@@ -165,7 +165,7 @@ const Signin = () => {
           </form>
           <div className="my-4 flex items-center justify-center space-x-2">
             <div className="h-[1px] w-full bg-gray-300"></div>
-            <p className="text-gray-600">or</p>
+            <p className="text-gray-600 dark:text-white">or</p>
             <div className="h-[1px] w-full bg-gray-300"></div>
           </div>
           {/* social logins */}
@@ -174,17 +174,17 @@ const Signin = () => {
               label="Continue with Google"
               icon={GoogleIcon}
               onClick={() => console.log("Google login")}
-              className="text-sm font-semibold text-blue-700"
+              className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
             />
             <SocialAuthButton
               label="Continue with Apple"
               icon={AppleIcon}
               onClick={() => console.log("Apple login")}
-              className="text-sm font-semibold text-blue-700"
+              className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
             />
           </div>
           {/* bottom login link */}
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-white">
             New to ReTaler? {""}
             <Link
               to="/signup"

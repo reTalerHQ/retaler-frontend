@@ -110,12 +110,12 @@ export const DashboardLayout = () => {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden bg-[#FAFAFA]">
+      <div className="flex h-screen dark:bg-[var(--background)] dark:text-white overflow-hidden bg-[#FAFAFA]">
         {/* Sidebar */}
         <aside
           className={`fixed top-0 left-0 z-[9999999] h-full w-full transform border-r border-[#BBBBBB] bg-white transition-transform duration-300 ease-in-out lg:w-[250px] ${isSidebarOpened ? "translate-x-0" : "-translate-x-full"} lg:static lg:translate-x-0 lg:transform-none`}
         >
-          <div className="flex h-24 items-center justify-between border-b border-[#BBBBBB] px-4">
+          <div className="flex h-24 items-center justify-between border-b border-[#BBBBBB] px-4 dark:bg-[#1e1e1e]">
             <Link to="/" className="hidden lg:block">
               <img src="/assets/images/retaler-logo.svg" alt="Retaler" />
             </Link>
@@ -128,7 +128,7 @@ export const DashboardLayout = () => {
             </button>
           </div>
 
-          <nav className="flex h-[calc(100%-10rem)] flex-col gap-4 overflow-y-auto px-6 py-6">
+          <nav className="flex h-[calc(100%-10rem)] flex-col gap-4 overflow-y-auto px-6 py-6 dark:bg-[#1e1e1e]">
             {sidebarLinks.map((link) => (
               <NavLink
                 key={link.id}
@@ -138,7 +138,7 @@ export const DashboardLayout = () => {
                   `flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors ${
                     isActive
                       ? "text-primary font-medium hover:bg-[#F6F8FD]"
-                      : "text-gray-700 hover:bg-gray-100"
+                      : "text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:text-black"
                   }`
                 }
               >
@@ -148,7 +148,7 @@ export const DashboardLayout = () => {
             ))}
           </nav>
 
-          <div className="border-t border-[#BBBBBB] px-6 py-4">
+          <div className="border-t border-[#BBBBBB] px-6 py-4 dark:bg-[#1e1e1e] dark:text-white">
             <NavLink
               to="/settings"
               onClick={() => setIsSidebarOpened(false)}
@@ -156,7 +156,7 @@ export const DashboardLayout = () => {
                 `flex items-center gap-2 rounded-md px-3 py-2 text-base transition-colors ${
                   isActive
                     ? "text-primary font-medium hover:bg-[#F6F8FD]"
-                    : "text-gray-700 hover:bg-gray-100"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-white dark:hover:text-black"
                 }`
               }
             >

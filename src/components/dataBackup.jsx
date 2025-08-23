@@ -35,7 +35,7 @@ export const DataBackup = () => {
           <X className="w-10 h-10 md:w-5 md:h-5 text-green-700 ml-auto cursor-pointer" onClick={ handleCloseNotification} />
         </section>
         )}
-        <section className="flex w-full flex-row gap-6 border rounded-xl bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw]">
+        <section className="flex w-full flex-row gap-6 border rounded-xl bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[#1e1e1e]">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-4">
               <h2 className="text-md font-semibold">Backup Account</h2>
@@ -50,7 +50,7 @@ export const DataBackup = () => {
             </div>
           </div>
         </section>
-        <section className="w-full rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw]">
+        <section className="w-full rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[#1e1e1e]">
           <div className="flex flex-col gap-6 w-full">
             <div className="flex flex-col gap-5 w-full">
               <h2 className="text-md font-semibold">Backup Details</h2>
@@ -69,7 +69,7 @@ export const DataBackup = () => {
             </div>
           </div>
         </section>
-        <section className="w-full  rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw]">
+        <section className="w-full  rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[#1e1e1e]">
           <div className="flex w-full flex-col gap-6">
             <h2 className="text-md font-semibold">Backup Settings</h2>
             <div className="flex w-full flex-row items-center">
@@ -77,7 +77,7 @@ export const DataBackup = () => {
                 <h2 className="text-sm font-semibold">
                   Enable Automatic Backup
                 </h2>
-                <p className="text-sm font-normal text-gray-500">
+                <p className="text-sm font-normal text-gray-500 dark:text-white">
                   Notifications will appear inside the app as pop-ups or
                   banners.
                 </p>
@@ -107,7 +107,7 @@ export const DataBackup = () => {
                             checked={selected === option.value}
                             onCheckedChange={() => setSelected(option.value)}
                           />
-                          <label className="text-sm text-gray-500">
+                          <label className="text-sm text-gray-500 dark:text-white">
                             {option.label}
                           </label>
                         </div>
@@ -122,7 +122,7 @@ export const DataBackup = () => {
                 <h2 className="text-sm font-semibold">
                   Backup Now
                 </h2>
-                <p className="text-sm font-normal text-gray-500">
+                <p className="text-sm font-normal text-gray-500 dark:text-white">
                   Don't want auto-backup? You can back up manually anytime.
                 </p>
               </div>

@@ -28,11 +28,11 @@ export const InviteFriend = () => {
       )}
             <div className="flex flex-col justify-between gap-3 lg:flex-col">
                 <h1 className="text-lg font-bold lg:text-2xl"> Invite a Friend to ReTaler </h1>
-                <section className="flex flex-row gap-4 rounded-xl border bg-white px-4 py-4 w-full md:max-w-[50vw] md:w-[50vw]">
+                <section className="flex flex-row gap-4 rounded-xl border bg-white px-4 py-4 w-full md:max-w-[50vw] md:w-[50vw] dark:bg-[#1e1e1e]">
                     <div className="flex flex-col gap-6">
                             <h2 className="text-lg font-semibold">
                                 Earn rewards when your friends join ReTaler!
-                                <p className="text-sm text-gray-500 font-normal">
+                                <p className="text-sm text-gray-500 font-normal dark:text-white">
                                     When they sign up using your link, you both get resources to increase your earnings.
                                 </p>
                             </h2>
@@ -46,21 +46,21 @@ export const InviteFriend = () => {
                                     onChange={() => {}}
                                     readOnly
                                     placeholder="https://retaler.com/invite?ref=yourUniqueCode" 
-                                    className="bg-gray-100 text-gray-500 border-none w-[70%] h-12"
+                                    className="bg-gray-100 text-gray-500 border-none w-[70%] h-12 dark:placeholder-white dark:bg-[#383838]"
                                 />
                             </div>
                             <div className="flex flex-row gap-4">
                                 <Button
                                     variant='secondary'
                                     onClick={handleShare}
-                                    className={`w-[140px] min-w-[120px] self-end mt-4`}
+                                    className={`w-[140px] min-w-[120px] self-end mt-4 dark:bg-white dark:text-blue-600`}
                                 >
                                     Share Link
                                 </Button>
                                 <Button
                                     variant='default'
                                     onClick={handleCopy}
-                                    className={`w-[140px] min-w-[120px] self-end mt-4`}
+                                    className={`w-[140px] min-w-[120px] self-end mt-4 dark:bg-[#365ed8] dark:text-white`}
                                 >
                                     Copy Link
                                 </Button>

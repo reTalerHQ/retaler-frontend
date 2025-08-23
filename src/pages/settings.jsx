@@ -14,7 +14,7 @@ export const Settings = () => {
 
     return (
         <>
-            <div className="flex flex-col justify-between gap-3 lg:flex-col">
+            <div className="dark:bg-[var(--background)] flex flex-col justify-between gap-3 lg:flex-col">
           
             {(!isMobile || isAtRootSettings) && (
                 <h1 className="text-lg font-bold lg:text-2xl">Settings</h1>

@@ -32,11 +32,11 @@ export const SettingsBar = ({ setActiveSetting, className }) => {
   return (
     <>
       {showLogoutToast && (
-        <div className="fixed top-20 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 transition-all">You've been Logged out successfully</div>
+        <div className=" fixed top-20 right-6 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 transition-all">You've been Logged out successfully</div>
       )}
-      <aside className={`${className}`}>
+      <aside className={`${className} dark:bg-[#1e1e1e] dark:text-white`}>
         <div className="">
-          <h2 className="text-lg font-semibold !text-gray-500">General</h2>
+          <h2 className="text-lg font-semibold !text-gray-500 dark:!text-white">General</h2>
           <div>
             {generalBarLinks.map((link) => (
               <NavLink
@@ -47,8 +47,9 @@ export const SettingsBar = ({ setActiveSetting, className }) => {
                   `flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors ${
                     isActive
                       ? "text-primary font-medium hover:bg-[#F6F8FD]"
-                      : "text-black hover:bg-gray-100"
+                      : "text-black hover:bg-gray-100 dark:text-white dark:hover:text-black"
                   }`
+                  
                 }
               >
                 {link.icon}
@@ -63,7 +64,7 @@ export const SettingsBar = ({ setActiveSetting, className }) => {
             link.title === "Log Out" ? (
               <button
                 key={link.id}
-                className="flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors text-black hover:bg-gray-100 w-full"
+                className="flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors text-black hover:bg-gray-100 w-full dark:text-white dark:hover:text-black"
                 onClick={() => setShowLogoutModal(true)}
               >
                 {link.icon}
@@ -78,7 +79,7 @@ export const SettingsBar = ({ setActiveSetting, className }) => {
                   `flex items-center gap-2 rounded-md px-3 py-3 text-base transition-colors ${
                     isActive
                       ? "text-primary font-medium hover:bg-[#F6F8FD]"
-                      : "text-black hover:bg-gray-100"
+                      : "text-black hover:bg-gray-100 dark:text-white dark:hover:text-black"
                   }`
                 }
               >
@@ -100,13 +101,13 @@ export const SettingsBar = ({ setActiveSetting, className }) => {
                 </div>
             </DialogHeader>
               <h2 className="text-xl text-center font-bold text-red-600">Are you sure you want to log out of ReTaler?</h2>       
-            <p className="text-xs text-gray-700 mb-4 text-center">
+            <p className="text-xs text-gray-700 mb-4 text-center dark:text-white">
               You’ll need to enter your email and password again to sign back in.
             </p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={() => setShowLogoutModal(false)} className="min-w-[120px] bg-gray-100 text-gray-700 hover:text-white">Cancel</Button>
+              <Button onClick={() => setShowLogoutModal(false)} className="min-w-[120px] bg-gray-100 text-gray-700 hover:text-white dark:bg-[#383838] dark:text-white">Cancel</Button>
               <Button variant="destructive" onClick={() => { window.location.href = "/sign-in"; localStorage.setItem("showLogoutToast", "true");
-              }} className="min-w-[120px]">Log Out</Button>
+              }} className="min-w-[120px] dark:bg-[#c6100f]">Log Out</Button>
             </div>
           </DialogContent>
         </Dialog>

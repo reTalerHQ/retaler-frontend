@@ -69,7 +69,7 @@ const CreateStaffRole = () => {
               <Input
                 type="text"
                 placeholder="e.g Sales Associate"
-                className="mt-1.5 bg-[#EFEEEE]"
+                className="mt-1.5 bg-[#EFEEEE] dark:bg-[#1e1e1e]"
               />
             </div>
             <div className="mt-3">
@@ -77,7 +77,7 @@ const CreateStaffRole = () => {
               <Input
                 type="text"
                 placeholder="Enter role description"
-                className="mt-1.5 bg-[#EFEEEE]"
+                className="mt-1.5 bg-[#EFEEEE] dark:bg-[#1e1e1e]"
               />
             </div>
             <div>
@@ -86,7 +86,7 @@ const CreateStaffRole = () => {
             <section className="mt-5">
               <h2 className="mb-2 text-xl font-semibold">Permissions</h2>
               <div className="">
-                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5">
+                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5 dark:bg-[#1e1e1e]">
                   <h3 className="mb-2 text-[16px] font-semibold">Inventory</h3>
 
                   {inventory.map((item, index) => (
@@ -99,7 +99,7 @@ const CreateStaffRole = () => {
                     </li>
                   ))}
                 </div>
-                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5">
+                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5 dark:bg-[#1e1e1e]">
                   <h3 className="mb-2 text-[16px] font-semibold">
                     Sales Operations
                   </h3>
@@ -113,7 +113,7 @@ const CreateStaffRole = () => {
                     </li>
                   ))}
                 </div>
-                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5">
+                <div className="mb-3 rounded-sm border border-[#EFEEEE] bg-white px-5 py-5 dark:bg-[#1e1e1e]">
                   <h3 className="mb-2 text-[16px] font-semibold">
                     Analytics and reports
                   </h3>
@@ -127,7 +127,7 @@ const CreateStaffRole = () => {
                     </li>
                   ))}
                 </div>
-                <div className="mb-3 w-full rounded-sm border border-[#EFEEEE] bg-white px-5 py-5">
+                <div className="mb-3 w-full rounded-sm border border-[#EFEEEE] bg-white px-5 py-5 dark:bg-[#1e1e1e]">
                   <h3 className="mb-2 text-[16px] font-semibold">
                     Staff Management
                   </h3>
@@ -147,7 +147,7 @@ const CreateStaffRole = () => {
           <div className="mt-6 flex justify-end gap-4">
             <button
               type="button"
-              className="rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474]"
+              className="rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474] dark:bg-[#1e1e1e]"
             >
               Cancel
             </button>
