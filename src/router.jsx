@@ -13,6 +13,7 @@ import {
   ProductDetailsPage,
   EditProductPage,
   AcceptStaffInvitePage,
+  GoogleCallbackPage,
 } from "@/pages";
 
 import { Account } from "./components/account";
@@ -47,6 +48,7 @@ import { SplashDashboard } from "./pages/splash-dashboard";
 import { AddNewSales } from "@/pages/add-new-sales";
 
 import { Bus } from "lucide-react";
+import GoogleCallback from "./pages/google-callback";
 
 export const router = createHashRouter([
   {
@@ -63,7 +65,7 @@ export const router = createHashRouter([
   },
   {
     path: "accept-staff-invite",
-    element: <AcceptStaffInvitePage />
+    element: <AcceptStaffInvitePage />,
   },
   {
     path: "/business-info",
@@ -221,6 +223,10 @@ export const router = createHashRouter([
   {
     path: "/sign-in",
     element: <SigninPage />,
+  },
+  {
+    path: "/google-callback",
+    element: <GoogleCallback />,
   },
 
   // {
