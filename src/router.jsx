@@ -1,4 +1,4 @@
-import { createHashRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import {
   AnalyticsPage,
@@ -47,8 +47,9 @@ import { SplashDashboard } from "./pages/splash-dashboard";
 import { AddNewSales } from "@/pages/add-new-sales";
 
 import { Bus } from "lucide-react";
+import GoogleCallback from "./pages/google-callback";
 
-export const router = createHashRouter([
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootEntry />,
@@ -63,7 +64,7 @@ export const router = createHashRouter([
   },
   {
     path: "accept-staff-invite",
-    element: <AcceptStaffInvitePage />
+    element: <AcceptStaffInvitePage />,
   },
   {
     path: "/business-info",
@@ -221,6 +222,10 @@ export const router = createHashRouter([
   {
     path: "/sign-in",
     element: <SigninPage />,
+  },
+  {
+    path: "/google-callback",
+    element: <GoogleCallback />,
   },
 
   // {

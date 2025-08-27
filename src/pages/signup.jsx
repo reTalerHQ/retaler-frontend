@@ -68,7 +68,10 @@ export const Signup = () => {
     try {
       console.log("Form Data:", data);
 
-      const rsp = await axiosInstance.post(`${BASE_URL}/v1/users/register/`, data);
+      const rsp = await axiosInstance.post(
+        `${BASE_URL}/v1/users/register/`,
+        data,
+      );
 
       toast.success(rsp.data.detail);
 
@@ -84,6 +87,20 @@ export const Signup = () => {
       console.log({ error });
       const message = error.response.data.detail;
       toast.error(message ?? "Something went wrong...");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const rsp = await axiosInstance.post(
+        `${BASE_URL}/v1/users/google-auth/login`,
+      );
+      window.location.href = rsp.data.url;
+    } catch (error) {
+      console.log({ error });
+      const message =
+        error?.response?.data?.detail ?? "Something went wrong...";
+      toast.error(message);
     }
   };
 
@@ -206,7 +223,7 @@ export const Signup = () => {
           <SocialAuthButton
             label="Continue with Google"
             icon={GoogleIcon}
-            onClick={() => console.log("Google login")}
+            onClick={handleGoogleLogin}
             className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
           />
           <SocialAuthButton

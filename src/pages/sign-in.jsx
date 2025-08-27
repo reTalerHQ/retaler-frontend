@@ -13,7 +13,11 @@ import { SocialAuthButton } from "@/components/SocialAuthButton";
 import clsx from "clsx";
 import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
-import { TOKEN_IDENTIFIER, USER_INFO_KEY, REFRESH_TOKEN_IDENTIFIER } from "@/constants";
+import {
+  TOKEN_IDENTIFIER,
+  USER_INFO_KEY,
+  REFRESH_TOKEN_IDENTIFIER,
+} from "@/constants";
 import { toast } from "sonner";
 
 // yup validation schema
@@ -77,6 +81,20 @@ const Signin = () => {
       const status = error?.response?.status;
       console.log({ status });
 
+      const message =
+        error?.response?.data?.detail ?? "Something went wrong...";
+      toast.error(message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const rsp = await axiosInstance.post(
+        `${BASE_URL}/v1/users/google-auth/login`,
+      );
+      window.location.href = rsp.data.url;
+    } catch (error) {
+      console.log({ error });
       const message =
         error?.response?.data?.detail ?? "Something went wrong...";
       toast.error(message);
@@ -173,7 +191,7 @@ const Signin = () => {
             <SocialAuthButton
               label="Continue with Google"
               icon={GoogleIcon}
-              onClick={() => console.log("Google login")}
+              onClick={handleGoogleLogin}
               className="text-sm font-semibold text-blue-700 dark:bg-[#2e2e2e]"
             />
             <SocialAuthButton
