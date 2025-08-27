@@ -44,7 +44,7 @@ const GoogleCallback = () => {
     handleGoogleCallback();
   }, [location, navigate]);
 
-  return <div>Loading...</div>;
+  return <div>Google Auth.</div>;
 };
 
 export default GoogleCallback;

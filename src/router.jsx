@@ -13,7 +13,6 @@ import {
   ProductDetailsPage,
   EditProductPage,
   AcceptStaffInvitePage,
-  GoogleCallbackPage,
 } from "@/pages";
 
 import { Account } from "./components/account";
