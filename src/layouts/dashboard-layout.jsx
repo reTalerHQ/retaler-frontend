@@ -33,19 +33,51 @@ export const DashboardLayout = () => {
     queryKey: ["FETCH_USER_STORE"],
     queryFn: async () => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const response = await axiosInstance.get(`${BASE_URL}/v1/store/`, {
-        headers: {
-          Authorization: `Bearer ${tokenFromStorage}`,
-        },
-      });
+      // const response = await axiosInstance.get(`${BASE_URL}/v1/store/`, {
+      //   headers: {
+      //     Authorization: `Bearer ${tokenFromStorage}`,
+      //   },
+      // });
 
-      const store = response?.data?.stores?.[0];
-      if (!store) {
-        throw new Error("No store data found for this user.");
+      // const store = response?.data?.stores?.[0];
+      // if (!store) {
+      //   throw new Error("No store data found for this user.");
+      // }
+
+      // setStoreInfo(store);
+      // console.log("✅ Set store in context:", store);
+      const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
+      const response = await axiosInstance.get(
+        `${BASE_URL}/v1/users/${userInfo?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+      const stores = response?.data?.user?.stores;
+      const staff_profile = response?.data?.user?.staff_profile?.[0];
+      console.log({ stores, staff_profile });
+
+      const store_id = staff_profile?.store_id;
+      if (store_id) {
+        setStoreInfo({ id: store_id });
       }
 
-      setStoreInfo(store);
-      console.log("✅ Set store in context:", store);
+      if (staff_profile) {
+        userInfo.role = staff_profile?.role?.name;
+        sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
+        setUserRole(staff_profile?.role?.name);
+      }
+
+      // const staff = staffResponse?.data?.data ?? [];
+      // console.log({ userInfo });
+      // const userStaffDetail = staff?.find((stf) => stf.user_id === userInfo.id);
+      // if (userStaffDetail) {
+      //   userInfo.role = userStaffDetail.role;
+      //   sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
+      // }
+
       return store;
     },
   });
@@ -60,8 +92,8 @@ export const DashboardLayout = () => {
     }
   }, []);
 
-  console.log({userRole});
-  
+  console.log({ userRole });
+
   const handleToggleSidebar = () => setIsSidebarOpened((v) => !v);
 
   const allSidebarLinks = [
@@ -77,14 +109,14 @@ export const DashboardLayout = () => {
       title: "Inventory",
       icon: <FolderSimple />,
       to: "/inventory",
-      roles: ["Admin", "Manager", "Staff", "Sales Person"],
+      roles: ["Admin", "Manager", "Staff", "Sales Rep"],
     },
     {
       id: 3,
       title: "Sales",
       icon: <CurrencyCircleDollar />,
       to: "/sales",
-      roles: ["Admin", "Manager", "Staff", "Sales Person"],
+      roles: ["Admin", "Manager", "Staff", "Sales Rep"],
     },
     {
       id: 4,
@@ -125,7 +157,7 @@ export const DashboardLayout = () => {
 
   return (
     <>
-      <div className="flex h-screen dark:bg-[var(--background)] dark:text-white overflow-hidden bg-[#FAFAFA]">
+      <div className="flex h-screen overflow-hidden bg-[#FAFAFA] dark:bg-[var(--background)] dark:text-white">
         {/* Sidebar */}
         <aside
           className={`fixed top-0 left-0 z-[9999999] h-full w-full transform border-r border-[#BBBBBB] bg-white transition-transform duration-300 ease-in-out lg:w-[250px] ${isSidebarOpened ? "translate-x-0" : "-translate-x-full"} lg:static lg:translate-x-0 lg:transform-none`}
