@@ -1,9 +1,26 @@
-import React from "react";
+import React, {useMemo} from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/context/user-context";
 
 export const SplashDashboard = () => {
   const navigate = useNavigate();
+
+   const { storeInfo } = useUser();
+   const displayName = useMemo(() => {
+      // Try common spots the backend might put it
+      const raw =
+        storeInfo?.user?.username ??
+        storeInfo?.username ??
+        storeInfo?.user?.first_name ??
+        storeInfo?.owner_name ??
+        storeInfo?.name ??
+        "";
+  
+      // Capitalize first letter (optional)
+      return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+    }, [storeInfo]);
+  
 
   const handleContinue = () => {
     navigate("/dashboard");
@@ -20,7 +37,7 @@ export const SplashDashboard = () => {
           />
         </div> */}
         <h1 className="mb-4 text-center text-xl font-semibold md:text-3xl">
-          Welcome to ReTaler, <br /> Amina Stores
+          Welcome to ReTaler, <br /> {displayName}
         </h1>
         <p className="text-center text-sm text-gray-600 md:text-lg">
           Let's help you manage your products, sales, and staff

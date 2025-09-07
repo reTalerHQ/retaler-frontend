@@ -31,7 +31,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { PagePreLoader } from "@/components/page-pre-loader";
 import { FETCH_SALES, FETCH_SALES_STATS } from "@/constants/query-key";
 
@@ -74,6 +74,34 @@ const Sales = () => {
     },
     enabled: Boolean(storeInfo?.id),
   });
+
+    const queryClient = useQueryClient();
+    const deleteSale = useMutation({
+      mutationFn: async(id) => {
+          const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+     return axiosInstance.delete(`/v1/store/${storeInfo.id}/sales/${id}`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      )
+    },
+      onSuccess: () => {
+        queryClient.invalidateQueries({queryKey: [FETCH_SALES]})
+      }
+    })
+  
+    const handleDeleteSelected = () => {
+      console.log("deletingsales:", typeof selectedSalesIds);
+      console.log("deletingsales:", selectedSalesIds)
+    selectedSalesIds.forEach((sale) => deleteSale.mutate(sale.id))
+    console.log("✅ Would delete IDs:", selectedSalesIds);
+    // setShowDeleteModal(false);
+    setSelectedSalesIds([]);
+  };
+  
 
   const columns = [
     {
@@ -136,11 +164,29 @@ const Sales = () => {
     },
   ];
 
-  const handleDeleteSelected = () => {
-    console.log("✅ Would delete IDs:", selectedSalesIds);
-    // setShowDeleteModal(false);
-    setSelectedSalesIds([]);
-  };
+  //   const { isLoading: isLoadingSales, data: salesData } = useQuery({
+  //   queryKey: [FETCH_SALES],
+  //   queryFn: async () => {
+  //     const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+  //     const rsp = await axiosInstance.get(
+  //       `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${tokenFromStorage}`,
+  //         },
+  //       },
+  //     );
+  //     return rsp?.data;
+  //   },
+  //   enabled: Boolean(storeInfo?.id),
+  // });
+
+  // const handleDeleteSelected = (saleId) => {
+  //   const queryClient = useQueryClient()
+  //   console.log("✅ Would delete IDs:", selectedSalesIds);
+  //   // setShowDeleteModal(false);
+  //   setSelectedSalesIds([]);
+  // };
 
   // const handleDeleteSelected = () => {
   //   const remainingSales = sales.filter(

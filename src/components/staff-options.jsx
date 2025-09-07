@@ -10,12 +10,13 @@ const StaffOptions = ({ name, role, status, id }) => {
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const location = useLocation();
+  const location = useLocation();  
 
   return (
     <>
       {showDeactivateModal ? (
         <DeactivateStaff
+          id={id}
           open={showDeactivateModal}
           onClose={() => setShowDeactivateModal(false)}
         />

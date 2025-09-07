@@ -47,6 +47,7 @@ import { SplashDashboard } from "./pages/splash-dashboard";
 import { AddNewSales } from "@/pages/add-new-sales";
 
 import { Bus } from "lucide-react";
+import AllRoles from "./pages/all-roles-page";
 
 export const router = createHashRouter([
   {
@@ -208,6 +209,10 @@ export const router = createHashRouter([
           {
             path: "add-new-staff",
             element: <AddNewStaffPage />,
+          },
+           {
+            path: "all-roles-page",
+            element: <AllRoles />,
           },
         ],
       },

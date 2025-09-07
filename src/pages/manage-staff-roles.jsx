@@ -66,6 +66,15 @@ const ManageStaffRoles = () => {
                 Create Staff Role
               </Link>
             </Button>
+             <Button className="mt-5 w-full py-6">
+              <Link
+                to="/staff/all-roles-page"
+                className="inline-flex gap-1.5"
+              >
+                <Plus />
+                View All Roles
+              </Link>
+            </Button>
           </div>
         </section>
         <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white px-3 py-4 lg:p-4 lg:px-5 dark:bg-[#1e1e1e] dark:border">

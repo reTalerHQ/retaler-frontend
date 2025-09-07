@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useUser } from "../context/user-context";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import {
@@ -106,6 +106,21 @@ export const DashboardLayout = () => {
     link.roles.includes(userRole),
   );
 
+  const { storeInfo } = useUser();
+     const displayName = useMemo(() => {
+        // Try common spots the backend might put it
+        const raw =
+          storeInfo?.user?.username ??
+          storeInfo?.username ??
+          storeInfo?.user?.first_name ??
+          storeInfo?.owner_name ??
+          storeInfo?.name ??
+          "";
+    
+        // Capitalize first letter (optional)
+        return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+      }, [storeInfo]);
+
   const showNotificationBadge = true;
 
   return (
@@ -212,7 +227,7 @@ export const DashboardLayout = () => {
                       alt="Avatar"
                       className="h-7 w-7 rounded-full"
                     />
-                    <span className="hidden lg:inline">Test User</span>
+                    <span className="hidden lg:inline"> {displayName} </span>
                     <CaretDown />
                   </button>
                 </PopoverTrigger>
