@@ -58,7 +58,7 @@ export function LandingPage() {
           <p className="text-5xl font-medium md:text-7xl">
             Every Sale, Every Insight All in one place.
           </p>
-          <p className="text-lg">
+          <p className="text-lg dark:text-gray-300">
             Built for small to mid sized retailers to stay on top of your
             business, every sale, every day with zero stress.
           </p>
@@ -120,13 +120,13 @@ export function LandingPage() {
 
                 {/* Answer */}
                 {openIndex === index && (
-                  <p className="text-left text-gray-600">{faq.answer}</p>
+                  <p className="text-left text-gray-600 dark:text-gray-400">{faq.answer}</p>
                 )}
               </div>
             ))}
           </div>
         </section>
-        <section className="flex flex-col items-center gap-10 rounded-xl bg-blue-100 p-15">
+        <section className="flex flex-col items-center gap-10 rounded-xl bg-blue-100 p-15 text-black ">
           <p className="text-center text-3xl font-medium md:text-4xl">
             Ready to track your business the right way?
           </p>

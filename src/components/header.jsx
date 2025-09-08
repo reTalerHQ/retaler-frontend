@@ -4,7 +4,8 @@ import { useState } from "react";
 export function Header() {
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 flex flex-row items-center justify-between bg-white p-2 shadow-xs md:px-50">
+      <header className="fixed top-0 right-0 left-0 flex flex-row items-center justify-between bg-white dark:bg-black derk:text-white
+       p-2 shadow-xs md:px-50">
         <div>
           <img src="/assets/images/retaler-logo.svg" alt="retaler logo" />
         </div>
@@ -91,9 +92,9 @@ function Hamburger() {
           onClick={() => setOpen((prev) => !prev)}
           className="grid place-items-center rounded px-2"
         >
-          <span className="block h-0.5 w-5 rounded-full bg-black"></span>
-          <span className="block h-0.5 w-5 rounded-full bg-black"></span>
-          <span className="block h-0.5 w-5 rounded-full bg-black"></span>
+          <span className="block h-0.5 w-5 rounded-full bg-black dark:bg-white"></span>
+          <span className="block h-0.5 w-5 rounded-full bg-black dark:bg-white"></span>
+          <span className="block h-0.5 w-5 rounded-full bg-black dark:bg-white"></span>
         </Button>
 
         <aside
@@ -143,7 +144,7 @@ function Hamburger() {
 export function ActionButton() {
     return (
       <>
-        <Button className="font-trap p-6 text-base font-medium">
+        <Button className="font-trap p-6 text-base font-medium text-white">
           Join the Waitlist
         </Button>
       </>
