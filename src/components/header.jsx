@@ -145,7 +145,7 @@ export function ActionButton() {
     return (
       <>
         <Button className="font-trap p-6 text-base font-medium text-white">
-          Join the Waitlist
+          Get Started
         </Button>
       </>
     );
