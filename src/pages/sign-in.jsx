@@ -60,11 +60,7 @@ const Signin = () => {
       const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/users/login`,
         data,
-        //   , {
-        //   headers: {
-        //     Authorization: `Bearer ${tokenFromStorage}`,
-        //   },
-        // }
+     
       );
       const {
         token: { access_token, refresh_token },
@@ -87,18 +83,8 @@ const Signin = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const rsp = await axiosInstance.post(
-        `${BASE_URL}/v1/users/google-auth/login`,
-      );
-      window.location.href = rsp.data.url;
-    } catch (error) {
-      console.log({ error });
-      const message =
-        error?.response?.data?.detail ?? "Something went wrong...";
-      toast.error(message);
-    }
+  const handleGoogleLogin = () => {
+    window.location.href = `${BASE_URL}/v1/users/auth/google/`;
   };
 
   const navigate = useNavigate();
