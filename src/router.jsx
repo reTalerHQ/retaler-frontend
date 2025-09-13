@@ -37,6 +37,7 @@ import {
 
 // import { SplashScreen } from "@/pages/splashScreen";
 import { RootEntry } from "@/pages/RootEntry";
+import { LandingPage } from "./pages/landingPage";
 import { Welcome } from "@/pages/welcome";
 import { Signup } from "@/pages/signup";
 import { BusinessInfo } from "@/pages/business-info";
@@ -50,6 +51,10 @@ import { Bus } from "lucide-react";
 import GoogleCallback from "./pages/google-callback";
 
 export const router = createBrowserRouter([
+  {
+    path: "/landing-page",
+    element: <LandingPage />,
+  },
   {
     path: "/",
     element: <RootEntry />,
