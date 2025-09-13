@@ -7,6 +7,7 @@ import axiosInstance from "@/lib/axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { FETCH_ROLES, FETCH_STAFFS } from "@/constants/query-key";
+import { toast } from "sonner";
 
 export const DeactivateStaff = ({ open, onClose, id }) => {
   const { storeInfo } = useUser();
@@ -171,6 +172,7 @@ export const DeleteRole = ({ open, onClose, id }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [FETCH_ROLES] });
+      toast.success("Role deleted successfully")
       onClose();
     },
   });

@@ -40,6 +40,7 @@ const Sales = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { storeInfo } = useUser();
+  
 
   const { isLoading: isLoadingSales, data: salesData } = useQuery({
     queryKey: [FETCH_SALES],

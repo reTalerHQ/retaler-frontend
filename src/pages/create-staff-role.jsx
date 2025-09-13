@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useUser } from "@/context/user-context";
 import axios from "axios";
+import { toast } from "sonner";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { BASE_URL } from "@/constants/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -37,7 +38,7 @@ const CreateStaffRole = () => {
   }
 
   const inventory = [
-    "View All Prodeucts",
+    "View All Products",
     "Add New Products",
     "Edit Product Details",
     "Delete Products",
@@ -61,8 +62,6 @@ const CreateStaffRole = () => {
 
   const { storeInfo } = useUser();
 
-  // console.log(staffInfo);
-
   const createRole = async (roleData) => {
     const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
     return await axios.post(
@@ -80,24 +79,31 @@ const CreateStaffRole = () => {
       },
     );
   };
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: createRole,
     onSuccess: () => {
       queryClient.invalidateQueries(["role"]);
+      toast.success("Role created successfully")
+      setRoleName("");
+      setRoleDescription("");
+      setRolePermission([]);
     },
+    onError: (error) => {
+      console.error("failed to create role:", error);
+      
+      alert("Failed to create role")
+    }
   });
 
   const handleSwitch = (permission) => {
-    setRolePermission((prev) => prev.includes(permission)
-  ? prev.filter((p) => p !== permission)
-  :[...prev, permission]
-  )
-  }
-
-  // const roleList = permissions
+    setRolePermission((prev) =>
+      prev.includes(permission)
+        ? prev.filter((p) => p !== permission)
+        : [...prev, permission],
+    );
+  };
 
   return (
     <>
@@ -114,7 +120,17 @@ const CreateStaffRole = () => {
           <h2 className="text-xl font-semibold text-[#373636]">
             Staff Role Details
           </h2>
-          <form action="">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              
+              mutation.mutate({
+                name: roleName,
+                description: roleDescription,
+                permissions: rolePermission,
+              });
+            }}
+          >
             <div className="mt-3">
               <label htmlFor="role-name">Role Name</label>
               <Input
@@ -150,7 +166,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch checked={rolePermission.includes(item)} onCheckedChange={() => handleSwitch(item)} />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -164,7 +183,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch checked={rolePermission.includes(item)} onCheckedChange={() => handleSwitch(item)} />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -178,7 +200,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                     <Switch checked={rolePermission.includes(item)} onCheckedChange={() => handleSwitch(item)} />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -192,37 +217,31 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch checked={rolePermission.includes(item)} onCheckedChange={() => handleSwitch(item)} />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
               </div>
             </section>
-          </form>
           <div className="mt-6 flex justify-end gap-4">
             <button
               type="button"
-              className="rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474] dark:bg-[#1e1e1e] cursor-pointer"
+              className="cursor-pointer rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474] dark:bg-[#1e1e1e]"
             >
               Cancel
             </button>
             <button
-              type="button"
-              // onClick={() => console.log("clicked")
-              // }
-              onClick={() => mutation.mutate({
-                name: roleName,
-        description: roleDescription,
-        permissions: rolePermission,
-       
-              })}
+              type="submit"
               disabled={mutation.isPending}
-              className="rounded-md bg-[#375ED9] px-8 py-3 text-white cursor-pointer"
-
+              className="cursor-pointer rounded-md bg-[#375ED9] px-8 py-3 text-white"
             >
-             {mutation.isPending ? "Creating Role..." : "Create Role"}
+              {mutation.isPending ? "Creating Role..." : "Create Role"}
             </button>
           </div>
+          </form>
         </section>
       </section>
     </>

@@ -146,10 +146,12 @@ export const AddNewSales = () => {
         return;
       }
 
+      const staffId = localStorage.getItem("staffId")
+
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const payload = {
         store_id: storeInfo?.id,
-        staff_id: storeInfo?.user_id,
+        staff_id: staffId,
         payment_method: data?.paymentMethod,
         amount_paid: data?.amountPaid,
         items: addedProducts?.map((prod) => ({
@@ -159,11 +161,15 @@ export const AddNewSales = () => {
         })),
       };
 
-      await axiosInstance.post(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, payload, {
-        headers: {
-          Authorization: `Bearer ${tokenFromStorage}`,
+      await axiosInstance.post(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
         },
-      });
+      );
       setAddedProducts([]);
 
       reset();

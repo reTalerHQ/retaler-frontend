@@ -11,16 +11,25 @@ import StaffOptions from "../components/staff-options";
 import { useUser } from "@/context/user-context";
 import { useQuery } from "@tanstack/react-query";
 import { FETCH_STAFFS } from "@/constants/query-key";
+import debounce from "lodash.debounce";
 
 const Staff = () => {
   useRoleAccess(["Manager", "Admin"]);
-  const [, setSelectedStaffIds] = useState([]);
-  // const [staff, setStaff] = useState([])
+  const [, setSelecteds] = useState([]);
+  // const [, setSearchTerm] = useState("");
+  // const [staffName, setStaffName] = useState("");
+  // const [roleName, setRoleName] = useState("");
+  // const [staffStatus, setStaffStatus] = useState("");
+  const [selectedField, setSelectedField] = useState("name");
+  const [searchValue, setSearchValue] = useState("");
+  // const [filterType, setFilterType] = useState("name")
+
+  const filterObject = searchValue ? { [selectedField]: searchValue } : {};
 
   const { storeInfo } = useUser();
   // This uses a default queryfn from main.jsx
   const { isLoading: isLoadingStaffs, data: staffs } = useQuery({
-    queryKey: [FETCH_STAFFS, storeInfo?.id],
+    queryKey: [FETCH_STAFFS, storeInfo?.id, filterObject],
     enabled: !!storeInfo?.id,
   });
 
@@ -31,10 +40,21 @@ const Staff = () => {
     name: s.name || "--",
     role: s.role || "--",
     id: s.id || "--",
-    status: s.status || "--",
+    staff_status: s.status || "--",
     login_time: s.login_time || "--",
     logout_time: s.logout_time || "--",
   }));
+
+  // const staffId = staffListFormated?.[0].id
+  // localStorage.setItem("staffId", staffId)
+
+  const handleSelectedField = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const handleInputValue = debounce((e) => {
+    setSearchValue(e.target.value);
+  }, 500);
 
   const columns = [
     {
@@ -46,7 +66,7 @@ const Staff = () => {
       header: "Role",
     },
     {
-      accessorKey: "status",
+      accessorKey: "staff_status",
       header: "Status",
       cell: ({ getValue }) => {
         const value = getValue();
@@ -108,7 +128,10 @@ const Staff = () => {
               </Link>
             </Button>
             <Button className="dark:bg-[#365ed8]">
-              <Link to="/staff/add-new-staff" className="inline-flex gap-1.5 dark:text-white">
+              <Link
+                to="/staff/add-new-staff"
+                className="inline-flex gap-1.5 dark:text-white"
+              >
                 <Plus />
                 Add New Staff
               </Link>
@@ -117,7 +140,7 @@ const Staff = () => {
         </section>
 
         {hasAddedStaff ? (
-          <section className="mt-8 rounded-sm border border-[#EFEEEE] bg-white lg:p-4 lg:px-5 dark:bg-[var(--background)] dark:border">
+          <section className="mt-8 rounded-sm border border-[#EFEEEE] bg-white lg:p-4 lg:px-5 dark:border dark:bg-[var(--background)]">
             <div className="mt-3 flex flex-row justify-between gap-3 lg:flex-row">
               <h2 className="text-xl font-semibold">All Staff</h2>
               <div className="flex gap-2 lg:items-center">
@@ -128,10 +151,16 @@ const Staff = () => {
                   showError={false}
                   type="Search"
                   placeholder="Search"
+                  onChange={handleInputValue}
                   leftIcon={
                     <MagnifyingGlass className="text-sm text-[#BBBBBB]" />
                   }
                 />
+                <select onChange={handleSelectedField}>
+                  <option value="name">Name</option>
+                  <option value="role">Role</option>
+                  <option value="staff_status">Status</option>
+                </select>
               </div>
             </div>
             <div className="mt-10">
@@ -139,7 +168,7 @@ const Staff = () => {
                 columns={columns}
                 data={staffListFormated}
                 enableRowSelection
-                onSelectedRowsChange={setSelectedStaffIds}
+                // onSelectedRowsChange={setSelectedStaffIds}
                 selectedRowClassName="bg-[#CACDF6]/30"
               />
             </div>

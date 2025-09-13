@@ -171,9 +171,11 @@ const StaffDetails = () => {
 
   const location = useLocation();
   const { name, role, status, id } = location.state || {};
-  const { storeInfo, staffInfo } = useUser();
+  const { storeInfo } = useUser();
+  console.log(storeInfo);
+  
 
-  console.log(staffInfo);
+  // console.log(staffInfo);
 
   const { isLoading: isLoadingRoles, data: permissions } = useQuery({
     queryKey: [FETCH_PERMISSIONS],

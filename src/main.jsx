@@ -12,10 +12,13 @@ import axios from "axios";
 import { BASE_URL } from "./constants/api.js";
 import { TOKEN_IDENTIFIER } from "./constants/index.js";
 
+
+
 const defaultQueryFn = async ({ queryKey }) => {
-  const [, storeId] = queryKey;
+  const [, storeId, filters = {}] = queryKey;
+  const queryString = new URLSearchParams(filters).toString()
   const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-  const { data } = await axios.get(`${BASE_URL}/v1/store/${storeId}/staff`, {
+  const { data } = await axios.get(`${BASE_URL}/v1/store/${storeId}/staff?${queryString}`, {
     headers: {
       Authorization: `Bearer ${tokenFromStorage}`,
     },

@@ -10,14 +10,18 @@ import StaffOptions from "../components/staff-options";
 import { useQuery } from "@tanstack/react-query";
 import { FETCH_STAFFS } from "@/constants/query-key";
 import { useUser } from "@/context/user-context";
+import debounce from "lodash.debounce";
 
 const ManageStaffRoles = () => {
   useRoleAccess(["Manager", "Admin"]);
   const [, setSelectedStaffRoleIds] = useState([]);
+  const [selectedField, setSelectedField] = useState("name");
+  const [searchValue, setSearchValue] = useState("");
 
+  const filterObject = searchValue ? { [selectedField]: searchValue } : {};
   const { storeInfo } = useUser();
   const { data: staffs } = useQuery({
-    queryKey: [FETCH_STAFFS, storeInfo?.id],
+    queryKey: [FETCH_STAFFS, storeInfo?.id, filterObject],
     enabled: !!storeInfo?.id,
   });
   const staffList = staffs ? (Array.isArray(staffs) ? staffs : [staffs]) : [];
@@ -26,6 +30,14 @@ const ManageStaffRoles = () => {
     name: s.name || "--",
     role: s.role || "--",
   }));
+
+  const handleSelectedField = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const handleInputValue = debounce((e) => {
+    setSearchValue(e.target.value);
+  }, 500);
 
   const columns = [
     {
@@ -66,18 +78,15 @@ const ManageStaffRoles = () => {
                 Create Staff Role
               </Link>
             </Button>
-             <Button className="mt-5 w-full py-6">
-              <Link
-                to="/staff/all-roles-page"
-                className="inline-flex gap-1.5"
-              >
+            <Button className="mt-5 w-full py-6">
+              <Link to="/staff/all-roles-page" className="inline-flex gap-1.5">
                 <Plus />
                 View All Roles
               </Link>
             </Button>
           </div>
         </section>
-        <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white px-3 py-4 lg:p-4 lg:px-5 dark:bg-[#1e1e1e] dark:border">
+        <section className="mt-8 rounded-2xl border border-[#EFEEEE] bg-white px-3 py-4 lg:p-4 lg:px-5 dark:border dark:bg-[#1e1e1e]">
           <div className="mt-3 flex flex-row justify-between gap-3 lg:flex-row">
             <h2 className="text-xl font-semibold">All Staff</h2>
             <div className="flex gap-2 lg:items-center">
@@ -87,11 +96,17 @@ const ManageStaffRoles = () => {
               <Input
                 showError={false}
                 type="Search"
+                onChange={handleInputValue}
                 placeholder="Search"
                 leftIcon={
                   <MagnifyingGlass className="text-sm text-[#BBBBBB]" />
                 }
               />
+              <select onChange={handleSelectedField}>
+                <option value="name">Name</option>
+                <option value="role">Role</option>
+                {/* <option value="staff_status">Status</option> */}
+              </select>
             </div>
           </div>
           <div className="mt-10">

@@ -34,13 +34,18 @@ const AllRoles = () => {
 
   const roleList = roles ? (Array.isArray(roles) ? roles : [roles]) : [];
   const roleListFormated = roleList.map((r) => ({
-    name: r.name,
     description: r.description,
     id: r.id,
+    name: r.name,
     store_id: r.store_id,
   }));
 
-  console.log(roleListFormated);
+  const storedRole = localStorage.setItem(
+    "roles",
+    JSON.stringify(roleListFormated),
+  );
+
+  console.log(roleListFormated[0]);
 
   const columns = [
     {
