@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../context/user-context";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   List,
   X,
@@ -25,9 +25,11 @@ import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { PagePreLoader } from "@/components/page-pre-loader";
+import { toast } from "sonner";
 
 export const DashboardLayout = () => {
   const { avatar, setStoreInfo } = useUser();
+  const navigate = useNavigate();
 
   const { isLoading } = useQuery({
     queryKey: ["FETCH_USER_STORE"],
@@ -78,7 +80,7 @@ export const DashboardLayout = () => {
       //   sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
       // }
 
-      return store;
+      return stores;
     },
   });
 
@@ -91,8 +93,6 @@ export const DashboardLayout = () => {
       setUserRole(user.role);
     }
   }, []);
-
-  console.log({ userRole });
 
   const handleToggleSidebar = () => setIsSidebarOpened((v) => !v);
 
@@ -139,7 +139,11 @@ export const DashboardLayout = () => {
   );
 
   const showNotificationBadge = true;
-
+  const handleLogout = () => {
+    sessionStorage.clear();
+    toast.success("Sign out successful");
+    navigate("/sign-in");
+  };
   return (
     <>
       <div className="flex h-screen overflow-hidden bg-[#FAFAFA] dark:bg-[var(--background)] dark:text-white">
@@ -256,7 +260,10 @@ export const DashboardLayout = () => {
                     <User className="text-lg" />
                     <span>My Account</span>
                   </Link>
-                  <button className="flex w-full items-center justify-start gap-2 px-4 text-sm">
+                  <button
+                    className="flex w-full items-center justify-start gap-2 px-4 text-sm"
+                    onClick={handleLogout}
+                  >
                     <img
                       src="/assets/images/log-out.svg"
                       alt="Logout"
