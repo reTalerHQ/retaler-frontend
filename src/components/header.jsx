@@ -1,14 +1,14 @@
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 export function Header() {
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 flex flex-row items-center justify-between bg-white dark:bg-black derk:text-white
-       p-2 shadow-xs md:px-50">
-        <div>
+      <header className="derk:text-white fixed top-0 right-0 left-0 z-50 flex flex-row items-center justify-between bg-white p-2 shadow-xs md:px-50 dark:bg-black">
+        <Link to="/landing-page">
           <img src="/assets/images/retaler-logo.svg" alt="retaler logo" />
-        </div>
+        </Link>
         <ul className="text-white-500 flex flex-row items-center gap-8 text-sm">
           <HeaderLinks />
           <div className="items-center gap-4">
@@ -47,6 +47,13 @@ function HeaderLinks() {
           Benefits
         </a>
         <a
+          href="#pricing"
+          className="hover:text-blue-700"
+          onClick={(e) => handleClick(e, "pricing")}
+        >
+          Pricing
+        </a>
+        <a
           href="#faqs"
           className="hover:text-blue-700"
           onClick={(e) => handleClick(e, "faqs")}
@@ -54,9 +61,9 @@ function HeaderLinks() {
           FAQs
         </a>
         <a
-          href="#aboutRetaler"
+          href="#about"
           className="hover:text-blue-700"
-          onClick={(e) => handleClick(e, "aboutRetaler")}
+          onClick={(e) => handleClick(e, "about")}
         >
           About ReTaler
         </a>
@@ -122,6 +129,13 @@ function Hamburger() {
             Benefits
           </a>
           <a
+            href="#pricing"
+            className="hover:text-blue-700"
+            onClick={(e) => handleClick(e, "faqs")}
+          >
+            Pricing
+          </a>
+          <a
             href="#faqs"
             className="hover:text-blue-700"
             onClick={(e) => handleClick(e, "faqs")}
@@ -129,7 +143,7 @@ function Hamburger() {
             FAQs
           </a>
           <a
-            href="#aboutRetaler"
+            href="#about"
             className="hover:text-blue-700"
             onClick={(e) => handleClick(e, "aboutRetaler")}
           >
@@ -145,7 +159,7 @@ export function ActionButton() {
     return (
       <>
         <Button className="font-trap p-6 text-base font-medium text-white">
-          Get Started
+          Get Started For Free
         </Button>
       </>
     );

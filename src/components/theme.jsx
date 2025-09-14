@@ -32,7 +32,7 @@ export const Theme = () => {
         <h1 className="text-lg font-bold lg:text-2xl">Theme</h1>
       </header>
 
-      <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[var(--background)]">
+      <section className="flex w-full flex-col gap-4 rounded-xl border bg-white px-4 py-4 md:w-[50vw] md:max-w-[50vw] dark:bg-[#1e1e1e]">
         <article className="flex items-center justify-between">
           <div>
             <h2 className="text-md font-semibold">System</h2>
