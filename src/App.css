@@ -87,3 +87,6 @@ input[type="number"] {
   color: #fff !important;
 } */
 
+html {
+  scroll-behavior: smooth;
+}

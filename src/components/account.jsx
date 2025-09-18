@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const MODAL_TYPES = {
   DELETE_ACCOUNT: "DELETE_ACCOUNT",
@@ -456,7 +457,12 @@ export const Account = () => {
                     onClick={handleDeleteAccount}
                     className="min-w-[120px] dark:bg-[#c6100f]"
                   >
-                    Delete Account
+                    <Link
+                      to="/signup"
+                      className=""
+                    >
+                      Delete Account
+                    </Link>
                   </Button>
                 </div>
               </DialogContent>

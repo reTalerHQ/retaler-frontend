@@ -37,6 +37,10 @@ import {
 
 // import { SplashScreen } from "@/pages/splashScreen";
 import { RootEntry } from "@/pages/RootEntry";
+import { LandingPageLayout } from "./layouts/landingPage-layout";
+import { LandingPageBody } from "./pages/landingPageBody";
+import { PrivacyPolicyLP } from "./pages/privacyPolicyLP";
+import { TermsOfUse } from "./pages/termsOfUse";
 import { Welcome } from "@/pages/welcome";
 import { Signup } from "@/pages/signup";
 import { BusinessInfo } from "@/pages/business-info";
@@ -51,6 +55,25 @@ import AllRoles from "./pages/all-roles-page";
 import GoogleCallback from "./pages/google-callback";
 
 export const router = createBrowserRouter([
+  {
+    path: "/landing-page",
+    element: <LandingPageLayout />,
+    children: [
+      {
+        index: true,
+        element: <LandingPageBody />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicyLP />,
+      },
+      {
+        path: "terms-of-use",
+        element: <TermsOfUse />,
+      },
+    ],
+  },
+
   {
     path: "/",
     element: <RootEntry />,

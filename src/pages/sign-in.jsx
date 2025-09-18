@@ -19,6 +19,7 @@ import {
   REFRESH_TOKEN_IDENTIFIER,
 } from "@/constants";
 import { toast } from "sonner";
+import { Eye, EyeSlash } from "phosphor-react";
 
 // yup validation schema
 const schema = yup.object({
@@ -31,6 +32,7 @@ const STORAGE_KEY_PASSWORD = "password";
 
 const Signin = () => {
   const [isChecked, setIsChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -88,6 +90,10 @@ const Signin = () => {
   };
 
   const navigate = useNavigate();
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <>
       <section className="flex min-h-screen items-center justify-center bg-[var(--background)] dark:bg-[var(--background)]">
@@ -127,13 +133,23 @@ const Signin = () => {
               >
                 Password
               </label>
-              <Input
-                type="password"
-                required={true}
-                placeholder="Enter a valid password"
-                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
-                {...register("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  required={true}
+                  placeholder="Enter a valid password"
+                  className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/3 right-2 -translate-y-1/2 text-gray-500"
+                  onClick={togglePasswordVisibility}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mb-4 text-sm text-red-500">
                   {errors.password.message}

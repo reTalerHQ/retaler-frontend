@@ -17,6 +17,7 @@ import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
 import { toast } from "sonner";
 import { TOKEN_IDENTIFIER, USER_INFO_KEY } from "@/constants";
+import { Eye, EyeSlash } from "phosphor-react";
 
 // yup validation schema
 const schema = yup.object({
@@ -45,6 +46,9 @@ export const Signup = () => {
 
   const navigate = useNavigate();
   const password = watch("password");
+
+  const [showPassword, setShowPassword] = useState(false);
+  
   const [criteria, setCriteria] = useState({
     minChar: false,
     upper: false,
@@ -94,6 +98,10 @@ export const Signup = () => {
     window.location.href = `${BASE_URL}/v1/users/auth/google/`;
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-blue-50 dark:bg-[#121212]">
       <div className="my-0 flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl dark:bg-[#1e1e1e]">
@@ -140,13 +148,23 @@ export const Signup = () => {
             )}
           </div>
           <div>
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Enter a valid password"
-              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
-              {...register("password")}
-            />
+            <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter a valid password"
+                className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 placeholder-red-500 focus:border focus:border-gray-500 focus:bg-white focus:outline-none md:text-base dark:bg-[#383838] dark:text-white"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500"
+                onClick={togglePasswordVisibility}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             {errors.password && (
               <p className="mb-4 text-sm text-red-500">
                 {errors.password.message}
