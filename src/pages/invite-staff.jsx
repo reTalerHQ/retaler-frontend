@@ -69,10 +69,10 @@ export const InviteStaff = () => {
       const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/store/${storeInfo.id}/staff`,
         {
-          email: data.email,
-          role: data.role,
           name: data.name,
           phone_number: data.phone_number,
+          email: data.email,
+          role: data.role,
         },
 
         {
@@ -165,16 +165,16 @@ export const InviteStaff = () => {
               {...register("role")}
               className="w-full rounded border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border-gray-400 focus:bg-white focus:outline-none"
             >
-              {roleOptions.map((role) => (
-                <option key={role.id} value={role.id}>
+              {/* {roleOptions.map((role) => (
+                <option key={role.id} value={role.name}>
                   {role.name}
                 </option>
-              ))}
+              ))} */}
 
-              {/* <option value="">Select Role</option>
+              <option value="">Select Role</option>
               <option value="Manager">Manager</option>
               <option value="Sales Rep">Sales Rep</option>
-              <option value="Admin">Admin</option> */}
+              <option value="Admin">Admin</option>
             </select>
             {errors.role && (
               <p className="mt-1 text-sm text-red-500">{errors.role.message}</p>

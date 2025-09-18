@@ -1,16 +1,20 @@
 import { Link } from "react-router-dom";
-import { EllipsisVerticalIcon } from "lucide-react";
 import { useState } from "react";
 import { DeactivateStaff } from "./modals";
 import { DeleteStaff } from "./modals";
 import { useLocation } from "react-router-dom";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { DotsThreeVertical } from "phosphor-react";
 const StaffOptions = ({ name, role, status, id }) => {
   const [options, setOptions] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const location = useLocation();  
+  const location = useLocation();
 
   return (
     <>
@@ -19,6 +23,7 @@ const StaffOptions = ({ name, role, status, id }) => {
           id={id}
           open={showDeactivateModal}
           onClose={() => setShowDeactivateModal(false)}
+          role={role}
         />
       ) : null}
       {showDeleteModal ? (
@@ -27,50 +32,51 @@ const StaffOptions = ({ name, role, status, id }) => {
           onClose={() => setShowDeleteModal(false)}
         />
       ) : null}
-      <button>
-        <EllipsisVerticalIcon
-          className=""
-          onClick={() => setOptions(!options)}
-        />
-      </button>
 
-      {options ? (
-        <section className="relative z-10 overflow-visible">
-          <div className="w-[12rem] absolute right-10.5 rounded-xl border border-[#EFEEEE] bg-[#eeecec] py-4 hover:opacity-100 dark:bg-[#383838] dark:border-none">
-            <div className="flex flex-col gap-1 px-4">
-              <button className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]">
-                <Link
-                  to={
-                    location.pathname === "/staff"
-                      ? "./staff-details"
-                      : location.pathname.includes("manage-staff-roles")
-                        ? "../staff-details"
-                        : null
-                  }
-                  state={{ name, role, status, id }}   
-                  >
-                  {/*className="px-6"*/}
-                  View Staff Details
-                </Link>
-              </button>
-              <button
-                onClick={() => setShowDeactivateModal(!showDeactivateModal)}
-                className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]"
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            className="cursor-pointer"
+            onClick={() => setOptions(!options)}
+          >
+            <DotsThreeVertical size={32} />
+          </button>
+        </PopoverTrigger>
+        {options ? (
+          <PopoverContent className={"mr-10 max-w-[200px]"}>
+            {/* <Link to={`${row.original.id}`}>View Details</Link> */}
+            <button className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]">
+              <Link
+                to={
+                  location.pathname === "/staff"
+                    ? "./staff-details"
+                    : location.pathname.includes("manage-staff-roles")
+                      ? "../staff-details"
+                      : null
+                }
+                state={{ name, role, status, id }}
               >
-                Deactivate Staff
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(!showDeleteModal)}
-                className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]"
-              >
-                Delete Staff
-              </button>
-            </div>
-          </div>
-        </section>
-      ) : (
-        ""
-      )}
+                {/*className="px-6"*/}
+                View Staff Details
+              </Link>
+            </button>
+            <button
+              onClick={() => setShowDeactivateModal(!showDeactivateModal)}
+              className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]"
+            >
+              Deactivate Staff
+            </button>
+            <button
+              onClick={() => setShowDeleteModal(!showDeleteModal)}
+              className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]"
+            >
+              Delete Staff
+            </button>
+          </PopoverContent>
+        ) : (
+          ""
+        )}
+      </Popover>
     </>
   );
 };

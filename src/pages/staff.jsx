@@ -16,13 +16,8 @@ import debounce from "lodash.debounce";
 const Staff = () => {
   useRoleAccess(["Manager", "Admin"]);
   const [, setSelecteds] = useState([]);
-  // const [, setSearchTerm] = useState("");
-  // const [staffName, setStaffName] = useState("");
-  // const [roleName, setRoleName] = useState("");
-  // const [staffStatus, setStaffStatus] = useState("");
   const [selectedField, setSelectedField] = useState("name");
   const [searchValue, setSearchValue] = useState("");
-  // const [filterType, setFilterType] = useState("name")
 
   const filterObject = searchValue ? { [selectedField]: searchValue } : {};
 

@@ -17,7 +17,7 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
     mutationFn: async (staffId) => {
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       return axiosInstance.patch(
-        `/v1/store/${storeInfo.id}/staff`,
+        `/v1/store/${storeInfo.id}/staff/${staffId}`,
 
         {
           staff_id: staffId,

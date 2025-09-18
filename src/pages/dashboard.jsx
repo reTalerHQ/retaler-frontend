@@ -79,6 +79,8 @@ const Dashboard = () => {
     // Capitalize first letter (optional)
     return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
   }, [storeInfo]);
+  console.log("name is:", displayName);
+  
 
   const actionsLinks = [
     {

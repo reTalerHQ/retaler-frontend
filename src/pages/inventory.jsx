@@ -17,7 +17,7 @@ import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Dot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
