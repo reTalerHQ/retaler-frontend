@@ -80,7 +80,7 @@ const Inventory = () => {
   const [loading, setLoading] = useState(true);
 
   const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
-    queryKey: [FETCH_INVENTORY],
+    queryKey: [FETCH_SALES],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const rsp = await axiosInstance.get(
@@ -113,7 +113,7 @@ const Inventory = () => {
         const params = new URLSearchParams();
         params.append(selectInput, searchValue);
         const response = await axiosInstance.get(
-          `${BASE_URL}/v1/store/inventory?${params.toString()}`,
+          `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
 
           {
             headers: {

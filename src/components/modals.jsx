@@ -44,7 +44,7 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
         <DialogContent>
           <DialogHeader>
             <div className="mb-5 flex justify-end">
-              <button onClick={() => onClose()}>
+              <button onClick={() => onClose()} className="cursor-pointer">
                 <X />
               </button>
             </div>
@@ -87,7 +87,7 @@ export const DeleteStaff = ({ open, onClose }) => {
         <DialogContent>
           <DialogHeader>
             <div className="mb-5 flex justify-end">
-              <button onClick={() => onClose()}>
+              <button onClick={() => onClose()} className="cursor-pointer">
                 <X />
               </button>
             </div>
@@ -124,7 +124,7 @@ export const ReactivateStaff = ({ open, onClose }) => {
         <DialogContent>
           <DialogHeader>
             <div className="mb-5 flex justify-end">
-              <button onClick={() => onClose()}>
+              <button onClick={() => onClose()} className="cursor-pointer">
                 <X />
               </button>
             </div>
@@ -184,7 +184,7 @@ export const DeleteRole = ({ open, onClose, id }) => {
         <DialogContent>
           <DialogHeader>
             <div className="mb-5 flex justify-end">
-              <button onClick={() => onClose()}>
+              <button onClick={() => onClose()} className="cursor-pointer">
                 <X />
               </button>
             </div>

@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export function Header() {
   return (
     <>
@@ -155,11 +155,16 @@ function Hamburger() {
   );
 }
 
+
 export function ActionButton() {
+  const navigate = useNavigate();
     return (
       <>
-        <Button className="font-trap p-6 text-base font-medium text-white">
+        <Button onClick={() => navigate("/signup") } className="font-trap p-6 text-base font-medium text-white">
+          
+          
           Get Started For Free
+          
         </Button>
       </>
     );

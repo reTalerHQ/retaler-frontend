@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useRoleAccess from "../hooks/use-role-access";
 import { FilterIcon, Share2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,18 @@ const Staff = () => {
     login_time: s.login_time || "--",
     logout_time: s.logout_time || "--",
   }));
+// console.log(staffList[0].id);
 
-  // const staffId = staffListFormated?.[0].id
+  console.log(staffListFormated[0]);
+  
+
+  useEffect(() => {
+    if (staffListFormated.length > 0 && staffListFormated[0].id) {
+      localStorage.setItem("staffId", staffListFormated[0].id)
+    }
+  }, [staffListFormated])
+
+  // const staffId = staffListFormated[0].id
   // localStorage.setItem("staffId", staffId)
 
   const handleSelectedField = (e) => {

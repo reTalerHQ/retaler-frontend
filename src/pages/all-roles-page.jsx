@@ -73,6 +73,7 @@ const AllRoles = () => {
         <Link to="/staff/manage-staff-roles">
           <CaretLeft className="text-3xl" />
         </Link>
+        
         <h1 className="text-xl font-bold lg:text-[28px]">View all Roles</h1>
       </div>
       <div className="mt-10">

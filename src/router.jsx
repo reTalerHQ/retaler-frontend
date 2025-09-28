@@ -56,6 +56,10 @@ import GoogleCallback from "./pages/google-callback";
 
 export const router = createBrowserRouter([
   {
+    path: "/",
+    element: <RootEntry />,
+  },
+  {
     path: "/landing-page",
     element: <LandingPageLayout />,
     children: [
@@ -74,14 +78,10 @@ export const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/",
-    element: <RootEntry />,
-  },
-  {
-    path: "/welcome",
-    element: <Welcome />,
-  },
+  // {
+  //   path: "/welcome",
+  //   element: <Welcome />,
+  // },
   {
     path: "/signup",
     element: <Signup />,
@@ -234,7 +234,7 @@ export const router = createBrowserRouter([
             path: "add-new-staff",
             element: <AddNewStaffPage />,
           },
-           {
+          {
             path: "all-roles-page",
             element: <AllRoles />,
           },

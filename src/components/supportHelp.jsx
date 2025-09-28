@@ -9,7 +9,7 @@ const supports = [
   },
   {
     name: "Phone",
-    description: "+234 01234567",
+    description: "+234 9012 345 457",
   },
   {
     name: "Knowledge Base",

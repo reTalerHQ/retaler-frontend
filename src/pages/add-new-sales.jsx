@@ -146,8 +146,12 @@ export const AddNewSales = () => {
         return;
       }
 
-      const staffId = localStorage.getItem("staffId")
-
+      const staffId = localStorage.getItem("staffId");
+      if (!staffId) {
+        toast.error("Valid staff ID required. Please log in.");
+        return;
+      }
+      console.log(staffId);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const payload = {
         store_id: storeInfo?.id,
@@ -182,10 +186,10 @@ export const AddNewSales = () => {
       });
     } catch (error) {
       console.log({ error });
-      const status = error.response.status;
-      console.log({ status });
+      // const status = error.response?.status ?? 0;
+      // console.log({ status });
 
-      const message = error.response.data.detail;
+      const message = error.response?.data?.detail;
       toast.error(
         typeof message === "string"
           ? (message ?? "Something went wrong...")
