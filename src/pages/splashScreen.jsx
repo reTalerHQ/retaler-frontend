@@ -12,14 +12,14 @@ export const SplashScreen = () => {
     if (isMobile) {
       const timer = setTimeout(() => {
         setShowSplash(false);
-        navigate("/welcome");
+        navigate("/landing-page");
       }, 4000);
       return () => clearTimeout(timer);
     }
   }, [isMobile, navigate]);
 
   if (!isMobile) {
-    navigate("/welcome");
+    navigate("/landing-page");
     return null;
   }
 

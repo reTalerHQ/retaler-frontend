@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
     const loginUrl = `${BASE_URL}/v1/users/login`;
 
     if (
-      error.response.status === 401 &&
+    error.response &&  error.response.status === 401 &&
       !originalRequest._retry &&
       originalRequest.url !== loginUrl
     ) {
