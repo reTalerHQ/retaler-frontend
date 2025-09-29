@@ -21,6 +21,8 @@ import { useUser } from "@/context/user-context";
 import axiosInstance from "@/lib/axios";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { BASE_URL } from "@/constants/api";
+import debounce from "lodash.debounce";
+import { useMemo } from "react";
 
 import {
   Dialog,
@@ -31,22 +33,31 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { PagePreLoader } from "@/components/page-pre-loader";
 import { FETCH_SALES, FETCH_SALES_STATS } from "@/constants/query-key";
 
 const Sales = () => {
   const [selectedSalesIds, setSelectedSalesIds] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedField, setSelectedField] = useState("name");
+  const [searchValue, setSearchValue] = useState("");
 
   const { storeInfo } = useUser();
 
+  const filterObject = useMemo(
+    () => (searchValue ? { [selectedField]: searchValue } : {}),
+    [searchValue, selectedField],
+  );
+
   const { isLoading: isLoadingSales, data: salesData } = useQuery({
-    queryKey: [FETCH_SALES],
-    queryFn: async () => {
+    queryKey: [FETCH_SALES, filterObject],
+    queryFn: async ({ queryKey }) => {
+      const [_key, filters] = queryKey;
+      const queryString = new URLSearchParams(filters).toString();
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const rsp = await axiosInstance.get(
-        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales?${queryString}`,
         {
           headers: {
             Authorization: `Bearer ${tokenFromStorage}`,
@@ -57,6 +68,14 @@ const Sales = () => {
     },
     enabled: Boolean(storeInfo?.id),
   });
+
+  const handleSelectedField = (e) => {
+    setSelectedField(e.target.value);
+  };
+
+  const handleInputValue = debounce((e) => {
+    setSearchValue(e.target.value);
+  }, 500);
 
   const { isLoading: isLoadingSalesStats, data: salesStats } = useQuery({
     queryKey: [FETCH_SALES_STATS],
@@ -74,6 +93,34 @@ const Sales = () => {
     },
     enabled: Boolean(storeInfo?.id),
   });
+
+  const queryClient = useQueryClient();
+  const deleteSale = useMutation({
+    mutationFn: async (id) => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      return axiosInstance.delete(
+        `/v1/store/${storeInfo.id}/sales/${id}`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [FETCH_SALES] });
+    },
+  });
+
+  const handleDeleteSelected = () => {
+    console.log("deletingsales:", typeof selectedSalesIds);
+    console.log("deletingsales:", selectedSalesIds);
+    selectedSalesIds.forEach((sale) => deleteSale.mutate(sale.id));
+    console.log("✅ Would delete IDs:", selectedSalesIds);
+    // setShowDeleteModal(false);
+    setSelectedSalesIds([]);
+  };
 
   const columns = [
     {
@@ -136,11 +183,29 @@ const Sales = () => {
     },
   ];
 
-  const handleDeleteSelected = () => {
-    console.log("✅ Would delete IDs:", selectedSalesIds);
-    // setShowDeleteModal(false);
-    setSelectedSalesIds([]);
-  };
+  //   const { isLoading: isLoadingSales, data: salesData } = useQuery({
+  //   queryKey: [FETCH_SALES],
+  //   queryFn: async () => {
+  //     const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+  //     const rsp = await axiosInstance.get(
+  //       `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${tokenFromStorage}`,
+  //         },
+  //       },
+  //     );
+  //     return rsp?.data;
+  //   },
+  //   enabled: Boolean(storeInfo?.id),
+  // });
+
+  // const handleDeleteSelected = (saleId) => {
+  //   const queryClient = useQueryClient()
+  //   console.log("✅ Would delete IDs:", selectedSalesIds);
+  //   // setShowDeleteModal(false);
+  //   setSelectedSalesIds([]);
+  // };
 
   // const handleDeleteSelected = () => {
   //   const remainingSales = sales.filter(
@@ -211,7 +276,7 @@ const Sales = () => {
       </div>
 
       {/* SALES TABLE */}
-      <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border dark:rounded-sm">
+      <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:rounded-sm dark:border dark:bg-[#1e1e1e]">
         <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
           <h1 className="text-lg font-bold">All Sales</h1>
 
@@ -242,10 +307,14 @@ const Sales = () => {
                 showError={false}
                 type="Search"
                 placeholder="Search"
+                onChange={handleInputValue}
                 leftIcon={
                   <MagnifyingGlass className="text-sm text-[#BBBBBB]" />
                 }
               />
+              <select onChange={handleSelectedField}>
+                <option value="product_name">Product Name</option>
+              </select>
             </div>
           </div>
         </div>

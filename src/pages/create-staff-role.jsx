@@ -3,6 +3,15 @@ import useRoleAccess from "../hooks/use-role-access";
 import { CaretLeft, MagnifyingGlass, Funnel } from "phosphor-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { useUser } from "@/context/user-context";
+import axios from "axios";
+import { toast } from "sonner";
+import { TOKEN_IDENTIFIER } from "@/constants";
+import { BASE_URL } from "@/constants/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FETCH_PERMISSIONS } from "@/constants/query-key";
+import { Description } from "@radix-ui/react-dialog";
+import { useState } from "react";
 // import React, { useState } from "react";
 // import { SketchPicker } from 'react-color';
 // import { BlockPicker, CompactPicker, CirclePicker } from 'react-color'; // Example from react-color
@@ -10,6 +19,9 @@ import { Switch } from "@/components/ui/switch";
 
 const CreateStaffRole = () => {
   useRoleAccess(["Manager", "Admin"]);
+  const [roleName, setRoleName] = useState("");
+  const [roleDescription, setRoleDescription] = useState("");
+  const [rolePermission, setRolePermission] = useState([]);
   //      const [color, setColor] = useState({ hex: '#ffffff' });
 
   //   const handleColorChange = (newColor) => {
@@ -26,7 +38,7 @@ const CreateStaffRole = () => {
   }
 
   const inventory = [
-    "View All Prodeucts",
+    "View All Products",
     "Add New Products",
     "Edit Product Details",
     "Delete Products",
@@ -48,6 +60,51 @@ const CreateStaffRole = () => {
     "Manage Staff Roles",
   ];
 
+  const { storeInfo } = useUser();
+
+  const createRole = async (roleData) => {
+    const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    return await axios.post(
+      `${BASE_URL}/v1/store/${storeInfo.id}/roles`,
+      {
+        name: roleData.name,
+        description: roleData.description,
+        permissions: roleData.permissions,
+        store_id: storeInfo.id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+        },
+      },
+    );
+  };
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createRole,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["role"]);
+      toast.success("Role created successfully")
+      setRoleName("");
+      setRoleDescription("");
+      setRolePermission([]);
+    },
+    onError: (error) => {
+      console.error("failed to create role:", error);
+      
+      alert("Failed to create role")
+    }
+  });
+
+  const handleSwitch = (permission) => {
+    setRolePermission((prev) =>
+      prev.includes(permission)
+        ? prev.filter((p) => p !== permission)
+        : [...prev, permission],
+    );
+  };
+
   return (
     <>
       <section>
@@ -63,11 +120,23 @@ const CreateStaffRole = () => {
           <h2 className="text-xl font-semibold text-[#373636]">
             Staff Role Details
           </h2>
-          <form action="">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              
+              mutation.mutate({
+                name: roleName,
+                description: roleDescription,
+                permissions: rolePermission,
+              });
+            }}
+          >
             <div className="mt-3">
               <label htmlFor="role-name">Role Name</label>
               <Input
                 type="text"
+                value={roleName}
+                onChange={(e) => setRoleName(e.target.value)}
                 placeholder="e.g Sales Associate"
                 className="mt-1.5 bg-[#EFEEEE] dark:bg-[#1e1e1e]"
               />
@@ -76,6 +145,8 @@ const CreateStaffRole = () => {
               <label htmlFor="role-description">Description</label>
               <Input
                 type="text"
+                value={roleDescription}
+                onChange={(e) => setRoleDescription(e.target.value)}
                 placeholder="Enter role description"
                 className="mt-1.5 bg-[#EFEEEE] dark:bg-[#1e1e1e]"
               />
@@ -95,7 +166,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -109,7 +183,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -123,7 +200,10 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
@@ -137,27 +217,31 @@ const CreateStaffRole = () => {
                       className="mb-3 flex list-none justify-between"
                     >
                       {item}
-                      <Switch />
+                      <Switch
+                        checked={rolePermission.includes(item)}
+                        onCheckedChange={() => handleSwitch(item)}
+                      />
                     </li>
                   ))}
                 </div>
               </div>
             </section>
-          </form>
           <div className="mt-6 flex justify-end gap-4">
             <button
               type="button"
-              className="rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474] dark:bg-[#1e1e1e]"
+              className="cursor-pointer rounded-md bg-[#EFEEEE] px-5 py-3 text-[#767474] dark:bg-[#1e1e1e]"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-[#375ED9] px-8 py-3 text-white"
+              disabled={mutation.isPending}
+              className="cursor-pointer rounded-md bg-[#375ED9] px-8 py-3 text-white"
             >
-              Create Role
+              {mutation.isPending ? "Creating Role..." : "Create Role"}
             </button>
           </div>
+          </form>
         </section>
       </section>
     </>

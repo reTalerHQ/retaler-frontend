@@ -51,9 +51,14 @@ import { SplashDashboard } from "./pages/splash-dashboard";
 import { AddNewSales } from "@/pages/add-new-sales";
 
 import { Bus } from "lucide-react";
+import AllRoles from "./pages/all-roles-page";
 import GoogleCallback from "./pages/google-callback";
 
 export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootEntry />,
+  },
   {
     path: "/landing-page",
     element: <LandingPageLayout />,
@@ -73,14 +78,10 @@ export const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "/",
-    element: <RootEntry />,
-  },
-  {
-    path: "/welcome",
-    element: <Welcome />,
-  },
+  // {
+  //   path: "/welcome",
+  //   element: <Welcome />,
+  // },
   {
     path: "/signup",
     element: <Signup />,
@@ -232,6 +233,10 @@ export const router = createBrowserRouter([
           {
             path: "add-new-staff",
             element: <AddNewStaffPage />,
+          },
+          {
+            path: "all-roles-page",
+            element: <AllRoles />,
           },
         ],
       },

@@ -10,5 +10,5 @@ export const RootEntry = () => {
     return <SplashScreen />;
   }
 
-  return <Navigate to="/welcome" replace />;
+  return <Navigate to="/landing-page" replace />;
 };

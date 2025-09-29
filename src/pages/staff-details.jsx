@@ -171,9 +171,11 @@ const StaffDetails = () => {
 
   const location = useLocation();
   const { name, role, status, id } = location.state || {};
-  const { storeInfo, staffInfo } = useUser();
+  const { storeInfo } = useUser();
+  console.log(storeInfo);
+  
 
-  console.log(staffInfo);
+  // console.log(staffInfo);
 
   const { isLoading: isLoadingRoles, data: permissions } = useQuery({
     queryKey: [FETCH_PERMISSIONS],
@@ -349,19 +351,6 @@ const StaffDetails = () => {
                     );
                   })}
 
-                  {/* <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
-                    View All Sales {roleList.forEach((perm, index) => {
-                      <a key={index}>{perm}</a>
-                    })}
-                   
-                    
-                  </li>
-                  <li className="mb-3 rounded-md bg-[#F6F8FD] px-5 py-1.5">
-                    Resord New Sales
-                  </li>
-                  <li className="rounded-md bg-[#F6F8FD] px-5 py-1.5">
-                    Edit Sales Records
-                  </li> */}
                 </ul>
               </div>
             </section>

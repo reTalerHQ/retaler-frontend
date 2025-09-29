@@ -55,7 +55,7 @@ const AddNewProduct = () => {
 
   const handleFileChange = (file) => {
     setFile(file);
-    setValue("file", file);
+    setValue("file", file, {shouldValidate: true});
   };
 
   const handleCategoryChange = (selected) => {
@@ -127,13 +127,14 @@ const AddNewProduct = () => {
     }
   };
 
-  if (formData.quantity > formData.low_stock_count) {
-    formData.status === 'IN STOCK'
-  } else if (formData.quantity < formData.low_stock_count) {
-    formData.status === 'OUT OF STOCK'
-  } else {
-    formData.status === ''
-  }
+  // if (formData.quantity > formData.low_stock_count) {
+  //   formData.status === 'IN STOCK'
+  // } else if (formData.quantity < formData.low_stock_count) {
+  //   formData.status === 'OUT OF STOCK'
+  // } else {
+  //   formData.status === ''
+  // }
+console.log(errors);
 
   return (
     <>
@@ -176,16 +177,18 @@ const AddNewProduct = () => {
           <Input 
             label="Product Name" 
             placeholder="Enter product name" 
-            value={formData.name}
-            onChange={handleChange("name")}
+            // value={formData.name}
+            // onChange={handleChange("name")}
             className={`dark:bg-[#383838]`}
+            {...register("name")}
           />
           <Input
             label="Product Description"
             placeholder="Enter product description"
-            value={formData.description}
-            onChange={handleChange("description")}
+            // value={formData.description}
+            // onChange={handleChange("description")}
                className={`dark:bg-[#383838]`}
+                {...register("description")}
           />
           <ReactSelectCustomized
             options={productCategories}

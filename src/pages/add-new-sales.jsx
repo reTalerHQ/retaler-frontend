@@ -146,10 +146,16 @@ export const AddNewSales = () => {
         return;
       }
 
+      const staffId = localStorage.getItem("staffId");
+      if (!staffId) {
+        toast.error("Valid staff ID required. Please log in.");
+        return;
+      }
+      console.log(staffId);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
       const payload = {
         store_id: storeInfo?.id,
-        staff_id: storeInfo?.user_id,
+        staff_id: staffId,
         payment_method: data?.paymentMethod,
         amount_paid: data?.amountPaid,
         items: addedProducts?.map((prod) => ({
@@ -159,11 +165,15 @@ export const AddNewSales = () => {
         })),
       };
 
-      await axiosInstance.post(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, payload, {
-        headers: {
-          Authorization: `Bearer ${tokenFromStorage}`,
+      await axiosInstance.post(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
         },
-      });
+      );
       setAddedProducts([]);
 
       reset();
@@ -176,10 +186,10 @@ export const AddNewSales = () => {
       });
     } catch (error) {
       console.log({ error });
-      const status = error.response.status;
-      console.log({ status });
+      // const status = error.response?.status ?? 0;
+      // console.log({ status });
 
-      const message = error.response.data.detail;
+      const message = error.response?.data?.detail;
       toast.error(
         typeof message === "string"
           ? (message ?? "Something went wrong...")

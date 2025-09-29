@@ -17,7 +17,7 @@ import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader } from "../components/ui/dialog";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FileUpload from "@/components/file-upload";
 import { Dot } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -34,6 +34,7 @@ import { TOKEN_IDENTIFIER } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import { FETCH_SALES } from "@/constants/query-key";
 import { FETCH_INVENTORY } from "@/constants/query-key";
+import debounce from "lodash.debounce";
 
 const MODAL_TYPES = {
   ADD_PRODUCTS: "ADD_PRODUCT",
@@ -52,15 +53,18 @@ const PAGE_MODE = {
 
 const Inventory = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   const { storeInfo } = useUser();
+  const [, setSearchTerm] = useState("");
   const [pageMode, setPageMode] = useState(PAGE_MODE.INITIAL);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openedModalType, setOpenedModalType] = useState(null);
   const [selectedUploadOption, setSelectedUploadOption] = useState(null);
   const [bulkFile, setBulkFile] = useState(null);
+  const [selectInput, setSelectedInput] = useState("product_name");
+  const [searchValue, setSearchValue] = useState("");
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -76,12 +80,15 @@ const Inventory = () => {
   const [loading, setLoading] = useState(true);
 
   const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
-    queryKey: [FETCH_INVENTORY],
+    queryKey: [FETCH_SALES],
     queryFn: async () => {
       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      const rsp = await axiosInstance.get(`${BASE_URL}/v1/store/${storeInfo.id}/sales`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const rsp = await axiosInstance.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       return rsp?.data;
     },
     enabled: Boolean(storeInfo?.id),
@@ -103,11 +110,17 @@ const Inventory = () => {
     const fetchInventory = async () => {
       try {
         const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-        const response = await axiosInstance.get(`${BASE_URL}/v1/store/inventory`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const params = new URLSearchParams();
+        params.append(selectInput, searchValue);
+        const response = await axiosInstance.get(
+          `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         let inventoryData = response.data.inventory || [];
         console.log(
           "✅ Inventory IDs",
@@ -139,7 +152,7 @@ const Inventory = () => {
     if (storeInfo?.id) {
       fetchInventory();
     }
-  }, [storeInfo]);
+  }, [storeInfo, searchValue, selectInput]);
 
   const handleToggleModal = (modalType) => {
     if (!modalType) {
@@ -155,6 +168,10 @@ const Inventory = () => {
   const handleUploadOptionSelect = (option) => {
     setSelectedUploadOption(option);
   };
+
+  const handleInputValue = debounce((e) => {
+    setSearchValue(e.target.value);
+  }, 500);
 
   const columns = [
     {
@@ -304,7 +321,7 @@ const Inventory = () => {
               border="#FFD633"
             />
           </div>
-          <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border dark:rounded-2xl ">
+          <div className="mt-8 bg-white p-4 lg:px-5 lg:py-9 dark:rounded-2xl dark:border dark:bg-[#1e1e1e]">
             <div className="mb-10 flex flex-col justify-between gap-3 lg:flex-row">
               <h1 className="text-lg font-bold">All Products</h1>
               <div className="flex items-center gap-2">
@@ -314,6 +331,7 @@ const Inventory = () => {
                 <Input
                   showError={false}
                   type="Search"
+                  onChange={handleInputValue}
                   placeholder="Search"
                   leftIcon={
                     <MagnifyingGlass className="text-sm text-[#BBBBBB]" />
@@ -325,7 +343,7 @@ const Inventory = () => {
               <p>Loading...</p>
             ) : (
               <DataTable
-            className="dark:bg-[#1e1e1e] "
+                className="dark:bg-[#1e1e1e]"
                 columns={columns}
                 data={products}
                 enableRowSelection
@@ -362,7 +380,7 @@ const Inventory = () => {
                   onClick={() =>
                     handleUploadOptionSelect(UPLOAD_OPTIONS.MANUAL)
                   }
-                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm dark:bg-[#1e1e1e] bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.MANUAL ? "border-primary border" : ""}`}
+                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm bg-[#FAFAFA] p-6 lg:gap-6 dark:bg-[#1e1e1e] ${selectedUploadOption === UPLOAD_OPTIONS.MANUAL ? "border-primary border" : ""}`}
                 >
                   <div className="bg-primary flex aspect-square h-10 items-center justify-center rounded-full lg:h-14">
                     <Tag className="text-lg text-white lg:text-2xl" />
@@ -374,7 +392,7 @@ const Inventory = () => {
                   </p>
                 </div>
                 <div
-                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm dark:bg-[#1e1e1e] bg-[#FAFAFA] p-6 lg:gap-6 ${selectedUploadOption === UPLOAD_OPTIONS.SPREAD_SHEET ? "border-primary border" : ""}`}
+                  className={`flex cursor-pointer flex-col items-center justify-center gap-4 rounded-sm bg-[#FAFAFA] p-6 lg:gap-6 dark:bg-[#1e1e1e] ${selectedUploadOption === UPLOAD_OPTIONS.SPREAD_SHEET ? "border-primary border" : ""}`}
                   onClick={() =>
                     handleUploadOptionSelect(UPLOAD_OPTIONS.SPREAD_SHEET)
                   }

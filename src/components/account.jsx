@@ -28,7 +28,9 @@ const schema = yup.object({
     .matches(/[\W_]/, "At least one special character"),
 });
 
+
 export const Account = () => {
+  const {storeInfo} = useUser();
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -160,13 +162,23 @@ export const Account = () => {
       setOpenedModalType(modalType);
     }
   };
+
+  
   const handleDeleteAccount = async () => {
     const deleteToken = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    // const storeInfo = JSON.parse(sessionStorage.getIte?m())
     const userInfo = JSON.parse(sessionStorage.getItem(USER_INFO_KEY));
     const userId = userInfo?.id;
+    console.log("token:", deleteToken);
+    console.log("User ID from session:", userId);
+    //  await axiosInstance.delete(`${BASE_URL}/v1/store/${storeInfo.id}/`, {
+    //  await axiosInstance.delete(`${BASE_URL}/v1/users/${userId}/`, {
+      // console.log("DELETE URL:", `${BASE_URL}/v1/store/${storeInfo.id}`);
+    console.log("DELETE URL:", `${BASE_URL}/v1/users/${userId}/`);
+    
 
     try {
-      await axiosInstance.delete(`${BASE_URL}/v1/users/${userId}/`, {
+     await axiosInstance.delete(`${BASE_URL}/v1/users/${userId}/`, {
         headers: {
           Authorization: `Bearer ${deleteToken}`,
         },
@@ -263,7 +275,7 @@ export const Account = () => {
                   onFocus={(e) => e.target.select()}
                   className="dark:bg-[#383838]"
                 />
-                <Input
+                {/* <Input
                   label="Business Name"
                   value={editedData.business}
                   onChange={(e) =>
@@ -271,7 +283,7 @@ export const Account = () => {
                   }
                   onFocus={(e) => e.target.select()}
                   className="dark:bg-[#383838]"
-                />
+                /> */}
               </div>
             </div>
           </section>
