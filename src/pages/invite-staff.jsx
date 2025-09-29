@@ -19,7 +19,7 @@ const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   role: yup.string().required("Role is required"),
   name: yup.string().required("Name is required"),
-  phone_number: yup.string().required("Phone number is required"),
+  phone_no: yup.string().required("Phone number is required"),
 });
 
 export const InviteStaff = () => {
@@ -38,7 +38,7 @@ export const InviteStaff = () => {
       email: "",
       role: "",
       name: "",
-      phone_number: "",
+      phone_no: "",
     },
   });
   const { setStoreInfo } = useUser();
@@ -70,7 +70,7 @@ export const InviteStaff = () => {
         `${BASE_URL}/v1/store/${storeInfo.id}/staff`,
         {
           name: data.name,
-          phone_number: data.phone_number,
+          phone_no: data.phone_no,
           email: data.email,
           role: data.role,
         },
@@ -135,11 +135,11 @@ export const InviteStaff = () => {
           <Input
             label="Phone Number"
             type="number"
-            {...register("phone_number")}
+            {...register("phone_no")}
           />
-          {errors.phone_number && (
+          {errors.phone_no && (
             <p className="mt-1 text-sm text-red-500">
-              {errors.phone_number.message}
+              {errors.phone_no.message}
             </p>
           )}
           <div>
