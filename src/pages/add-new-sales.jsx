@@ -146,7 +146,13 @@ export const AddNewSales = () => {
         return;
       }
 
-      const staffId = localStorage.getItem("staffId");
+      // const staffId = localStorage.getItem("staffId");
+      // if (!staffId) {
+      //   toast.error("Valid staff ID required. Please log in.");
+      //   return;
+      // }
+      const userInfo = JSON.parse(sessionStorage.getItem("RETALER_USER_INFO"));
+      const staffId = userInfo?.id || userInfo?.staff_id;
       if (!staffId) {
         toast.error("Valid staff ID required. Please log in.");
         return;
