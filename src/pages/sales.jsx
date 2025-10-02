@@ -23,6 +23,9 @@ import { TOKEN_IDENTIFIER } from "@/constants";
 import { BASE_URL } from "@/constants/api";
 import debounce from "lodash.debounce";
 import { useMemo } from "react";
+// import { useFetchInventory } from "@/hooks/useFetchInventory";
+// import { useFetchInventory } from "@/hooks/useFetchInventory";
+// import { useFetchInventory } from "@/hooks/use-fetch-inventory";
 
 import {
   Dialog,
@@ -44,6 +47,13 @@ const Sales = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const { storeInfo } = useUser();
+  // const { isLoading: isLoadingInventory, data: inventoryData } =
+  //   useFetchInventory(storeInfo?.id);
+
+  //   const inventoryMap = {};
+  // (inventoryData?.inventory ?? []).forEach((prod) => {
+  //   inventoryMap[prod.id] = prod.product_name;
+  // });
 
   const filterObject = useMemo(
     () => (searchValue ? { [selectedField]: searchValue } : {}),
@@ -128,6 +138,20 @@ const Sales = () => {
       header: "Product Names",
       accessorFn: (data) => data?.items?.map((p) => p.inventory_id).join(","),
     },
+    // const inventoryMap = {};
+    // (inventoryData?.inventory ?? []).forEach((prod) => {
+    //   inventoryMap[prod.id] = prod.product_name;
+    // });
+
+    // const columns = [
+    //   {
+    //     accessorKey: "items",
+    //     header: "Product Names",
+    //     accessorFn: (data) =>
+    //       data?.items
+    //         ?.map((p) => inventoryMap[p.inventory_id] || p.inventory_id)
+    //         .join(", "),
+    //   },
     {
       accessorKey: "total_amount",
       header: "Total Price",
