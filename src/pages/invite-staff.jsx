@@ -81,7 +81,7 @@ export const InviteStaff = () => {
           },
         },
       );
-      // console.log("storeInfo:", storeInfo);
+     
       toast.success(rsp.data.detail);
       navigate("/watch-demo");
     } catch (error) {

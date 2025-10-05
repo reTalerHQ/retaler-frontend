@@ -97,7 +97,7 @@ const Staff = () => {
       cell: ({ row }) => {
         const name = row.original.name;
         const role = row.original.role;
-        const status = row.original.status;
+        const status = row.original.staff_status;
         const id = row.original.id;
         return <StaffOptions name={name} role={role} status={status} id={id} />;
       },

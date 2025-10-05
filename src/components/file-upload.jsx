@@ -9,10 +9,13 @@ const FileUpload = ({
   handleFileChange,
   className,
   description,
+  onFileSelect,
   ...props
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState(file ? URL.createObjectURL(file) : null);
+  const [preview, setPreview] = useState(
+    file ? URL.createObjectURL(file) : null,
+  );
 
   useEffect(() => {
     if (file) {
@@ -40,8 +43,12 @@ const FileUpload = ({
   };
 
   const onChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile && onFileSelect) {
+      onFileSelect(selectedFile);
+    }
     if (e.target.files?.length > 0) {
-      handleFileChange(e.target.files[0]);
+      handleFileChange(selectedFile);
     }
   };
 
@@ -53,11 +60,11 @@ const FileUpload = ({
   if (preview) {
     return (
       <div className="relative">
-        <img src={preview} alt="preview" className="w-full h-auto rounded-xl" />
+        <img src={preview} alt="preview" className="h-auto w-full rounded-xl" />
         <button
           type="button"
           onClick={onRemove}
-          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+          className="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white"
         >
           <X size={16} />
         </button>

@@ -73,7 +73,7 @@ export const Signup = () => {
       console.log("Form Data:", data);
 
       const rsp = await axiosInstance.post(
-        `${BASE_URL}/v1/users/register/`,
+        `${BASE_URL}/v1/users/register`,
         data,
       );
 
@@ -89,7 +89,7 @@ export const Signup = () => {
       navigate("/business-info");
     } catch (error) {
       console.log({ error });
-      const message = error.response.data.detail;
+      const message = error.response.data?.detail;
       toast.error(message ?? "Something went wrong...");
     }
   };
