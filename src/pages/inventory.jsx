@@ -27,11 +27,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "sonner";
 import { useUser } from "@/context/user-context";
 import axiosInstance from "@/lib/axios";
+import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FETCH_SALES } from "@/constants/query-key";
 import { FETCH_INVENTORY } from "@/constants/query-key";
 import debounce from "lodash.debounce";
@@ -65,6 +67,7 @@ const Inventory = () => {
   const [bulkFile, setBulkFile] = useState(null);
   const [selectInput, setSelectedInput] = useState("product_name");
   const [searchValue, setSearchValue] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -172,6 +175,52 @@ const Inventory = () => {
   const handleInputValue = debounce((e) => {
     setSearchValue(e.target.value);
   }, 500);
+
+  // file upload
+
+  // const fileName = file.name
+
+  const fileUpload = async () => {
+    const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    const formData = new FormData();
+    formData.append("file", bulkFile);
+    formData.append("store_id", storeInfo.id);
+    return await axios.post(
+      `${BASE_URL}/v1/store/${storeInfo.id}/inventory/import_csv`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (ProgressEvent) => {
+          const percent = Math.round(
+            (ProgressEvent.loaded * 100) / ProgressEvent.total,
+          );
+          setUploadProgress(percent);
+        },
+      },
+    );
+  };
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: fileUpload,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["inventory"]);
+      toast.success("Import successful");
+    },
+    onError: (error) => {
+      console.error("failed to import:", error);
+      alert("failed to import file");
+    },
+  });
+
+  const handleSelectedFile = (file) => {
+    if (!file) return;
+    setBulkFile(file);
+  };
 
   const columns = [
     {
@@ -354,7 +403,9 @@ const Inventory = () => {
           </div>
         </>
       )}
-      {pageMode === PAGE_MODE.BULK_UPLOAD && <BulkUploadProducts />}
+      {pageMode === PAGE_MODE.BULK_UPLOAD && (
+        <BulkUploadProducts file={bulkFile} uploadProgress={uploadProgress} />
+      )}
       <Dialog open={openModal}>
         <DialogContent className={"gap-2 sm:max-w-[90%] lg:max-w-[700px]"}>
           <DialogHeader>
@@ -446,6 +497,7 @@ const Inventory = () => {
                   }
                   file={bulkFile}
                   handleFileChange={setBulkFile}
+                  onFileSelect={handleSelectedFile}
                 />
               </div>
               {bulkFile && <div></div>}
@@ -455,21 +507,24 @@ const Inventory = () => {
                     <img src="assets/images/csv-icon.svg" />
                     <div>
                       <h4 className="text-sm font-semibold">
-                        Product_inventory_2024.csv
+                        {/* Product_inventory_2024.csv */} {bulkFile?.name}
                       </h4>
                       <p className="flex items-center gap-0.5 text-sm">
-                        <span>2.3 MB</span> <Dot size={32} />{" "}
-                        <span>5 seconds left</span>
+                        <span>
+                          {" "}
+                          {(bulkFile?.size / 1024 / 1024).toFixed(2)} mb{" "}
+                        </span>{" "}
+                        <Dot size={32} /> <span>5 seconds left</span>
                       </p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
                     <X size={18} className="cursor-pointer" />
-                    <p className="text-sm">60%</p>
+                    <p className="text-sm"> {uploadProgress}% </p>
                   </div>
                 </div>
                 <div>
-                  <Progress value={60} className={"bg-white"} />
+                  <Progress value={uploadProgress} className={"bg-white"} />
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-center gap-2">
@@ -484,7 +539,8 @@ const Inventory = () => {
                   disabled={!selectedUploadOption}
                   onClick={() => {
                     setPageMode(PAGE_MODE.BULK_UPLOAD);
-                    handleToggleModal();
+                    handleToggleModal(bulkFile);
+                    mutation.mutate();
                   }}
                 >
                   Import

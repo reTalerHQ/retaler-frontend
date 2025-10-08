@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FETCH_ROLES, FETCH_STAFFS } from "@/constants/query-key";
 import { toast } from "sonner";
 
-export const DeactivateStaff = ({ open, onClose, id }) => {
+export const DeactivateStaff = ({ open, onClose, role, id }) => {
   const { storeInfo } = useUser();
 
   const queryClient = useQueryClient();
@@ -22,6 +22,7 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
         {
           staff_id: staffId,
           status: "inactive",
+          role: role
         },
 
         {
@@ -32,8 +33,9 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [FETCH_STAFFS] });
+      queryClient.invalidateQueries({ queryKey: [FETCH_STAFFS], exact: false });
       onClose();
+      status("inactive")
     },
   });
   if (!open) return null;
@@ -67,7 +69,7 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
             </button>
             <button
               onClick={() => {
-                deactivateStaff.mutate(id);
+                deactivateStaff.mutate(id, role);
               }}
               className="w-[9rem] cursor-pointer rounded-sm bg-[#C61010] py-2 text-center"
             >
@@ -80,7 +82,36 @@ export const DeactivateStaff = ({ open, onClose, id }) => {
   );
 };
 
-export const DeleteStaff = ({ open, onClose }) => {
+
+
+export const DeleteStaff = ({ open, onClose, id }) => {
+  const { storeInfo } = useUser();
+
+  const queryClient = useQueryClient();
+  const deleteStaff = useMutation({
+    mutationFn: async (staffId) => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      return axiosInstance.delete(
+        `/v1/store/${storeInfo.id}/staff/${staffId}`,
+
+        // {
+        //   staff_id: staffId,
+        //   status: "inactive",
+        // },
+
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [FETCH_STAFFS] });
+      onClose();
+    },
+  });
+  if (!open) return null;
   return (
     <>
       <Dialog open={open} className="">
@@ -107,7 +138,7 @@ export const DeleteStaff = ({ open, onClose }) => {
             >
               Cancel
             </button>
-            <button className="w-[9rem] cursor-pointer rounded-sm bg-[#C61010] py-2 text-center">
+            <button   onClick={() => deleteStaff.mutate(id)} className="w-[9rem] cursor-pointer rounded-sm bg-[#C61010] py-2 text-center">
               Delete
             </button>
           </div>
@@ -117,7 +148,34 @@ export const DeleteStaff = ({ open, onClose }) => {
   );
 };
 
-export const ReactivateStaff = ({ open, onClose }) => {
+export const ReactivateStaff = ({ open, onClose, role, id }) => {
+  const { storeInfo } = useUser();
+  const queryClient = useQueryClient();
+  const reactivateStaff = useMutation({
+    mutationFn: async (staffId) => {
+      const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      return axiosInstance.patch(
+        `/v1/store/${storeInfo.id}/staff/${staffId}`,
+
+        {
+          staff_id: staffId,
+          status: "active",
+          role: role
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${tokenFromStorage}`,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [FETCH_STAFFS], exact: false });
+      onClose();
+    },
+  });
+  if (!open) return null;
   return (
     <>
       <Dialog open={open} className="">
@@ -143,7 +201,7 @@ export const ReactivateStaff = ({ open, onClose }) => {
             >
               Cancel
             </button>
-            <button className="w-[9rem] cursor-pointer rounded-sm bg-[#375ED9] py-2 text-center">
+            <button onClick={() => reactivateStaff.mutate(id, role)} className="w-[9rem] cursor-pointer rounded-sm bg-[#375ED9] py-2 text-center">
               Reactivate
             </button>
           </div>

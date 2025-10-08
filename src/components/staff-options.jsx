@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { DeactivateStaff } from "./modals";
-import { DeleteStaff } from "./modals";
+import { DeactivateStaff, ReactivateStaff, DeleteStaff } from "./modals";
 import { useLocation } from "react-router-dom";
 import {
   Popover,
@@ -12,8 +11,9 @@ import { DotsThreeVertical } from "phosphor-react";
 const StaffOptions = ({ name, role, status, id }) => {
   const [options, setOptions] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+console.log("status prop:", status);
   const location = useLocation();
 
   return (
@@ -26,8 +26,17 @@ const StaffOptions = ({ name, role, status, id }) => {
           role={role}
         />
       ) : null}
+      {showReactivateModal ? (
+        <ReactivateStaff
+          id={id}
+          open={showReactivateModal}
+          onClose={() => setShowReactivateModal(false)}
+          role={role}
+        />
+      ) : null}
       {showDeleteModal ? (
         <DeleteStaff
+          id={id}
           open={showDeleteModal}
           onClose={() => setShowDeleteModal(false)}
         />
@@ -61,10 +70,14 @@ const StaffOptions = ({ name, role, status, id }) => {
               </Link>
             </button>
             <button
-              onClick={() => setShowDeactivateModal(!showDeactivateModal)}
+              onClick={() =>
+                status === "active"
+                  ? setShowDeactivateModal(!showDeactivateModal)
+                  : setShowReactivateModal(!showReactivateModal)
+              }
               className="w-[10rem] rounded-sm py-3 hover:bg-[#375ED9]"
             >
-              Deactivate Staff
+              {status === "active" ? "Deactivate Staff" : "Reactivate Staff"}
             </button>
             <button
               onClick={() => setShowDeleteModal(!showDeleteModal)}

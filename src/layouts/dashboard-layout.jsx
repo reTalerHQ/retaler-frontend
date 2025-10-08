@@ -139,19 +139,19 @@ export const DashboardLayout = () => {
   );
 
   const { storeInfo } = useUser();
-     const displayName = useMemo(() => {
-        // Try common spots the backend might put it
-        const raw =
-          storeInfo?.user?.username ??
-          storeInfo?.username ??
-          storeInfo?.user?.first_name ??
-          storeInfo?.owner_name ??
-          storeInfo?.name ??
-          "";
-    
-        // Capitalize first letter (optional)
-        return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
-      }, [storeInfo]);
+  const displayName = useMemo(() => {
+    // Try common spots the backend might put it
+    const raw =
+      storeInfo?.user?.username ??
+      storeInfo?.username ??
+      storeInfo?.user?.first_name ??
+      storeInfo?.owner_name ??
+      storeInfo?.name ??
+      "";
+
+    // Capitalize first letter (optional)
+    return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+  }, [storeInfo]);
 
   const showNotificationBadge = true;
   const handleLogout = () => {
@@ -269,7 +269,7 @@ export const DashboardLayout = () => {
                 </PopoverTrigger>
                 <PopoverContent className="flex max-w-40 flex-col gap-3 p-2 lg:max-w-50">
                   <Link
-                    to="/account"
+                    to="/settings/account"
                     className="flex items-center justify-start gap-2 px-4 text-sm"
                   >
                     <User className="text-lg" />
