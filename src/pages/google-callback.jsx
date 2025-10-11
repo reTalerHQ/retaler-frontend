@@ -21,6 +21,7 @@ const GoogleCallback = () => {
       const searchParams = new URLSearchParams(location.search);
       const accessToken = searchParams.get("access_token");
       const refreshToken = searchParams.get("refresh_token");
+      const authType = searchParams.get("type");
 
       if (!accessToken || !refreshToken) {
         toast.error("Google authenticatication failed");
@@ -44,6 +45,11 @@ const GoogleCallback = () => {
         }
 
         sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
+
+        if (authType && authType?.toUpperCase() === "SIGNUP") {
+          navigate("/splash-dashboard");
+          return;
+        }
 
         navigate("/dashboard");
         return;
