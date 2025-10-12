@@ -39,6 +39,11 @@ const Staff = () => {
     login_time: s.login_time || "--",
     logout_time: s.logout_time || "--",
   }));
+
+  const no_of_staff = localStorage.setItem('no of staff', staffListFormated.length)
+  console.log('no of staffs', no_of_staff);
+  
+  
 // console.log(staffList[0].id);
 
   console.log(staffListFormated[0]);

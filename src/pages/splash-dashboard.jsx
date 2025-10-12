@@ -7,6 +7,8 @@ export const SplashDashboard = () => {
   const navigate = useNavigate();
 
    const { storeInfo } = useUser();
+   console.log('storeinfo', storeInfo);
+   
    const displayName = useMemo(() => {
       // Try common spots the backend might put it
       const raw =

@@ -57,14 +57,23 @@ export const DashboardLayout = () => {
           },
         },
       );
-      const stores = response?.data?.user?.stores;
+      const stores = response?.data?.user?.stores || [];
+      const eachStore = stores.find((store) => store.user_id === userInfo.id);
+
+      if (eachStore) {
+        setStoreInfo({ id: eachStore.id, name: eachStore.name });
+        console.log("set store info", eachStore);
+      } else {
+        console.log("no store found for this user");
+      }
       const staff_profile = response?.data?.user?.staff_profile?.[0];
+      // const store_name = stores?.find((store) => store.id === store_id)?.name;
       console.log({ stores, staff_profile });
 
-      const store_id = staff_profile?.store_id;
-      if (store_id) {
-        setStoreInfo({ id: store_id });
-      }
+      // const store_id = staff_profile?.store_id;
+      // if (store_id) {
+      //   setStoreInfo({ id: store_id, name: store_name });
+      // }
 
       if (staff_profile) {
         userInfo.role = staff_profile?.role?.name;
@@ -79,6 +88,9 @@ export const DashboardLayout = () => {
       //   userInfo.role = userStaffDetail.role;
       //   sessionStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
       // }
+
+      console.log("stores are", stores);
+      console.log("store id", response?.data?.user?.stores?.id);
 
       return stores;
     },

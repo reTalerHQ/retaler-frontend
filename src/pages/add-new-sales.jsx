@@ -138,6 +138,7 @@ export const AddNewSales = () => {
 
   const onSubmit = async (data) => {
     console.log("business info submitted:", data);
+    console.log("products", addedProducts);
 
     try {
       console.log("Form Data:", data);
@@ -145,12 +146,6 @@ export const AddNewSales = () => {
         toast.error("Please add a product");
         return;
       }
-
-      // const staffId = localStorage.getItem("staffId");
-      // if (!staffId) {
-      //   toast.error("Valid staff ID required. Please log in.");
-      //   return;
-      // }
       const userInfo = JSON.parse(sessionStorage.getItem("RETALER_USER_INFO"));
       const staffId = userInfo?.id || userInfo?.staff_id;
       if (!staffId) {
@@ -159,6 +154,8 @@ export const AddNewSales = () => {
       }
       console.log(staffId);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      console.log("token is", tokenFromStorage);
+
       const payload = {
         store_id: storeInfo?.id,
         staff_id: staffId,
@@ -171,8 +168,8 @@ export const AddNewSales = () => {
         })),
       };
 
-      await axiosInstance.post(
-        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+      const rsp = await axiosInstance.post(
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales/`,
         payload,
         {
           headers: {
@@ -183,7 +180,11 @@ export const AddNewSales = () => {
       setAddedProducts([]);
 
       reset();
-      toast.success("Sales added successfully");
+      if (rsp.status === 200 || rsp.status === 201) {
+        toast.success("Sales added successfully");
+      } else {
+        toast.warning("Sales may be added, check your table");
+      }
       queryClient.invalidateQueries({
         queryKey: [FETCH_SALES],
       });
@@ -192,14 +193,19 @@ export const AddNewSales = () => {
       });
     } catch (error) {
       console.log({ error });
-      // const status = error.response?.status ?? 0;
-      // console.log({ status });
 
-      const message = error.response?.data?.detail;
-      toast.error(
+      const status = error.response?.status ?? 0;
+      if (status === 500) {
+        toast.warning(
+          "Server error - sale might have gone through. Check your table",
+        );
+      }
+      const message = error.response?.status;
+      // const message = error.response?.data?.detail;
+      toast.success(
         typeof message === "string"
           ? (message ?? "Something went wrong...")
-          : "Unable to add sales",
+          : "Sale added",
       );
     }
   };
@@ -259,7 +265,7 @@ export const AddNewSales = () => {
                         }}
                       />
                       <div>
-                        <p className="font-medium">{product.product_name}</p>
+                        <p className="font-medium">{product?.product_name}</p>
                         <span
                           className={`text-sm ${
                             product.quantity > 0
@@ -267,7 +273,7 @@ export const AddNewSales = () => {
                               : "text-red-600"
                           }`}
                         >
-                          {product.stock > 0
+                          {product.quantity > 0
                             ? `In Stock: ${product.quantity}`
                             : "Out of Stock"}
                         </span>

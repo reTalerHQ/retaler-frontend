@@ -55,7 +55,7 @@ const AddNewProduct = () => {
 
   const handleFileChange = (file) => {
     setFile(file);
-    setValue("file", file, {shouldValidate: true});
+    setValue("file", file, { shouldValidate: true });
   };
 
   const handleCategoryChange = (selected) => {
@@ -93,7 +93,7 @@ const AddNewProduct = () => {
       "expiration_date",
       data.expiration_date
         ? new Date(data.expiration_date).toISOString()
-        : null
+        : null,
     );
     formData.append("category", data.category ? Number(data.category) : null);
     formData.append("file", file);
@@ -115,18 +115,17 @@ const AddNewProduct = () => {
           currency: "₦",
           last_updated: new Date().toISOString(),
           status: "",
-        })
+        }),
       );
       toast.success("Product added successfully!");
       navigate("/inventory/");
     } catch (error) {
       console.error("❌ API error:", error);
       toast.error(
-        error.response?.data?.detail ?? "Failed to add product. Try again."
+        error.response?.data?.detail ?? "Failed to add product. Try again.",
       );
     }
   };
-
   // if (formData.quantity > formData.low_stock_count) {
   //   formData.status === 'IN STOCK'
   // } else if (formData.quantity < formData.low_stock_count) {
@@ -134,7 +133,7 @@ const AddNewProduct = () => {
   // } else {
   //   formData.status === ''
   // }
-console.log(errors);
+  console.log(errors);
 
   return (
     <>
@@ -152,15 +151,19 @@ console.log(errors);
           Product Images (optional)
         </h4>
         <div>
-          <Label className="mt-3 mb-2 block dark:text-white">Upload Product Image</Label>
+          <Label className="mt-3 mb-2 block dark:text-white">
+            Upload Product Image
+          </Label>
           <FileUpload
-          className={`dark:bg-[#2e2e2e]`}
+            className={`dark:bg-[#2e2e2e]`}
             file={file}
             handleFileChange={handleFileChange}
             description={
               <div className="flex flex-col gap-2">
                 <h5 className="text-sm">Upload Product Image</h5>
-                <p className="text-xs font-light dark:text-white">Max file size: 5mb</p>
+                <p className="text-xs font-light dark:text-white">
+                  Max file size: 5mb
+                </p>
               </div>
             }
           />
@@ -174,9 +177,9 @@ console.log(errors);
           Product Details
         </h4>
         <div className="flex flex-col gap-4">
-          <Input 
-            label="Product Name" 
-            placeholder="Enter product name" 
+          <Input
+            label="Product Name"
+            placeholder="Enter product name"
             // value={formData.name}
             // onChange={handleChange("name")}
             className={`dark:bg-[#383838]`}
@@ -187,14 +190,14 @@ console.log(errors);
             placeholder="Enter product description"
             // value={formData.description}
             // onChange={handleChange("description")}
-               className={`dark:bg-[#383838]`}
-                {...register("description")}
+            className={`dark:bg-[#383838]`}
+            {...register("description")}
           />
           <ReactSelectCustomized
             options={productCategories}
             label={"Category"}
             onChange={handleCategoryChange}
-               className={`dark:bg-[#383838]`}
+            className={`dark:bg-[#383838]`}
             error={errors.category?.message}
           />
           <ReactSelectCustomized
@@ -209,7 +212,7 @@ console.log(errors);
             type="date"
             {...register("expiration_date")}
             error={errors.expiration_date?.message}
-               className={`dark:bg-[#383838]`}
+            className={`dark:bg-[#383838]`}
           />
           <div className="flex flex-col items-start gap-4 lg:flex-row">
             <Input
@@ -219,7 +222,7 @@ console.log(errors);
               leftIcon={<span className="pl-1 text-xs">₦</span>}
               {...register("cost_price")}
               error={errors.cost_price?.message}
-                 className={`dark:bg-[#383838]`}
+              className={`dark:bg-[#383838]`}
             />
             <Input
               label="Product Selling Price"
@@ -228,7 +231,7 @@ console.log(errors);
               leftIcon={<span className="pl-1 text-xs">₦</span>}
               {...register("selling_price")}
               error={errors.selling_price?.message}
-                 className={`dark:bg-[#383838]`}
+              className={`dark:bg-[#383838]`}
             />
           </div>
           <div className="flex flex-col items-start gap-4 lg:flex-row">
@@ -238,7 +241,7 @@ console.log(errors);
               type="number"
               {...register("quantity")}
               error={errors.quantity?.message}
-                 className={`dark:bg-[#383838]`}
+              className={`dark:bg-[#383838]`}
             />
             <Input
               label="Low Stock Count"
@@ -246,7 +249,7 @@ console.log(errors);
               type="number"
               {...register("low_stock_count")}
               error={errors.low_stock_count?.message}
-                 className={`dark:bg-[#383838]`}
+              className={`dark:bg-[#383838]`}
             />
           </div>
           <Button type="submit">Add new Product</Button>
@@ -257,4 +260,3 @@ console.log(errors);
 };
 
 export default AddNewProduct;
-

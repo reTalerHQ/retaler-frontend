@@ -131,27 +131,14 @@ const Sales = () => {
     // setShowDeleteModal(false);
     setSelectedSalesIds([]);
   };
+  // const inventoryMap = {};
 
   const columns = [
     {
-      accessorKey: "items",
-      header: "Product Names",
-      accessorFn: (data) => data?.items?.map((p) => p.inventory_id).join(","),
+      accessorKey: "product_name",
+      header: "Product Name",
+      accessorFn: (data) => data?.items?.map((p) => p.product_name).join(","),
     },
-    // const inventoryMap = {};
-    // (inventoryData?.inventory ?? []).forEach((prod) => {
-    //   inventoryMap[prod.id] = prod.product_name;
-    // });
-
-    // const columns = [
-    //   {
-    //     accessorKey: "items",
-    //     header: "Product Names",
-    //     accessorFn: (data) =>
-    //       data?.items
-    //         ?.map((p) => inventoryMap[p.inventory_id] || p.inventory_id)
-    //         .join(", "),
-    //   },
     {
       accessorKey: "total_amount",
       header: "Total Price",
@@ -266,11 +253,7 @@ const Sales = () => {
       <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-3 dark:text-black">
         <BusinessOverviewCard
           title="Total Sales"
-          count={
-            salesStats?.revenue_generated
-              ? `N ${formatCurrency(salesStats?.revenue_generated)}`
-              : 0
-          }
+          count={salesStats?.total_sales ? ` ${salesStats?.total_sales}` : ""}
           icon={<CurrencyCircleDollar className="text-2xl text-[#038719]" />}
           color="#E6F3E8"
           border="#98CEA1"
@@ -398,7 +381,7 @@ const Sales = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {isLoadingSales || (isLoadingSalesStats && <PagePreLoader />)}
+      {(isLoadingSales || isLoadingSalesStats) && <PagePreLoader />}
     </>
   );
 };

@@ -29,7 +29,8 @@ const faqs = [
   },
   {
     question: "Is my data secure?",
-    answer: "Yes. We use industry-standard encryption and security protocols to protect your data. See our Privacy Policy for more details.",
+    answer:
+      "Yes. We use industry-standard encryption and security protocols to protect your data. See our Privacy Policy for more details.",
   },
 ];
 
@@ -47,7 +48,7 @@ export function LandingPageLayout() {
         <Outlet />
 
         <section id="faqs" className="">
-          <div className="mb-10 w-[30%] px-4 ">
+          <div className="mb-10 w-[30%] px-4">
             <p className="text-primary pt-8 pb-4 font-semibold">FAQS</p>
             <label className="text-4xl font-medium">
               Frequently Asked Questions

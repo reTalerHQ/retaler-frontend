@@ -46,13 +46,13 @@ function HeaderLinks() {
         >
           Benefits
         </a>
-        {/* <a
+        <a
           href="#pricing"
           className="hover:text-blue-700"
           onClick={(e) => handleClick(e, "pricing")}
         >
           Pricing
-        </a> */}
+        </a>
         <a
           href="#faqs"
           className="hover:text-blue-700"
@@ -128,20 +128,20 @@ function Hamburger() {
           >
             Benefits
           </a>
-          {/* <a
+          <a
             href="#pricing"
             className="hover:text-blue-700"
             onClick={(e) => handleClick(e, "pricing")}
           >
             Pricing
-          </a> */}
-          {/* <a
+          </a>
+          <a
             href="#faqs"
             className="hover:text-blue-700"
             onClick={(e) => handleClick(e, "faqs")}
           >
             FAQs
-          </a> */}
+          </a>
           <a
             href="#about"
             className="hover:text-blue-700"
