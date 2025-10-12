@@ -55,8 +55,15 @@ export const InviteStaff = () => {
           Authorization: `Bearer ${tokenFromStorage}`,
         },
       });
-      const store = response?.data?.stores?.[0];
-      setStoreInfo(store);
+      const store = response?.data?.stores?.find(
+        (s) => s.user_id === userInfo.id,
+      );
+
+      if (store) {
+        setStoreInfo(store);
+      } else {
+        console.log("no store found for this user");
+      }
       return store;
     },
   });
@@ -81,7 +88,7 @@ export const InviteStaff = () => {
           },
         },
       );
-     
+
       toast.success(rsp.data.detail);
       navigate("/watch-demo");
     } catch (error) {
@@ -114,8 +121,8 @@ export const InviteStaff = () => {
   const roleOptions = JSON.parse(localStorage.getItem("roles")) || [];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-50">
-      <div className="my-0 flex h-screen w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:max-w-xl">
+    <div className="flex h-full items-center justify-center py-5 bg-blue-50">
+      <div className="my-0 flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:max-w-xl">
         <h1 className="mb-2 text-lg font-semibold md:text-3xl">
           Invite Staff Members
         </h1>
@@ -127,21 +134,23 @@ export const InviteStaff = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
           {/* <label className="mb-1 block text-sm">Name</label> */}
-          <Input label="Name" type="text" {...register("name")} />
+          <div>
+
+          <Input label="Name" type="text" {...register("name")} className="mb-0" />
           {errors.name && (
-            <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+            <p className=" text-sm text-red-500">{errors.name.message}</p>
           )}
+          </div>
           {/* <label className="mb-1 block text-sm">Phone Number</label> */}
-          <Input
-            label="Phone Number"
-            type="number"
-            {...register("phone_no")}
-          />
+          <div>
+
+          <Input label="Phone Number" type="number" {...register("phone_no")} />
           {errors.phone_no && (
             <p className="mt-1 text-sm text-red-500">
               {errors.phone_no.message}
             </p>
           )}
+          </div>
           <div>
             {/* <label className="mb-1 block text-sm">Email Address</label> */}
             <Input
@@ -149,7 +158,7 @@ export const InviteStaff = () => {
               type="email"
               placeholder="janedoe@gmail.com"
               {...register("email")}
-              className="w-full border-0 bg-gray-100 px-3 py-2 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
+              className="w-full border-0 bg-gray-100 px-3 text-sm text-gray-800 focus:border focus:border-gray-400 focus:bg-white focus:outline-none md:text-base"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-500">

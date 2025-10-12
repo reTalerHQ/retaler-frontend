@@ -126,7 +126,6 @@ const AddNewProduct = () => {
       );
     }
   };
-
   // if (formData.quantity > formData.low_stock_count) {
   //   formData.status === 'IN STOCK'
   // } else if (formData.quantity < formData.low_stock_count) {

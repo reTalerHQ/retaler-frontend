@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useRoleAccess from "../hooks/use-role-access";
 import { BusinessOverviewCard } from "../components/business-overview-card";
 import {
@@ -15,8 +15,8 @@ import { formatCurrency } from "../utils/number-utilites";
 import { format } from "date-fns";
 import { useUser } from "@/context/user-context";
 
-import { useQuery } from "@tanstack/react-query";
-import { FETCH_SALES, FETCH_INVENTORY } from "@/constants/query-key";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { FETCH_SALES, FETCH_SALES_STATS, FETCH_INVENTORY } from "@/constants/query-key";
 
 import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
@@ -25,6 +25,7 @@ import { PagePreLoader } from "@/components/page-pre-loader";
 
 const Dashboard = () => {
   useRoleAccess(["Manager", "Admin"]);
+  const [welcome, setWelcome] = useState("")
 
   const { storeInfo } = useUser();
 
@@ -66,20 +67,47 @@ const Dashboard = () => {
     }, {});
   }, [InventoryData]);
 
-  const displayName = useMemo(() => {
-    // Try common spots the backend might put it
-    const raw =
-      storeInfo?.user?.username ??
-      storeInfo?.username ??
-      storeInfo?.user?.first_name ??
-      storeInfo?.owner_name ??
-      storeInfo?.name ??
-      "";
+useEffect(() => {
+  // Try common spots the backend might put it
+  const raw =
+    storeInfo?.user?.username ??
+    storeInfo?.username ??
+    storeInfo?.user?.first_name ??
+    storeInfo?.owner_name ??
+    storeInfo?.name ??
+    "";
+      const name = raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+   const justSignedUp = sessionStorage.getItem("justSignedUp")
+    if(justSignedUp) {
+      sessionStorage.removeItem("justSignedUp")
+     setWelcome(`Welcome ${name}`)
+    }
+      setWelcome(`Welcome${name ? `,${name}` : ""}`)
+}, [storeInfo])
 
-    // Capitalize first letter (optional)
-    return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
-  }, [storeInfo]);
-  console.log("name is:", displayName);
+const restockCount =  localStorage.getItem('storeRestockNeeded')
+const queryClient = useQueryClient()
+const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
+
+  // const displayName = useMemo(() => {
+  //   const justSignedUp = sessionStorage.getItem("justSignedUp")
+  //   if(justSignedUp) {
+  //     sessionStorage.removeItem("justSignedUp")
+  //     return "Welcome"
+  //   }
+  //   // Try common spots the backend might put it
+  //   const raw =
+  //     storeInfo?.user?.username ??
+  //     storeInfo?.username ??
+  //     storeInfo?.user?.first_name ??
+  //     storeInfo?.owner_name ??
+  //     storeInfo?.name ??
+  //     "";
+
+  //   // Capitalize first letter (optional)
+  //   return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+  // }, [storeInfo]);
+  // console.log("name is:", displayName);
   
 
   const actionsLinks = [
@@ -142,10 +170,15 @@ const Dashboard = () => {
     0,
   );
 
+  const numberOfStaff = localStorage.getItem('no of staff')
+
+
+
   return (
     <>
       <h1 className="mb-3 text-2xl font-bold lg:text-3xl">
-        Welcome back{displayName ? `, ${displayName}` : ""}
+        
+       {welcome}
       </h1>
       <p className="text-sm lg:text-base">
         Track your sales, manage inventory, and stay on top of your products
@@ -164,7 +197,7 @@ const Dashboard = () => {
             />
             <BusinessOverviewCard
               title="Total Sales"
-              count={`N ${formatCurrency(totalRevenue)}`}
+             count={salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0}
               icon={
                 <CurrencyCircleDollar className="text-2xl text-[#038719]" />
               }
@@ -173,14 +206,14 @@ const Dashboard = () => {
             />
             <BusinessOverviewCard
               title="Restock Needed"
-              count={0}
+              count={restockCount}
               icon={<Warning className="text-2xl text-[#CCA300]" />}
               color="#FFF5CC"
               border="#FFD633"
             />
             <BusinessOverviewCard
               title="No. of Staff"
-              count={0}
+              count={numberOfStaff}
               icon={<User className="text-2xl text-[#C61010]" />}
               color="#F9E7E7"
               border="#E89D9D"

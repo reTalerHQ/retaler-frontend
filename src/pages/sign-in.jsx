@@ -96,7 +96,7 @@ const Signin = () => {
 
   return (
     <>
-      <section className="flex min-h-screen items-center justify-center bg-[var(--background)] dark:bg-[var(--background)]">
+      <section className="flex min-h-screen items-center justify-center bg-blue-50 dark:bg-[var(--background)]">
         <div className="flex w-xl flex-col justify-center rounded-lg bg-white px-10 py-8 shadow-md md:my-1 md:max-w-xl dark:bg-[#1e1e1e]">
           <h1 className="text-[20px] font-semibold md:text-[36px] md:font-bold">
             Welcome Back!

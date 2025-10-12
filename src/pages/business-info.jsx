@@ -60,6 +60,8 @@ export const BusinessInfo = () => {
           },
         },
       );
+      // const createdStore = rsp.data?.store || rsp.data
+      // setStoreInfo
       console.log({ rsp });
 
       navigate("/invite-staff");

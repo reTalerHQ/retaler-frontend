@@ -138,7 +138,9 @@ export const AddNewSales = () => {
 
   const onSubmit = async (data) => {
     console.log("business info submitted:", data);
+    console.log("products", addedProducts);
 
+  
     try {
       console.log("Form Data:", data);
       if (!(addedProducts?.length > 0)) {
@@ -159,20 +161,27 @@ export const AddNewSales = () => {
       }
       console.log(staffId);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      console.log('token is', tokenFromStorage);
+      
       const payload = {
         store_id: storeInfo?.id,
         staff_id: staffId,
         payment_method: data?.paymentMethod,
         amount_paid: data?.amountPaid,
+        // total_amount: data?.totalAmount,
+       
+        // created_by: data?.staffId,
         items: addedProducts?.map((prod) => ({
           inventory_id: prod.id,
+          // product_name: prod.product_name,
           quantity: prod.quantity,
           price: prod.selling_price,
+          // total_price: prod.quantity * prod.selling_price,
         })),
       };
 
       await axiosInstance.post(
-        `${BASE_URL}/v1/store/${storeInfo.id}/sales`,
+        `${BASE_URL}/v1/store/${storeInfo.id}/sales/`,
         payload,
         {
           headers: {
@@ -192,8 +201,11 @@ export const AddNewSales = () => {
       });
     } catch (error) {
       console.log({ error });
+      
       // const status = error.response?.status ?? 0;
       // console.log({ status });
+      console.log("Error response:", error.response?.data);
+console.log("Status:", error.response?.status);
 
       const message = error.response?.data?.detail;
       toast.error(
@@ -259,7 +271,7 @@ export const AddNewSales = () => {
                         }}
                       />
                       <div>
-                        <p className="font-medium">{product.product_name}</p>
+                        <p className="font-medium">{product?.product_name}</p>
                         <span
                           className={`text-sm ${
                             product.quantity > 0
@@ -267,7 +279,7 @@ export const AddNewSales = () => {
                               : "text-red-600"
                           }`}
                         >
-                          {product.stock > 0
+                          {product.quantity > 0
                             ? `In Stock: ${product.quantity}`
                             : "Out of Stock"}
                         </span>

@@ -25,7 +25,7 @@ const benefits = [
 ];
 const pricings = [
   {
-    name: "Free",
+    name: "Basic",
     description:
       "Best for self-employed retailers and individual shop owners just starting out. Get tools to manage your store for free",
     price: "0",
@@ -137,7 +137,7 @@ export function LandingPageBody() {
                 key={index}
                 className={`rounded-xl p-5 text-left ${index === 1 ? "bg-primary text-white" : "bg white dark:border-primary border border-1 border-gray-200 text-black dark:text-white"}`}
               >
-                <p className="text-2xl font-semibold">{pricing.name} Plan</p>
+                <p className="text-2xl font-semibold">{pricing.name}</p>
                 <p
                   className={`mt-4 text-sm font-thin ${index === 1 ? "bg-primary text-gray-200" : "bg white text-gray-500"}`}
                 >

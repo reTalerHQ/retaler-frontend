@@ -34,7 +34,7 @@ import axios from "axios";
 import { BASE_URL } from "@/constants/api";
 import { TOKEN_IDENTIFIER } from "@/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FETCH_SALES } from "@/constants/query-key";
+import { FETCH_SALES, FETCH_SALES_STATS } from "@/constants/query-key";
 import { FETCH_INVENTORY } from "@/constants/query-key";
 import debounce from "lodash.debounce";
 
@@ -68,19 +68,19 @@ const Inventory = () => {
   const [selectInput, setSelectedInput] = useState("product_name");
   const [searchValue, setSearchValue] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      product_name: "Garri",
-      currency: "₦",
-      cost_price: 1200,
-      selling_price: 1500,
-      quantity: 100,
-      status: "In Stock",
-      last_updated: new Date("2025-07-10"),
-    },
-  ]);
-  const [loading, setLoading] = useState(true);
+  // const [products, setProducts] = useState([
+  // {
+  //   id: 1,
+  //   product_name: "Garri",
+  //   currency: "₦",
+  //   cost_price: 1200,
+  //   selling_price: 1500,
+  //   quantity: 100,
+  //   status: "In Stock",
+  //   last_updated: new Date("2025-07-10"),
+  // },
+  // ]);
+  const [, setLoading] = useState(true);
 
   const { data: salesData = [], isLoading: isLoadingSales } = useQuery({
     queryKey: [FETCH_SALES],
@@ -109,106 +109,141 @@ const Inventory = () => {
   //   enabled: Boolean(storeInfo?.id),
   // });
 
+  const { data: products = [], isLoading: loading } = useQuery({
+    queryKey: [FETCH_INVENTORY, selectInput, searchValue],
+    queryFn: async () => {
+      console.log("Store info:", storeInfo);
+
+      const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+      const params = new URLSearchParams();
+      params.append(selectInput, searchValue);
+      const rsp = await axiosInstance.get(
+        `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      return rsp?.data?.inventory || [];
+    },
+    enabled: Boolean(storeInfo?.id),
+  });
+
   useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-        const params = new URLSearchParams();
-        params.append(selectInput, searchValue);
-        const response = await axiosInstance.get(
-          `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
+    console.log("✅ Updated products:", products);
+  }, [products]);
 
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        let inventoryData = response.data.inventory || [];
-        console.log(
-          "✅ Inventory IDs",
-          inventoryData.map((p) => p.id),
-        );
+    const restockNeeded = products.filter(
+      (product) => product.quantity <= product.low_stock_threshold
+    )
 
-        console.log("🧾 Final inventory list:", inventoryData);
+    const restockCount = restockNeeded.length
+    localStorage.setItem('storeRestockNeeded', restockCount)
 
-        const stored = localStorage.getItem("NEW_PRODUCT");
-        if (stored) {
-          const newProduct = JSON.parse(stored);
-          const alreadyExists = inventoryData.some(
-            (p) => p.id === newProduct.id,
-          );
-          if (!alreadyExists) {
-            inventoryData = [newProduct, ...inventoryData];
-          }
-          localStorage.removeItem("NEW_PRODUCT");
-        }
-
-        setProducts(inventoryData);
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (storeInfo?.id) {
-      fetchInventory();
-    }
-  }, [storeInfo, searchValue, selectInput]);
-
-  const handleToggleModal = (modalType) => {
-    if (!modalType) {
-      setOpenModal(false);
-      setOpenedModalType(null);
-      setSelectedUploadOption(null);
-    } else {
-      setOpenModal(true);
-      setOpenedModalType(modalType);
-    }
+    
+    console.log('restock needed', restockCount);
+    
+    // useEffect(() => {
+      //   const fetchInventory = async () => {
+        //     try {
+          //       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+          //       const params = new URLSearchParams();
+          //       params.append(selectInput, searchValue);
+          //       const response = await axiosInstance.get(
+            //         `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
+            
+            //         {
+              //           headers: {
+                //             Authorization: `Bearer ${token}`,
+                //           },
+                //         },
+                //       );
+                // let inventoryData = response.data.inventory || [];
+                // console.log(
+                  //   "✅ Inventory IDs",
+                  //   inventoryData.map((p) => p.id),
+                  // );
+                  
+                  // console.log("🧾 Final inventory list:", inventoryData);
+                  
+                  // const stored = localStorage.getItem("NEW_PRODUCT");
+                  // if (stored) {
+                    //   const newProduct = JSON.parse(stored);
+                    //   const alreadyExists = inventoryData.some(
+                      //     (p) => p.id === newProduct.id,
+                      //   );
+                      //   if (!alreadyExists) {
+                        //     inventoryData = [newProduct, ...inventoryData];
+                        //   }
+                        //     localStorage.removeItem("NEW_PRODUCT");
+                        //   }
+                        
+                        //   setProducts(inventoryData);
+                        // } catch (error) {
+                          //   console.error("Error fetching inventory:", error);
+                          // } finally {
+                            //   setLoading(false);
+                            //     }
+                            //   };
+                            
+                            //   if (storeInfo?.id) {
+                              //     fetchInventory();
+                              //   }
+                              // }, [storeInfo, searchValue, selectInput]);
+                              
+                              const handleToggleModal = (modalType) => {
+                                if (!modalType) {
+                                  setOpenModal(false);
+                                  setOpenedModalType(null);
+                                  setSelectedUploadOption(null);
+                                } else {
+                                  setOpenModal(true);
+                                  setOpenedModalType(modalType);
+                                }
+                              };
+                              
+                              const handleUploadOptionSelect = (option) => {
+                                setSelectedUploadOption(option);
+                              };
+                              
+                              const handleInputValue = debounce((e) => {
+                                setSearchValue(e.target.value);
+                              }, 500);
+                              
+                              // file upload
+                              const fileUpload = async () => {
+                                const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+                                const formData = new FormData();
+                                formData.append("file", bulkFile);
+                                formData.append("store_id", storeInfo.id);
+                                console.log(formData.get("file"));
+                                
+                                return await axios.post(
+                                  `${BASE_URL}/v1/store/${storeInfo.id}/inventory/import_csv`,
+                                  formData,
+                                  {
+                                    headers: {
+                                      Authorization: `Bearer ${tokenFromStorage}`,
+                                      "Content-Type": "multipart/form-data",
+                                    },
+                                    onUploadProgress: (ProgressEvent) => {
+                                      const percent = Math.round(
+                                        (ProgressEvent.loaded * 100) / ProgressEvent.total,
+                                      );
+                                      setUploadProgress(percent);
+                                    },
+                                  },
+                                );
   };
-
-  const handleUploadOptionSelect = (option) => {
-    setSelectedUploadOption(option);
-  };
-
-  const handleInputValue = debounce((e) => {
-    setSearchValue(e.target.value);
-  }, 500);
-
-  // file upload
-
-  // const fileName = file.name
-
-  const fileUpload = async () => {
-    const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-    const formData = new FormData();
-    formData.append("file", bulkFile);
-    formData.append("store_id", storeInfo.id);
-    return await axios.post(
-      `${BASE_URL}/v1/store/${storeInfo.id}/inventory/import_csv`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${tokenFromStorage}`,
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (ProgressEvent) => {
-          const percent = Math.round(
-            (ProgressEvent.loaded * 100) / ProgressEvent.total,
-          );
-          setUploadProgress(percent);
-        },
-      },
-    );
-  };
-
+  
   const queryClient = useQueryClient();
-
+  
   const mutation = useMutation({
     mutationFn: fileUpload,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["inventory"]);
+    onSuccess: (data) => {
+      console.log("importing", data);
+      
+      queryClient.invalidateQueries([FETCH_INVENTORY]);
       toast.success("Import successful");
     },
     onError: (error) => {
@@ -216,12 +251,14 @@ const Inventory = () => {
       alert("failed to import file");
     },
   });
-
+  
   const handleSelectedFile = (file) => {
     if (!file) return;
     setBulkFile(file);
   };
-
+  
+  const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
+  
   const columns = [
     {
       accessorKey: "product_name",
@@ -355,7 +392,7 @@ const Inventory = () => {
             />
             <BusinessOverviewCard
               title="Total Sales"
-              count={`N ${formatCurrency(totalRevenue)}`}
+             count={salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0}
               icon={
                 <CurrencyCircleDollar className="text-2xl text-[#038719]" />
               }
@@ -364,7 +401,7 @@ const Inventory = () => {
             />
             <BusinessOverviewCard
               title="Restock Needed"
-              count={5}
+              count={restockCount}
               icon={<Warning className="text-2xl text-[#CCA300]" />}
               color="#FFF5CC"
               border="#FFD633"
@@ -539,7 +576,7 @@ const Inventory = () => {
                   disabled={!selectedUploadOption}
                   onClick={() => {
                     setPageMode(PAGE_MODE.BULK_UPLOAD);
-                    handleToggleModal(bulkFile);
+                    handleToggleModal();
                     mutation.mutate();
                   }}
                 >

@@ -78,6 +78,7 @@ export const Signup = () => {
       );
 
       toast.success(rsp.data.detail);
+      sessionStorage.setItem("justSignedUp", "true")
 
       const {
         token: { access_token },
