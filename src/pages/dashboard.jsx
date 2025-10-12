@@ -16,7 +16,11 @@ import { format } from "date-fns";
 import { useUser } from "@/context/user-context";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FETCH_SALES, FETCH_SALES_STATS, FETCH_INVENTORY } from "@/constants/query-key";
+import {
+  FETCH_SALES,
+  FETCH_SALES_STATS,
+  FETCH_INVENTORY,
+} from "@/constants/query-key";
 
 import axiosInstance from "@/lib/axios";
 import { BASE_URL } from "@/constants/api";
@@ -25,7 +29,7 @@ import { PagePreLoader } from "@/components/page-pre-loader";
 
 const Dashboard = () => {
   useRoleAccess(["Manager", "Admin"]);
-  const [welcome, setWelcome] = useState("")
+  const [welcome, setWelcome] = useState("");
 
   const { storeInfo } = useUser();
 
@@ -67,27 +71,27 @@ const Dashboard = () => {
     }, {});
   }, [InventoryData]);
 
-useEffect(() => {
-  // Try common spots the backend might put it
-  const raw =
-    storeInfo?.user?.username ??
-    storeInfo?.username ??
-    storeInfo?.user?.first_name ??
-    storeInfo?.owner_name ??
-    storeInfo?.name ??
-    "";
-      const name = raw ? raw[0].toUpperCase() + raw.slice(1) : "";
-   const justSignedUp = sessionStorage.getItem("justSignedUp")
-    if(justSignedUp) {
-      sessionStorage.removeItem("justSignedUp")
-     setWelcome(`Welcome ${name}`)
+  useEffect(() => {
+    // Try common spots the backend might put it
+    const raw =
+      storeInfo?.user?.username ??
+      storeInfo?.username ??
+      storeInfo?.user?.first_name ??
+      storeInfo?.owner_name ??
+      storeInfo?.name ??
+      "";
+    const name = raw ? raw[0].toUpperCase() + raw.slice(1) : "";
+    const justSignedUp = sessionStorage.getItem("justSignedUp");
+    if (justSignedUp) {
+      sessionStorage.removeItem("justSignedUp");
+      setWelcome(`Welcome ${name}`);
     }
-      setWelcome(`Welcome${name ? `,${name}` : ""}`)
-}, [storeInfo])
+    setWelcome(`Welcome${name ? `,${name}` : ""}`);
+  }, [storeInfo]);
 
-const restockCount =  localStorage.getItem('storeRestockNeeded')
-const queryClient = useQueryClient()
-const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
+  const restockCount = localStorage.getItem("storeRestockNeeded");
+  const queryClient = useQueryClient();
+  const salesStats = queryClient.getQueryData([FETCH_SALES_STATS]);
 
   // const displayName = useMemo(() => {
   //   const justSignedUp = sessionStorage.getItem("justSignedUp")
@@ -108,7 +112,6 @@ const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
   //   return raw ? raw[0].toUpperCase() + raw.slice(1) : "";
   // }, [storeInfo]);
   // console.log("name is:", displayName);
-  
 
   const actionsLinks = [
     {
@@ -170,21 +173,16 @@ const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
     0,
   );
 
-  const numberOfStaff = localStorage.getItem('no of staff')
-
-
+  const numberOfStaff = localStorage.getItem("no of staff");
 
   return (
     <>
-      <h1 className="mb-3 text-2xl font-bold lg:text-3xl">
-        
-       {welcome}
-      </h1>
+      <h1 className="mb-3 text-2xl font-bold lg:text-3xl">{welcome}</h1>
       <p className="text-sm lg:text-base">
         Track your sales, manage inventory, and stay on top of your products
       </p>
-      <section className="mt-6 grid grid-cols-1 gap-6 lg:mt-10 lg:grid-cols-10 lg:gap-4 ">
-        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
+      <section className="mt-6 grid grid-cols-1 gap-6 lg:mt-10 lg:grid-cols-10 lg:gap-4">
+        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-7 lg:px-5 lg:py-9 dark:border dark:bg-[#1e1e1e]">
           <h2 className="mb-6 text-lg font-bold">Business Overview</h2>
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <BusinessOverviewCard
@@ -197,7 +195,9 @@ const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
             />
             <BusinessOverviewCard
               title="Total Sales"
-             count={salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0}
+              count={
+                salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0
+              }
               icon={
                 <CurrencyCircleDollar className="text-2xl text-[#038719]" />
               }
@@ -220,7 +220,7 @@ const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
             />
           </div>
         </article>
-        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-3 lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
+        <article className="rounded-md bg-white p-4 shadow-xs lg:col-span-3 lg:px-5 lg:py-9 dark:border dark:bg-[#1e1e1e]">
           <h2 className="mb-6 text-lg font-bold">Quick Action</h2>
           <div className="flex flex-col gap-4">
             {actionsLinks.map((link) => (
@@ -235,7 +235,7 @@ const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
           </div>
         </article>
         {hasOnboarded ? (
-          <article className="col-span-full rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:bg-[#1e1e1e] dark:border ">
+          <article className="col-span-full rounded-md bg-white p-4 shadow-xs lg:px-5 lg:py-9 dark:border dark:bg-[#1e1e1e]">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-bold">Recent Sales</h2>
               <Link to="/sales" className="text-sm text-[#767474]">

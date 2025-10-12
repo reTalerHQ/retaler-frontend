@@ -16,8 +16,6 @@ import axiosInstance from "@/lib/axios";
 const Analytics = () => {
   const { storeInfo } = useUser();
 
-
-
   const { data: salesData, isLoading: isLoadingSalesData } = useQuery({
     queryKey: [FETCH_SALES_ANALYTICS],
     queryFn: async () => {
@@ -39,9 +37,7 @@ const Analytics = () => {
         return response?.data;
       },
     });
-  const {
-    data: salesPerformanceData,
-  } = useQuery({
+  const { data: salesPerformanceData } = useQuery({
     queryKey: [FETCH_SALES_PERFORMANCE],
     queryFn: async () => {
       const response = await axiosInstance.get(

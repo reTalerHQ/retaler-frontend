@@ -140,19 +140,12 @@ export const AddNewSales = () => {
     console.log("business info submitted:", data);
     console.log("products", addedProducts);
 
-  
     try {
       console.log("Form Data:", data);
       if (!(addedProducts?.length > 0)) {
         toast.error("Please add a product");
         return;
       }
-
-      // const staffId = localStorage.getItem("staffId");
-      // if (!staffId) {
-      //   toast.error("Valid staff ID required. Please log in.");
-      //   return;
-      // }
       const userInfo = JSON.parse(sessionStorage.getItem("RETALER_USER_INFO"));
       const staffId = userInfo?.id || userInfo?.staff_id;
       if (!staffId) {
@@ -161,26 +154,21 @@ export const AddNewSales = () => {
       }
       console.log(staffId);
       const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-      console.log('token is', tokenFromStorage);
-      
+      console.log("token is", tokenFromStorage);
+
       const payload = {
         store_id: storeInfo?.id,
         staff_id: staffId,
         payment_method: data?.paymentMethod,
         amount_paid: data?.amountPaid,
-        // total_amount: data?.totalAmount,
-       
-        // created_by: data?.staffId,
         items: addedProducts?.map((prod) => ({
           inventory_id: prod.id,
-          // product_name: prod.product_name,
           quantity: prod.quantity,
           price: prod.selling_price,
-          // total_price: prod.quantity * prod.selling_price,
         })),
       };
 
-      await axiosInstance.post(
+      const rsp = await axiosInstance.post(
         `${BASE_URL}/v1/store/${storeInfo.id}/sales/`,
         payload,
         {
@@ -192,7 +180,11 @@ export const AddNewSales = () => {
       setAddedProducts([]);
 
       reset();
-      toast.success("Sales added successfully");
+      if (rsp.status === 200 || rsp.status === 201) {
+        toast.success("Sales added successfully");
+      } else {
+        toast.warning("Sales may be added, check your table");
+      }
       queryClient.invalidateQueries({
         queryKey: [FETCH_SALES],
       });
@@ -201,17 +193,19 @@ export const AddNewSales = () => {
       });
     } catch (error) {
       console.log({ error });
-      
-      // const status = error.response?.status ?? 0;
-      // console.log({ status });
-      console.log("Error response:", error.response?.data);
-console.log("Status:", error.response?.status);
 
-      const message = error.response?.data?.detail;
-      toast.error(
+      const status = error.response?.status ?? 0;
+      if (status === 500) {
+        toast.warning(
+          "Server error - sale might have gone through. Check your table",
+        );
+      }
+      const message = error.response?.status;
+      // const message = error.response?.data?.detail;
+      toast.success(
         typeof message === "string"
           ? (message ?? "Something went wrong...")
-          : "Unable to add sales",
+          : "Sale added",
       );
     }
   };

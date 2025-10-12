@@ -133,116 +133,115 @@ const Inventory = () => {
     console.log("✅ Updated products:", products);
   }, [products]);
 
-    const restockNeeded = products.filter(
-      (product) => product.quantity <= product.low_stock_threshold
-    )
+  const restockNeeded = products.filter(
+    (product) => product.quantity <= product.low_stock_threshold,
+  );
 
-    const restockCount = restockNeeded.length
-    localStorage.setItem('storeRestockNeeded', restockCount)
+  const restockCount = restockNeeded.length;
+  localStorage.setItem("storeRestockNeeded", restockCount);
 
-    
-    console.log('restock needed', restockCount);
-    
-    // useEffect(() => {
-      //   const fetchInventory = async () => {
-        //     try {
-          //       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
-          //       const params = new URLSearchParams();
-          //       params.append(selectInput, searchValue);
-          //       const response = await axiosInstance.get(
-            //         `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
-            
-            //         {
-              //           headers: {
-                //             Authorization: `Bearer ${token}`,
-                //           },
-                //         },
-                //       );
-                // let inventoryData = response.data.inventory || [];
-                // console.log(
-                  //   "✅ Inventory IDs",
-                  //   inventoryData.map((p) => p.id),
-                  // );
-                  
-                  // console.log("🧾 Final inventory list:", inventoryData);
-                  
-                  // const stored = localStorage.getItem("NEW_PRODUCT");
-                  // if (stored) {
-                    //   const newProduct = JSON.parse(stored);
-                    //   const alreadyExists = inventoryData.some(
-                      //     (p) => p.id === newProduct.id,
-                      //   );
-                      //   if (!alreadyExists) {
-                        //     inventoryData = [newProduct, ...inventoryData];
-                        //   }
-                        //     localStorage.removeItem("NEW_PRODUCT");
-                        //   }
-                        
-                        //   setProducts(inventoryData);
-                        // } catch (error) {
-                          //   console.error("Error fetching inventory:", error);
-                          // } finally {
-                            //   setLoading(false);
-                            //     }
-                            //   };
-                            
-                            //   if (storeInfo?.id) {
-                              //     fetchInventory();
-                              //   }
-                              // }, [storeInfo, searchValue, selectInput]);
-                              
-                              const handleToggleModal = (modalType) => {
-                                if (!modalType) {
-                                  setOpenModal(false);
-                                  setOpenedModalType(null);
-                                  setSelectedUploadOption(null);
-                                } else {
-                                  setOpenModal(true);
-                                  setOpenedModalType(modalType);
-                                }
-                              };
-                              
-                              const handleUploadOptionSelect = (option) => {
-                                setSelectedUploadOption(option);
-                              };
-                              
-                              const handleInputValue = debounce((e) => {
-                                setSearchValue(e.target.value);
-                              }, 500);
-                              
-                              // file upload
-                              const fileUpload = async () => {
-                                const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
-                                const formData = new FormData();
-                                formData.append("file", bulkFile);
-                                formData.append("store_id", storeInfo.id);
-                                console.log(formData.get("file"));
-                                
-                                return await axios.post(
-                                  `${BASE_URL}/v1/store/${storeInfo.id}/inventory/import_csv`,
-                                  formData,
-                                  {
-                                    headers: {
-                                      Authorization: `Bearer ${tokenFromStorage}`,
-                                      "Content-Type": "multipart/form-data",
-                                    },
-                                    onUploadProgress: (ProgressEvent) => {
-                                      const percent = Math.round(
-                                        (ProgressEvent.loaded * 100) / ProgressEvent.total,
-                                      );
-                                      setUploadProgress(percent);
-                                    },
-                                  },
-                                );
+  console.log("restock needed", restockCount);
+
+  // useEffect(() => {
+  //   const fetchInventory = async () => {
+  //     try {
+  //       const token = sessionStorage.getItem(TOKEN_IDENTIFIER);
+  //       const params = new URLSearchParams();
+  //       params.append(selectInput, searchValue);
+  //       const response = await axiosInstance.get(
+  //         `${BASE_URL}/v1/store/${storeInfo.id}/inventory?${params.toString()}`,
+
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         },
+  //       );
+  // let inventoryData = response.data.inventory || [];
+  // console.log(
+  //   "✅ Inventory IDs",
+  //   inventoryData.map((p) => p.id),
+  // );
+
+  // console.log("🧾 Final inventory list:", inventoryData);
+
+  // const stored = localStorage.getItem("NEW_PRODUCT");
+  // if (stored) {
+  //   const newProduct = JSON.parse(stored);
+  //   const alreadyExists = inventoryData.some(
+  //     (p) => p.id === newProduct.id,
+  //   );
+  //   if (!alreadyExists) {
+  //     inventoryData = [newProduct, ...inventoryData];
+  //   }
+  //     localStorage.removeItem("NEW_PRODUCT");
+  //   }
+
+  //   setProducts(inventoryData);
+  // } catch (error) {
+  //   console.error("Error fetching inventory:", error);
+  // } finally {
+  //   setLoading(false);
+  //     }
+  //   };
+
+  //   if (storeInfo?.id) {
+  //     fetchInventory();
+  //   }
+  // }, [storeInfo, searchValue, selectInput]);
+
+  const handleToggleModal = (modalType) => {
+    if (!modalType) {
+      setOpenModal(false);
+      setOpenedModalType(null);
+      setSelectedUploadOption(null);
+    } else {
+      setOpenModal(true);
+      setOpenedModalType(modalType);
+    }
   };
-  
+
+  const handleUploadOptionSelect = (option) => {
+    setSelectedUploadOption(option);
+  };
+
+  const handleInputValue = debounce((e) => {
+    setSearchValue(e.target.value);
+  }, 500);
+
+  // file upload
+  const fileUpload = async () => {
+    const tokenFromStorage = sessionStorage.getItem(TOKEN_IDENTIFIER);
+    const formData = new FormData();
+    formData.append("file", bulkFile);
+    formData.append("store_id", storeInfo.id);
+    console.log(formData.get("file"));
+
+    return await axios.post(
+      `${BASE_URL}/v1/store/${storeInfo.id}/inventory/import_csv`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${tokenFromStorage}`,
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (ProgressEvent) => {
+          const percent = Math.round(
+            (ProgressEvent.loaded * 100) / ProgressEvent.total,
+          );
+          setUploadProgress(percent);
+        },
+      },
+    );
+  };
+
   const queryClient = useQueryClient();
-  
+
   const mutation = useMutation({
     mutationFn: fileUpload,
     onSuccess: (data) => {
       console.log("importing", data);
-      
+
       queryClient.invalidateQueries([FETCH_INVENTORY]);
       toast.success("Import successful");
     },
@@ -251,14 +250,14 @@ const Inventory = () => {
       alert("failed to import file");
     },
   });
-  
+
   const handleSelectedFile = (file) => {
     if (!file) return;
     setBulkFile(file);
   };
-  
-  const  salesStats  = queryClient.getQueryData([FETCH_SALES_STATS])
-  
+
+  const salesStats = queryClient.getQueryData([FETCH_SALES_STATS]);
+
   const columns = [
     {
       accessorKey: "product_name",
@@ -392,7 +391,9 @@ const Inventory = () => {
             />
             <BusinessOverviewCard
               title="Total Sales"
-             count={salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0}
+              count={
+                salesStats?.total_sales ? ` ${salesStats?.total_sales}` : 0
+              }
               icon={
                 <CurrencyCircleDollar className="text-2xl text-[#038719]" />
               }
